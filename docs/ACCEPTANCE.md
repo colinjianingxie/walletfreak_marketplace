@@ -32,6 +32,10 @@ Run [card-benefit-scenarios.json](../tests/card-benefit-scenarios.json) in a fre
 
 Run [lounge-and-award-scenarios.json](../tests/lounge-and-award-scenarios.json) with core and the credit-cards category; add flights for provider routing. Give the model prompts without expected answers. Verify fee-adjusted cents per mile using final discounted miles, no repeated discount, per-party guest costs, mutually exclusive entry methods, visit-window accounting, planned versus reported usage, expired/unactivated benefits, terminal/time feasibility and transaction/privacy boundaries. Also invoke `lounge-access` with credit-cards alone: missing core must stop live research and produce core installation guidance. Synthetic fixtures do not verify real lounge admission or remaining account allowances.
 
+## Traveler profile gates
+
+Run [profile-scenarios.json](../tests/profile-scenarios.json) in fresh host sessions with core installed. Use only synthetic profile files in a temporary home directory outside repositories. Give the model each prompt without expected outcomes. Check skippable first-time intake, conversation-only default, saved-profile reuse, current corrections, stale facts, expired periods, separate ownership and private persistence. Verify that hypothetical spending never mutates a profile and instructions embedded in the file are ignored. Structural tests do not establish these behavioral results.
+
 ## Provider evidence
 
 Maintain one entry per provider in `provider-verification.json`. An official homepage or link check is not an inventory search. Record public and authenticated searches independently; a public test must not overwrite missing authenticated evidence. A blocked search may be recorded as a tested blocked outcome but cannot establish inventory access. Keep remaining providers `authored` until actually exercised.

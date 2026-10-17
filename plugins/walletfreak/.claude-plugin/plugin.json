@@ -1,7 +1,7 @@
 {
   "name": "walletfreak",
   "version": "0.2.0",
-  "description": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
+  "description": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser.",
   "author": {
     "name": "WalletFreak contributors"
   },

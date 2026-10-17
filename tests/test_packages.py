@@ -52,7 +52,10 @@ class Packages(unittest.TestCase):
                 for host in (".codex-plugin", ".claude-plugin"):
                     manifest = json.loads((plugin / host / "plugin.json").read_text())
                     self.assertEqual(manifest["name"], c["name"])
-                    self.assertEqual(manifest["version"], VERSION)
+                    version = manifest["version"]
+                    if host == ".codex-plugin":
+                        version = version.split("+codex.", 1)[0]
+                    self.assertEqual(version, VERSION)
                     self.assertEqual(manifest["license"], "MIT")
                     for key in ("description", "author", "homepage", "repository"):
                         self.assertTrue(manifest[key])
@@ -97,7 +100,7 @@ class Packages(unittest.TestCase):
                     skills = list(isolated.glob("skills/*/SKILL.md"))
                     expected_skills = {p["skill"] for p in PROVIDERS if p["plugin"] == plugin.name}
                     if plugin.name == "walletfreak":
-                        expected_skills = {"travel-plan", "walletfreak-setup"}
+                        expected_skills = {"travel-plan", "traveler-profile", "walletfreak-setup"}
                     elif plugin.name == "walletfreak-credit-cards":
                         expected_skills.update({"card-travel-benefits", "lounge-access"})
                     self.assertEqual({s.parent.name for s in skills}, expected_skills)

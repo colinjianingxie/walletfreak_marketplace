@@ -1,7 +1,7 @@
 {
   "name": "walletfreak",
-  "version": "0.2.0",
-  "description": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
+  "version": "0.2.0+codex.20261017221236",
+  "description": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser.",
   "author": {
     "name": "WalletFreak contributors"
   },
@@ -16,15 +16,16 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "WalletFreak \u00b7 Travel core",
-    "shortDescription": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
-    "longDescription": "Shared trip intake, travel comparison, setup diagnostics and one local browser. Users sign in and book themselves.",
+    "shortDescription": "Travel research with optional cards, points and preferences profiles.",
+    "longDescription": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser. Users sign in and book themselves.",
     "developerName": "WalletFreak",
     "category": "Productivity",
     "capabilities": [
       "Interactive"
     ],
     "defaultPrompt": [
-      "Help me research travel with Travel core."
+      "Help me research travel with Travel core.",
+      "Help me fill in my cards, points balances and travel preferences."
     ],
     "brandColor": "#167347"
   },

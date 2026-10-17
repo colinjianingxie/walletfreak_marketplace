@@ -9,6 +9,8 @@ WalletFreak researches travel and explains how the user can book. Users sign in 
 
 ## 1. Intake
 
+Start with the bundled [traveler profile](../traveler-profile/SKILL.md) intake rule for points/card searches. Reuse existing conversation facts or the optional saved profile before asking for missing cards, approximate balances, status, certificates and remaining credits. Accept self-reports on an honor system, keep reporting dates and preservation preferences, and offer a skippable first-time intake. Saving requires the user's choice; a complete profile or account login is never required to begin research. Return relevant facts to provider skills through the conversation rather than creating provider-specific copies.
+
 Gather dates, acceptable flexibility, destination(s), departure/arrival airports and acceptable alternatives; travelers and child ages only when needed; cabin, baggage, connection limits, accessibility and room/bed/occupancy needs; budget and comparison currency; cancellation preferences; and loyalty balances, certificates, status, eligible card products and remaining credits only as needed. Label user-reported account information. Do not request account numbers, passwords, codes or passport details. Ask a concise grouped question for material gaps; otherwise state reasonable assumptions and continue.
 
 ## 2. Setup and provider discovery

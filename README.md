@@ -34,7 +34,7 @@ Install only the categories you need; each includes all of its provider guides. 
 
 | Plugin | Responsibility |
 | --- | --- |
-| `walletfreak` | Required intake, comparison, synthesis, setup and one shared browser |
+| `walletfreak` | Required intake, optional traveler profiles, comparison, synthesis, setup and one shared browser |
 | `walletfreak-hotels` | Eight hotel groups, each with its own research skill and references |
 | `walletfreak-flights` | 19 airline/program groups, each with its own research skill and references |
 | `walletfreak-credit-cards` | Lounge tracker, existing card travel benefits and four card travel portals |
@@ -50,6 +50,12 @@ Provider names are skills inside these packages, not separate installations. New
 | Portals (4) | Capital One Travel, Amex Travel, Chase Travel including The Edit, Citi Travel |
 
 Find exact package/skill names in [providers.json](providers.json). Grouped provider guides document their separate booking sites and programs. Core can research other providers generically and must label that separately from dedicated coverage. All providers start as **authored**; this is not a certification of live prices or authenticated account access. See the [verification ledger](docs/provider-verification.json) and [release checks](docs/ACCEPTANCE.md).
+
+## Your travel wallet, on an honor system
+
+Core includes [traveler-profile](plugins/walletfreak/skills/traveler-profile/SKILL.md). Before points/card research, it reuses known facts or offers a short, skippable intake for your cards, approximate bank/airline/hotel balances, status, issued certificates, unused credits and points you prefer to preserve. No account connection or proof is required. Current replies override older snapshots; missing facts remain unknown.
+
+Keep this information in the conversation, or ask **“Save my travel wallet for future searches.”** Saving is optional and explicit. You can also fill the [blank profile template](plugins/walletfreak/skills/traveler-profile/assets/profile-template.md) yourself. The default file is `~/.walletfreak/traveler-profile.md`, outside the plugin and project; it is local plain text with owner-only permissions where supported. Never enter account numbers or secrets. Say “Update my airline balance to about 60,000” or “Delete my saved traveler profile” to maintain it. Hypothetical bookings do not spend your saved balance, and self-reports do not establish current benefit terms or award availability.
 
 ## Existing card travel benefits
 

@@ -35,6 +35,18 @@ Official Delta/United award-discount pages and lounge source routes were reviewe
 
 Category source commit `a1c4bfb87b3165971a5a50170d4b73749c0cbe69` was pushed to public `main`; 43 public catalog/documentation files matched the tested source. On 2026-10-17, website commit `37fea1d128efe248986a57e83fa2fc23ad307b1f` was deployed to the existing Firebase Hosting project with the user's authorization. Both custom domains and the Firebase URL passed HTML/header checks; all six live files matched the build, and the live website passed desktop/mobile behavior checks. See the [website deployment record](https://github.com/colinjianingxie/walletfreak/blob/main/VALIDATION.md#production-deployment--2026-10-17). This establishes website publication, not provider inventory or card-benefit eligibility.
 
+## Traveler profile follow-up — 2026-10-17
+
+Added core's optional `traveler-profile` skill and blank template, the shared first-intake rule, and card-benefit reuse. Reports are accepted on an honor system; saving is explicit, dates and preservation preferences survive reuse, and proposed spending does not mutate the profile.
+
+- All seven repository tests passed, including isolated package references and the updated three-skill core inventory.
+- Official Codex validators passed for the two changed plugins and all four changed/new skill frontmatter files.
+- Native Claude validation passed for the marketplace and both changed plugin manifests; `git diff --check` passed.
+- Reinstalled core and credit-cards in Codex as `0.2.0+codex.20261017221236` from this durable local checkout. CLI listing confirmed both enabled, and the installed core contains `traveler-profile` and its template. WalletFreak’s configured marketplace now uses this local source rather than its GitHub snapshot; other marketplaces and plugin installations are unchanged. Start a new thread to load the new skills.
+- Five synthetic behavior cases are recorded in [profile-scenarios.json](../tests/profile-scenarios.json). Fresh-host execution of these cases has not been run. These structural checks do not establish actual save/reuse behavior or live account eligibility.
+
+The initial implementation was developed and installed from a separate local checkout. Package checks did not read or save real account data, and fixtures contain only synthetic reports. Fresh-host behavior checks and release tagging remain pending; these checks are not a validated release.
+
 ## Remaining verification
 
 Claude model behavior remains pending at the user's request. Live public inventory, authenticated provider searches, account-specific card eligibility, real login interruptions and concurrent-host behavior remain unverified. All 31 provider ledger entries stay authored. Historical 0.1.0 synthetic checks below do not establish new 0.2.0 host results beyond the checks explicitly recorded above. Release tagging remains a separate action.
