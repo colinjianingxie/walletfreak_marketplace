@@ -1,4 +1,41 @@
-# Validation record — 0.1.0
+# Validation record — 0.2.0
+
+Checked locally on 2026-10-17. This version replaces individual provider packages with three categories; the required core retains planning, setup and one browser. Package validation is not certification of live prices or account benefits.
+
+## Category release checks
+
+- Seven repository tests passed: four-package catalogs/manifests, category/provider mappings, isolated references, separate evidence for all 31 provider IDs, the sole pinned browser and redemption arithmetic.
+- All four Codex manifests and all 35 skill frontmatter files passed the official validators. Native Claude validation passed for both the marketplace and all four plugins.
+- Clean temporary Codex configurations installed all four packages, core/hotels/flights without credit-cards, credit-cards alone and hotels alone. Clean Claude configurations installed all four packages and hotels alone without signing in. Ordinary user configurations were not changed.
+- Actual Codex discovery reported all 35 enabled skills under the correct plugin namespaces: core 2, hotels 8, flights 19, credit-cards 6.
+- The three prompts in [category-scenarios.json](../tests/category-scenarios.json) and the hotels-only missing-core prompt in [scenarios.json](../tests/scenarios.json) passed manual review. The model received prompts without expected outcomes. It loaded United, Hilton, Chase and card-benefit skills from installed discovery; core’s calculator returned 1.6 cents/point gross and 1.4 adjusted. It supplied the credit-cards install command without inventing savings when that category was absent, and stopped research with the core install command when hotels or credit-cards were installed alone. No travel sites or accounts were accessed.
+- Codex app-server reported exactly one `walletfreak-browser`; it opened the local production website through the installed core, used an isolated temporary Chrome profile, produced no automatic workspace snapshot files and closed successfully.
+- Website checks passed: four unit tests, production build and Chrome behavior at 320, 390, 768 and 1440px. Category selection stays independent of provider filtering; both hosts’ commands install core first and each selected category once. Clipboard success/denial, provider/category documentation links and no external/Firebase requests passed. Desktop/mobile category screenshots were reviewed.
+- GitHub’s unauthenticated repository API confirmed the marketplace is public. The site now advertises that repository from the hero, navigation, installation area and footer.
+
+The 0.1.0-to-0.2.0 migration is documented in [installation](INSTALL.md#upgrading-from-010). Clean category installs were tested; an in-place upgrade of an existing user installation and desktop UI installation have not been exercised. Temporary authentication links used for Codex behavior checks were removed. No credentials or test transcripts enter the repositories.
+
+## Lounge and award-discount follow-up
+
+The final credit-cards package includes `lounge-access` alongside card-benefit research and four portal skills. Fresh isolated Codex and Claude configurations installed all four final packages; Codex also installed credit-cards alone. Final Codex discovery reported 35 enabled skills and the shared browser still opened the local website with an isolated profile, no automatic workspace snapshots and a successful close.
+
+A fresh Codex session received only the five prompts in [lounge-and-award-scenarios.json](../tests/lounge-and-award-scenarios.json), without expected answers. Manual review confirmed:
+
+- Already-discounted Delta 42,500 miles + USD 100 versus USD 900 returned 1.8824 cents/mile; United 85,000 miles + USD 200 versus USD 1,200 returned 1.1765. No second mileage discount or discount to award cash charges was applied.
+- One supported lounge credential cost USD 30 for two guests versus USD 70 for the alternative; free-guest allowances were not combined and capacity remained separate from eligibility.
+- Two entries within the stipulated 24-hour window consumed one visit. Planned use left the actual balance unchanged; a conditional update based on a user report reduced it once.
+- Expired access, an inaccessible terminal and opening after boarding were excluded. Unactivated membership and unknown issuing-market rules remained conditional or unverified.
+- Activation, reservations, guest-pass purchases, pass redemption, QR export and cookie-based monitoring were declined; the tracker stayed in the conversation.
+
+With only credit-cards installed, the model loaded `lounge-access`, stopped live research, supplied the core installation command and requested a fresh session. It did not install anything. All six new behavior cases passed; no travel websites or accounts were accessed by these synthetic sessions. Temporary authentication links were removed.
+
+Official Delta/United award-discount pages and lounge source routes were reviewed on 2026-10-17. These are sourced research instructions, not authenticated eligibility or inventory verification; unreadable or sign-in-only terms remain unverified. Delta Gold and eligible United-card discounts require current account/product/itinerary evidence, and final quoted miles are used once. The seven repository tests include fee-adjusted arithmetic using final discounted miles. The website now gives lounge tracking prominent placement and illustrates cash-minus-fees value; its four unit tests, production build, four viewport checks and desktop/mobile visual review passed.
+
+## Remaining verification
+
+Claude model behavior remains pending at the user's request. Live public inventory, authenticated provider searches, account-specific card eligibility, real login interruptions and concurrent-host behavior remain unverified. All 31 provider ledger entries stay authored. Historical 0.1.0 synthetic checks below do not establish new 0.2.0 host results beyond the checks explicitly recorded above. Release tags and website deployment remain separate actions.
+
+## Historical 0.1.0 evidence (before initial source publication)
 
 Prepared locally on 2026-10-17; **unpublished, with release acceptance gates still pending**. This record separates package checks, host behavior and provider inventory. Passing a synthetic scenario does not verify a live price or account benefit.
 

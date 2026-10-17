@@ -1,6 +1,6 @@
 {
   "name": "walletfreak",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
   "author": {
     "name": "WalletFreak contributors"
@@ -15,7 +15,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "WalletFreak · Travel core",
+    "displayName": "WalletFreak \u00b7 Travel core",
     "shortDescription": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
     "longDescription": "Shared trip intake, travel comparison, setup diagnostics and one local browser. Users sign in and book themselves.",
     "developerName": "WalletFreak",

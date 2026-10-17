@@ -8,6 +8,8 @@ import unittest
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+CATEGORIES = json.loads((ROOT / "categories.json").read_text())
+VERSION = "0.2.0"
 PROVIDERS = json.loads((ROOT / "providers.json").read_text())
 EXPECTED = {
     "marriott", "hilton", "hyatt", "ihg", "accor", "wyndham", "choice", "best-western",
@@ -24,10 +26,17 @@ class Packages(unittest.TestCase):
         self.assertEqual(len(PROVIDERS), 31)
         codex = json.loads((ROOT / ".agents/plugins/marketplace.json").read_text())
         claude = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
-        names = ["walletfreak"] + [p["plugin"] for p in PROVIDERS]
+        names = ["walletfreak"] + [c["plugin"] for c in CATEGORIES]
+        self.assertEqual(names, ["walletfreak", "walletfreak-hotels", "walletfreak-flights", "walletfreak-credit-cards"])
+        self.assertEqual(len({c["id"] for c in CATEGORIES}), len(CATEGORIES))
+        for category in CATEGORIES:
+            self.assertEqual(category["plugin"], "walletfreak-" + category["id"])
+            self.assertTrue(category["description"])
+            for provider in [p for p in PROVIDERS if p["plugin"] == category["plugin"]]:
+                self.assertEqual(provider["category"], category["name"])
         self.assertEqual(codex["name"], "walletfreak")
         self.assertEqual(claude["name"], "walletfreak")
-        self.assertEqual(claude["metadata"]["version"], "0.1.0")
+        self.assertEqual(claude["metadata"]["version"], VERSION)
         self.assertEqual([p["name"] for p in codex["plugins"]], names)
         self.assertEqual([p["name"] for p in claude["plugins"]], names)
         self.assertEqual({p.name for p in (ROOT / "plugins").iterdir()}, set(names))
@@ -38,12 +47,12 @@ class Packages(unittest.TestCase):
                 self.assertEqual(a["source"], expected)
                 self.assertEqual(c["policy"], {"installation": "AVAILABLE", "authentication": "ON_INSTALL"})
                 self.assertEqual(c["category"], "Productivity")
-                self.assertEqual(a["version"], "0.1.0")
+                self.assertEqual(a["version"], VERSION)
                 plugin = ROOT / expected
                 for host in (".codex-plugin", ".claude-plugin"):
                     manifest = json.loads((plugin / host / "plugin.json").read_text())
                     self.assertEqual(manifest["name"], c["name"])
-                    self.assertEqual(manifest["version"], "0.1.0")
+                    self.assertEqual(manifest["version"], VERSION)
                     self.assertEqual(manifest["license"], "MIT")
                     for key in ("description", "author", "homepage", "repository"):
                         self.assertTrue(manifest[key])
@@ -86,9 +95,12 @@ class Packages(unittest.TestCase):
                     isolated = Path(temporary) / plugin.name
                     shutil.copytree(plugin, isolated)
                     skills = list(isolated.glob("skills/*/SKILL.md"))
-                    self.assertEqual(len(skills), 3 if plugin.name == "walletfreak" else 1)
+                    expected_skills = {p["skill"] for p in PROVIDERS if p["plugin"] == plugin.name}
                     if plugin.name == "walletfreak":
-                        self.assertEqual({s.parent.name for s in skills}, {"travel-plan", "card-travel-benefits", "walletfreak-setup"})
+                        expected_skills = {"travel-plan", "walletfreak-setup"}
+                    elif plugin.name == "walletfreak-credit-cards":
+                        expected_skills.update({"card-travel-benefits", "lounge-access"})
+                    self.assertEqual({s.parent.name for s in skills}, expected_skills)
                     for skill in skills:
                         text = skill.read_text()
                         match = re.match(r"---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---\n", text)
@@ -108,11 +120,14 @@ class Packages(unittest.TestCase):
 
     def test_provider_contract_and_ledger(self):
         ledger = json.loads((ROOT / "docs/provider-verification.json").read_text())
-        self.assertEqual({r["plugin"] for r in ledger}, {p["plugin"] for p in PROVIDERS})
+        self.assertEqual({r["id"] for r in ledger}, EXPECTED)
+        self.assertEqual({p["plugin"] for p in PROVIDERS}, {c["plugin"] for c in CATEGORIES})
         self.assertEqual(len(ledger), 31)
         for provider, evidence in zip(PROVIDERS, ledger):
             with self.subTest(provider=provider["id"]):
-                self.assertEqual(provider["version"], "0.1.0")
+                self.assertEqual(provider["version"], VERSION)
+                for key in ("id", "plugin", "skill"):
+                    self.assertEqual(provider[key], evidence[key])
                 self.assertEqual(provider["verification"], evidence["stage"])
                 self.assertIn(evidence["stage"], ("authored", "public-search tested", "authenticated-search tested"))
                 for field in ("publicSearch", "authenticatedSearch"):
@@ -146,6 +161,10 @@ class RedemptionValue(unittest.TestCase):
         self.assertEqual(calculator.redemption_value("100", "120", 10000, "EUR", "EUR")["per_point"], "-0.002")
         # A verified credit available only to the cash option changes the cash avoided.
         self.assertEqual(calculator.redemption_value("800", "100", 50000, "USD", "USD")["cents_per_point"], "1.400")
+
+    def test_final_discounted_miles_keep_award_cash_charges(self):
+        self.assertAlmostEqual(float(calculator.redemption_value("900", "100", 42500, "USD", "USD")["cents_per_point"]), 1.8823529411764706)
+        self.assertAlmostEqual(float(calculator.redemption_value("1200", "200", 85000, "USD", "USD")["cents_per_point"]), 1.1764705882352942)
 
     def test_unknown_fees_mixed_currencies_and_invalid_inputs(self):
         cases = [(900, None, 50000, "USD", "USD"), (900, 100, 50000, "USD", "EUR"),

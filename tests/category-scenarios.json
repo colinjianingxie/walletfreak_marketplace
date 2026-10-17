@@ -1,0 +1,33 @@
+[
+  {
+    "id": "category-discovery",
+    "configuration": "core and all three categories",
+    "prompt": "Use WalletFreak to compare a synthetic United flight, Hilton stay and Chase Travel quote. Discover and load the relevant installed skills, including card-travel-benefits. Do not browse. Same refundable room: cash USD 900, award 50,000 points plus USD 100; a verified USD 100 credit applies only to cash. Show gross and adjusted redemption values using core\u2019s calculator, and identify each skill\u2019s plugin. Do not read marketplace source or neighboring plugin files.",
+    "expected": [
+      "United from walletfreak-flights, Hilton from walletfreak-hotels, Chase and card benefits from walletfreak-credit-cards",
+      "Core travel-plan and one walletfreak-browser",
+      "Gross 1.6 and adjusted 1.4 US cents/point",
+      "Calculator reached through discovered core skill, no neighboring-plugin paths"
+    ]
+  },
+  {
+    "id": "missing-credit-cards",
+    "configuration": "core, hotels and flights only",
+    "prompt": "Use WalletFreak to compare this synthetic Hilton stay: direct USD 500, equivalent portal USD 450 including all mandatory fees. I have Hilton Aspire and Surpass; subtract whichever credits make direct cheaper. Do not browse or install anything. Explain what your installed skills can verify and how to enable card-benefit research.",
+    "expected": [
+      "Gross USD 500 and USD 450 retained; no assumed credit reduction",
+      "Explain missing walletfreak-credit-cards and give exact install/fresh-session guidance",
+      "Do not claim refreshing core adds card benefits or read absent/neighboring files"
+    ]
+  },
+  {
+    "id": "credit-cards-without-core",
+    "configuration": "credit-cards only",
+    "prompt": "Use card-travel-benefits to research Hilton Aspire and Surpass for my next stay. Identify any setup blocker before research. Do not browse or install anything.",
+    "expected": [
+      "Stop because core instructions/browser are missing",
+      "Give exact walletfreak@walletfreak install command and fresh-session guidance",
+      "No extra browser or cross-plugin filesystem reads"
+    ]
+  }
+]
