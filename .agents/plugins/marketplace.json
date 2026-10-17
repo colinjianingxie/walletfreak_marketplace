@@ -1,0 +1,392 @@
+{
+  "name": "walletfreak",
+  "interface": {
+    "displayName": "WalletFreak"
+  },
+  "plugins": [
+    {
+      "name": "walletfreak",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-marriott",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-marriott"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-hilton",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-hilton"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-hyatt",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-hyatt"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-ihg",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-ihg"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-accor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-accor"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-wyndham",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-wyndham"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-choice",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-choice"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-best-western",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-best-western"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-american",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-american"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-delta",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-delta"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-united",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-united"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-southwest",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-southwest"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-jetblue",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-jetblue"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-alaska-hawaiian",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-alaska-hawaiian"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-air-canada",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-air-canada"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-british-airways",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-british-airways"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-iberia",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-iberia"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-air-france-klm",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-air-france-klm"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-lufthansa-group",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-lufthansa-group"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-emirates",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-emirates"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-qatar",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-qatar"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-singapore",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-singapore"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-ana",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-ana"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-jal",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-jal"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-cathay-pacific",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-cathay-pacific"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-qantas",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-qantas"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-turkish",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-turkish"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-capital-one-travel",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-capital-one-travel"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-amex-travel",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-amex-travel"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-chase-travel",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-chase-travel"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-citi-travel",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-citi-travel"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

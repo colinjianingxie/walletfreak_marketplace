@@ -1,0 +1,16 @@
+{
+  "name": "walletfreak-qantas",
+  "version": "0.1.0",
+  "description": "Research Qantas cash, points and eligibility. Requires the WalletFreak core plugin.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "homepage": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "repository": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "license": "MIT",
+  "keywords": [
+    "travel",
+    "research",
+    "qantas"
+  ]
+}

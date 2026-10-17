@@ -1,0 +1,172 @@
+{
+  "name": "walletfreak",
+  "owner": {
+    "name": "WalletFreak contributors"
+  },
+  "metadata": {
+    "description": "A shared travel core and independently installable provider research skills.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "walletfreak",
+      "source": "./plugins/walletfreak",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-marriott",
+      "source": "./plugins/walletfreak-marriott",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-hilton",
+      "source": "./plugins/walletfreak-hilton",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-hyatt",
+      "source": "./plugins/walletfreak-hyatt",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-ihg",
+      "source": "./plugins/walletfreak-ihg",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-accor",
+      "source": "./plugins/walletfreak-accor",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-wyndham",
+      "source": "./plugins/walletfreak-wyndham",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-choice",
+      "source": "./plugins/walletfreak-choice",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-best-western",
+      "source": "./plugins/walletfreak-best-western",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-american",
+      "source": "./plugins/walletfreak-american",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-delta",
+      "source": "./plugins/walletfreak-delta",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-united",
+      "source": "./plugins/walletfreak-united",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-southwest",
+      "source": "./plugins/walletfreak-southwest",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-jetblue",
+      "source": "./plugins/walletfreak-jetblue",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-alaska-hawaiian",
+      "source": "./plugins/walletfreak-alaska-hawaiian",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-air-canada",
+      "source": "./plugins/walletfreak-air-canada",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-british-airways",
+      "source": "./plugins/walletfreak-british-airways",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-iberia",
+      "source": "./plugins/walletfreak-iberia",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-air-france-klm",
+      "source": "./plugins/walletfreak-air-france-klm",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-lufthansa-group",
+      "source": "./plugins/walletfreak-lufthansa-group",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-emirates",
+      "source": "./plugins/walletfreak-emirates",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-qatar",
+      "source": "./plugins/walletfreak-qatar",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-singapore",
+      "source": "./plugins/walletfreak-singapore",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-ana",
+      "source": "./plugins/walletfreak-ana",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-jal",
+      "source": "./plugins/walletfreak-jal",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-cathay-pacific",
+      "source": "./plugins/walletfreak-cathay-pacific",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-qantas",
+      "source": "./plugins/walletfreak-qantas",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-turkish",
+      "source": "./plugins/walletfreak-turkish",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-capital-one-travel",
+      "source": "./plugins/walletfreak-capital-one-travel",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-amex-travel",
+      "source": "./plugins/walletfreak-amex-travel",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-chase-travel",
+      "source": "./plugins/walletfreak-chase-travel",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-citi-travel",
+      "source": "./plugins/walletfreak-citi-travel",
+      "version": "0.1.0"
+    }
+  ]
+}

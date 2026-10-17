@@ -1,0 +1,16 @@
+{
+  "name": "walletfreak",
+  "version": "0.1.0",
+  "description": "Shared trip intake, travel comparison, setup diagnostics and one local browser.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "homepage": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "repository": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "license": "MIT",
+  "keywords": [
+    "travel",
+    "research",
+    "core"
+  ]
+}

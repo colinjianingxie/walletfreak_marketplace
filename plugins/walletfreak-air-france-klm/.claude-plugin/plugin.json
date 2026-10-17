@@ -1,0 +1,16 @@
+{
+  "name": "walletfreak-air-france-klm",
+  "version": "0.1.0",
+  "description": "Research Air France / KLM cash, points and eligibility. Requires the WalletFreak core plugin.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "homepage": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "repository": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "license": "MIT",
+  "keywords": [
+    "travel",
+    "research",
+    "air-france-klm"
+  ]
+}

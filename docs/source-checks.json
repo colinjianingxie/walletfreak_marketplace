@@ -1,0 +1,376 @@
+{
+  "checkedAt": "2026-10-17T19:17:43.348844+00:00",
+  "kind": "official entry-point HTTP check; not inventory/search validation",
+  "results": [
+    {
+      "url": "https://all.accor.com/",
+      "status": 200,
+      "final": "https://all.accor.com/a/en.html"
+    },
+    {
+      "url": "https://news.alaskaair.com/loyalty/hawaiianmiles-is-now-atmos-rewards-with-more-ways-to-earn-more-destinations-to-explore-and-more-perks-to-enjoy/",
+      "status": 200,
+      "final": "https://news.alaskaair.com/loyalty/hawaiianmiles-is-now-atmos-rewards-with-more-ways-to-earn-more-destinations-to-explore-and-more-perks-to-enjoy/"
+    },
+    {
+      "url": "https://travel.capitalone.com/",
+      "status": 200,
+      "final": "https://travel.capitalone.com/"
+    },
+    {
+      "url": "https://world.hyatt.com/",
+      "status": 403,
+      "final": "https://world.hyatt.com/"
+    },
+    {
+      "url": "https://www.aa.com/",
+      "status": 403,
+      "final": "https://www.aa.com/"
+    },
+    {
+      "url": "https://www.aa.com/i18n/aadvantage-program/aadvantage-program.jsp",
+      "status": 403,
+      "final": "https://www.aa.com/i18n/aadvantage-program/aadvantage-program.jsp"
+    },
+    {
+      "url": "https://www.aircanada.com/",
+      "status": 403,
+      "final": "https://www.aircanada.com/"
+    },
+    {
+      "url": "https://www.aircanada.com/ca/en/aco/home/aeroplan.html",
+      "status": 403,
+      "final": "https://www.aircanada.com/ca/en/aco/home/aeroplan.html"
+    },
+    {
+      "url": "https://www.airfrance.com/",
+      "status": 0,
+      "final": "https://www.airfrance.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.alaskaair.com/",
+      "status": 200,
+      "final": "https://www.alaskaair.com/"
+    },
+    {
+      "url": "https://www.alaskaair.com/atmosrewards/",
+      "status": 200,
+      "final": "https://www.alaskaair.com/atmosrewards"
+    },
+    {
+      "url": "https://www.americanexpress.com/en-us/travel/",
+      "status": 200,
+      "final": "https://www.americanexpress.com/en-us/travel/"
+    },
+    {
+      "url": "https://www.americanexpress.com/en-us/travel/cardmember-travel-benefits/",
+      "status": 200,
+      "final": "https://www.americanexpress.com/en-us/travel/cardmember-travel-benefits/"
+    },
+    {
+      "url": "https://www.ana.co.jp/en/us/",
+      "status": 200,
+      "final": "https://www.ana.co.jp/en/us/"
+    },
+    {
+      "url": "https://www.ana.co.jp/en/us/amc/",
+      "status": 200,
+      "final": "https://www.ana.co.jp/en/us/amc/"
+    },
+    {
+      "url": "https://www.austrian.com/",
+      "status": 403,
+      "final": "https://www.austrian.com/"
+    },
+    {
+      "url": "https://www.bestwestern.com/",
+      "status": 403,
+      "final": "https://www.bestwestern.com/"
+    },
+    {
+      "url": "https://www.bestwestern.com/en_US/best-western-rewards.html",
+      "status": 403,
+      "final": "https://www.bestwestern.com/en_US/best-western-rewards.html"
+    },
+    {
+      "url": "https://www.britishairways.com/",
+      "status": 0,
+      "final": "https://www.britishairways.com/",
+      "error": "curl: (28) Operation timed out after 12004 milliseconds with 0 bytes received"
+    },
+    {
+      "url": "https://www.britishairways.com/content/the-british-airways-club",
+      "status": 0,
+      "final": "https://www.britishairways.com/content/the-british-airways-club",
+      "error": "curl: (28) Operation timed out after 12002 milliseconds with 0 bytes received"
+    },
+    {
+      "url": "https://www.brusselsairlines.com/",
+      "status": 403,
+      "final": "https://www.brusselsairlines.com/"
+    },
+    {
+      "url": "https://www.capitalone.com/help-center/capital-one-travel/",
+      "status": 200,
+      "final": "https://www.capitalone.com/help-center/capital-one-travel/",
+      "replaces": "https://www.capitalone.com/credit-cards/travel-and-lounge/",
+      "webDocumentationRead": true
+    },
+    {
+      "url": "https://www.cathaypacific.com/",
+      "status": 301,
+      "final": "https://www.cathaypacific.com/cx/en_US.html",
+      "error": "curl: (28) Operation timed out after 4013 milliseconds with 0 bytes received"
+    },
+    {
+      "url": "https://www.cathaypacific.com/cx/en_US/membership.html",
+      "status": 200,
+      "final": "https://www.cathaypacific.com/cx/en_US/membership.html"
+    },
+    {
+      "url": "https://www.chase.com/travel",
+      "status": 200,
+      "final": "https://www.chase.com/travel"
+    },
+    {
+      "url": "https://www.chase.com/travel/the-edit",
+      "status": 200,
+      "final": "https://www.chase.com/travel/the-edit"
+    },
+    {
+      "url": "https://www.choicehotels.com/",
+      "status": 0,
+      "final": "https://www.choicehotels.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.choicehotels.com/choice-privileges",
+      "status": 0,
+      "final": "https://www.choicehotels.com/choice-privileges",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.citi.com/citi-partner/cititravel/login",
+      "status": 200,
+      "final": "https://www.citi.com/citi-partner/cititravel/login"
+    },
+    {
+      "url": "https://www.cititravel.com/",
+      "status": 200,
+      "final": "https://www.citi.com/citi-partner/cititravel/login"
+    },
+    {
+      "url": "https://www.delta.com/",
+      "status": 444,
+      "final": "https://www.delta.com/"
+    },
+    {
+      "url": "https://www.delta.com/us/en/skymiles/overview",
+      "status": 444,
+      "final": "https://www.delta.com/us/en/skymiles/overview"
+    },
+    {
+      "url": "https://www.discover-airlines.com/",
+      "status": 403,
+      "final": "https://www.discover-airlines.com/"
+    },
+    {
+      "url": "https://www.emirates.com/",
+      "status": 403,
+      "final": "https://www.emirates.com/error/accessrestricted.html?refid=18.497fd117.1792264652.353c8a7c"
+    },
+    {
+      "url": "https://www.emirates.com/english/skywards/",
+      "status": 200,
+      "final": "https://www.emirates.com/english/skywards/"
+    },
+    {
+      "url": "https://www.eurowings.com/",
+      "status": 403,
+      "final": "https://www.eurowings.com/"
+    },
+    {
+      "url": "https://www.flyingblue.com/",
+      "status": 0,
+      "final": "https://www.flyingblue.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.hawaiianairlines.com/",
+      "status": 200,
+      "final": "https://www.hawaiianairlines.com/"
+    },
+    {
+      "url": "https://www.hilton.com/",
+      "status": 403,
+      "final": "https://www.hilton.com/en/"
+    },
+    {
+      "url": "https://www.hilton.com/en/hilton-honors/",
+      "status": 403,
+      "final": "https://www.hilton.com/en/hilton-honors/"
+    },
+    {
+      "url": "https://www.hyatt.com/",
+      "status": 403,
+      "final": "https://www.hyatt.com/"
+    },
+    {
+      "url": "https://www.iberia.com/",
+      "status": 403,
+      "final": "https://www.iberia.com/"
+    },
+    {
+      "url": "https://www.iberia.com/gb/iberia-club/",
+      "status": 403,
+      "final": "https://www.iberia.com/gb/iberia-club/"
+    },
+    {
+      "url": "https://www.ihg.com/",
+      "status": 403,
+      "final": "https://www.ihg.com/"
+    },
+    {
+      "url": "https://www.ihg.com/onerewards/content/us/en/home",
+      "status": 403,
+      "final": "https://www.ihg.com/onerewards/content/us/en/home"
+    },
+    {
+      "url": "https://www.ita-airways.com/",
+      "status": 403,
+      "final": "https://www.ita-airways.com/"
+    },
+    {
+      "url": "https://www.jal.co.jp/",
+      "status": 403,
+      "final": "https://www.jal.co.jp/"
+    },
+    {
+      "url": "https://www.jal.co.jp/jp/en/jalmile/",
+      "status": 403,
+      "final": "https://www.jal.co.jp/jp/en/jalmile/"
+    },
+    {
+      "url": "https://www.jetblue.com/",
+      "status": 200,
+      "final": "https://www.jetblue.com/"
+    },
+    {
+      "url": "https://www.jetblue.com/trueblue",
+      "status": 406,
+      "final": "https://www.jetblue.com/trueblue"
+    },
+    {
+      "url": "https://www.klm.com/",
+      "status": 0,
+      "final": "https://www.klm.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.lufthansa.com/",
+      "status": 403,
+      "final": "https://www.lufthansa.com/"
+    },
+    {
+      "url": "https://www.marriott.com/",
+      "status": 403,
+      "final": "https://www.marriott.com/"
+    },
+    {
+      "url": "https://www.marriott.com/loyalty.mi",
+      "status": 403,
+      "final": "https://www.marriott.com/loyalty.mi"
+    },
+    {
+      "url": "https://www.miles-and-more.com/",
+      "status": 403,
+      "final": "https://www.miles-and-more.com/"
+    },
+    {
+      "url": "https://www.qantas.com/",
+      "status": 200,
+      "final": "https://www.qantas.com/en-us"
+    },
+    {
+      "url": "https://www.qantas.com/au/en/frequent-flyer.html",
+      "status": 200,
+      "final": "https://www.qantas.com/en-au/frequent-flyer"
+    },
+    {
+      "url": "https://www.qatarairways.com/",
+      "status": 403,
+      "final": "https://www.qatarairways.com/"
+    },
+    {
+      "url": "https://www.qatarairways.com/en/Privilege-Club.html",
+      "status": 403,
+      "final": "https://www.qatarairways.com/en/Privilege-Club.html"
+    },
+    {
+      "url": "https://www.singaporeair.com/sg/en/plan-travel/destinations/",
+      "status": 404,
+      "final": "https://www.singaporeair.com/sg/en/plan-travel/destinations/",
+      "replaces": "https://www.singaporeair.com/",
+      "webDocumentationRead": true,
+      "note": "Official page was readable through web documentation retrieval; direct HTTP returned 404. Treat regional/browser access as unverified."
+    },
+    {
+      "url": "https://www.singaporeair.com/en_UK/sg/ppsclub-krisflyer/",
+      "status": 404,
+      "final": "https://www.singaporeair.com/en_UK/sg/ppsclub-krisflyer/",
+      "replaces": "https://www.singaporeair.com/en_UK/us/ppsclub-krisflyer/",
+      "webDocumentationRead": true,
+      "note": "Official page was readable through web documentation retrieval; direct HTTP returned 404. Treat regional/browser access as unverified."
+    },
+    {
+      "url": "https://www.southwest.com/",
+      "status": 200,
+      "final": "https://www.southwest.com/"
+    },
+    {
+      "url": "https://www.southwest.com/rapidrewards/",
+      "status": 200,
+      "final": "https://www.southwest.com/rapid-rewards/"
+    },
+    {
+      "url": "https://www.swiss.com/",
+      "status": 403,
+      "final": "https://www.swiss.com/"
+    },
+    {
+      "url": "https://www.turkishairlines.com/",
+      "status": 0,
+      "final": "https://www.turkishairlines.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.turkishairlines.com/en-int/miles-and-smiles/",
+      "status": 0,
+      "final": "https://www.turkishairlines.com/en-int/miles-and-smiles/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.united.com/",
+      "status": 0,
+      "final": "https://www.united.com/",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.united.com/en/us/fly/mileageplus.html",
+      "status": 0,
+      "final": "https://www.united.com/en/us/fly/mileageplus.html",
+      "error": "curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)"
+    },
+    {
+      "url": "https://www.wyndhamhotels.com/",
+      "status": 200,
+      "final": "https://www.wyndhamhotels.com/"
+    },
+    {
+      "url": "https://www.wyndhamhotels.com/wyndham-rewards",
+      "status": 200,
+      "final": "https://www.wyndhamhotels.com/wyndham-rewards"
+    }
+  ]
+}

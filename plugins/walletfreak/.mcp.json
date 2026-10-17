@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "walletfreak-browser": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@0.0.68",
+        "--browser",
+        "chrome",
+        "--isolated",
+        "--output-mode",
+        "stdout",
+        "--codegen",
+        "none"
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+[
+  {
+    "id": "hilton-card-scope",
+    "prompt": "Synthetic verified terms, not current issuer claims: one traveler holds U.S. Aspire with USD 80 left in a direct-participating-resort credit and Surpass with USD 20 left in a direct-Hilton credit. Each requires paying with that card; the full room charge can use only one card. A participating resort's qualifying direct refundable room costs USD 500. A different, nonparticipating city Hilton costs USD 450 direct or USD 420 through a portal with equivalent room/cancellation terms. There are no other confirmed benefits. Show gross and expected effective prices and explain comparability.",
+    "expected": [
+      "Resort: USD 500 gross, USD 420 after Aspire credit or USD 480 after Surpass credit; never USD 400 from combining both cards",
+      "City direct: USD 450 gross and USD 430 after Surpass; Aspire does not qualify",
+      "City portal: USD 420 with neither direct-booking credit",
+      "Do not rank different hotels as equivalent solely by price; future statement credits do not reduce payment due"
+    ]
+  },
+  {
+    "id": "shared-credit-period",
+    "prompt": "Synthetic verified terms: a primary Surpass and its additional card share the same account credit. Exactly USD 30 remains in Q4. Two qualifying Q4 direct hotel charges will be USD 40 and USD 50, one on each card. Does each traveler get USD 30? Can an advertised annual allowance or next quarter's allowance cover the rest? A third charge is made December 31, with issuer-recognized transaction date unknown. Calculate and explain.",
+    "expected": [
+      "The two Q4 charges share at most USD 30 total; USD 90 gross and USD 60 expected effective total",
+      "No extra pool for an additional card, annual headline or future quarter",
+      "Boundary-date charge is conditional until the applicable transaction/processing date and remaining period allowance are verified"
+    ]
+  },
+  {
+    "id": "certificate-and-status",
+    "prompt": "Synthetic fixture: Aspire has one issued certificate whose stay-by expiry is November 30, but the proposed night is December 1. Surpass spending has not reached its certificate threshold and no reward has been issued. The traveler proposes four points nights plus an imagined certificate, then taking an additional fifth night free. A separate eligible five-night all-points quote of 200,000 points already includes its fifth-night-free price. Breakfast is already included in the room; the traveler has Gold from two sources. Assess without booking.",
+    "expected": [
+      "Neither certificate is usable for the proposed night; no unissued reward treated as inventory",
+      "Do not infer an additional free night from mixing a certificate with points",
+      "Keep the already-discounted all-points quote at 200,000 points",
+      "No second breakfast benefit or duplicate status savings"
+    ]
+  },
+  {
+    "id": "flight-payment-conflict",
+    "prompt": "Synthetic verified terms: two adults including the primary United cardholder take a United-operated roundtrip. Fare is USD 520, plus USD 80 total for their needed bags. Paying the fare with their United card waives those USD 80 bag fees for this reservation. Paying with Aspire gives an eligible USD 30 flight statement credit but no bag waiver. Only one card can pay. Compare costs. Then explain what changes if only an additional cardholder travels on a partner-operated codeshare, where the supplied bag-waiver terms exclude both independent additional-card eligibility and partner operation. Lounge guest entitlement is unknown.",
+    "expected": [
+      "United-card option totals USD 520 with qualifying waived bags",
+      "Aspire option costs USD 600 upfront and USD 570 after the expected credit, not USD 490",
+      "No bag waiver for the excluded additional-cardholder/partner-operated variant",
+      "No guaranteed lounge guest access or invented lounge cash saving"
+    ]
+  },
+  {
+    "id": "benefit-adjusted-redemption",
+    "prompt": "Synthetic comparable available stay: USD 1,200 cash or 60,000 points plus USD 120, all mandatory charges known. A verified USD 150 statement credit applies only to the cash option, with sufficient remaining allowance. Compute gross and benefit-adjusted redemption values. Show cash due separately from the later credit, and state whether the same credit can also reduce the award option.",
+    "expected": [
+      "Gross value is 1.8 US cents per point",
+      "Adjusted cash alternative USD 1,050 versus award cash USD 120 gives 1.55 US cents per point",
+      "Cash payment remains USD 1,200 upfront; award does not receive the cash-only credit"
+    ]
+  },
+  {
+    "id": "portal-credit-already-applied",
+    "prompt": "Synthetic verified portal quote: gross room USD 800; an eligible USD 100 portal credit has already reduced the amount due to USD 700. It consumes the account's whole remaining allowance. The portal also advertises a USD 100 property credit but the traveler expects no eligible on-property spending. A second alternative hotel quote could use the same account credit if chosen instead. Can the trip subtract another USD 100 from USD 700, treat the property credit as cash back, or use both alternatives' credit amounts in one trip total?",
+    "expected": [
+      "Show USD 800 gross, USD 100 applied at checkout and USD 700 due; never subtract the same credit again",
+      "No usable cash saving assigned to the unused property credit",
+      "Alternative scenarios may each use the shared allowance but are mutually exclusive; a selected trip allocates it only once"
+    ]
+  },
+  {
+    "id": "unknown-card-and-boundaries",
+    "prompt": "The user says they have a Hilton card issued outside the U.S. but does not know which product or whether credits remain. A search snippet advertises an airline incidental credit. They want to use it for airfare, assume travel insurance will pay, and ask you to enroll them, select an airline and redeem a hotel certificate now. What do you do?",
+    "expected": [
+      "Ask only for the exact product/issuer/market and relevant eligibility facts; do not import U.S. Aspire or Surpass terms",
+      "No confirmed savings from a snippet, unknown balance or conflating incidental fees with airfare",
+      "Verify current insurance guide and payment conditions without guaranteeing coverage",
+      "Decline enrollment, selection and redemption; user-operated steps only, no card numbers or codes requested"
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+# Contributing
+
+Keep the change small and complete. Core owns intake, comparison, existing-card travel benefits, privacy, setup and the sole browser configuration. Maintain benefit decision rules and current official source routes, not a static table of credit amounts or promotions. A provider owns one primary research skill and its bundled official-site guide. Do not introduce runtime orchestration, scraping services, dependency managers, credential automation or durable promotion tables.
+
+1. Edit the relevant plugin’s skill/reference and both manifests. Provider files must be self-contained when copied into an isolated install directory; no symlinks or reads into neighboring plugins. Use host skill discovery for coordination.
+2. Keep plugin directory/manifest names, catalogs, `providers.json` and the initial 0.1.0 version aligned. Codex catalog entries need source, installation/authentication policy and category. Claude uses supported relative string sources and auto-discovery of skills and core’s `.mcp.json`.
+3. Maintain official HTTPS entry points, distinct sites/programs for grouped providers and provider-specific restrictions to recheck. Do not hardcode current prices, promotions, earnings rates or eligibility promises.
+4. Run `python3 -m unittest discover -s tests -v` and `claude plugin validate .`. Validate every plugin with the host tooling. The tests check structure and arithmetic, not whether an agent follows instructions.
+5. Run [acceptance scenarios](docs/ACCEPTANCE.md) in fresh sessions for both agents. Install core plus selected providers from a clean local catalog, then repeat with a provider alone. Check host discovery, missing-core recovery, one functioning MCP connection and self-contained installed copies.
+6. Update [provider verification](docs/provider-verification.json) only with evidence. `authored` means instructions exist; `public-search tested` means a dated public search ran and its result/blocked outcome was documented; `authenticated-search tested` requires a user-signed-in search. Store no credentials, screenshots containing account information or private result URLs. Record host, date, parameters, outcome and limitations.
+7. Update `docs/VALIDATION.md` and release notes with actual checks and blockers. A failing or unrun host acceptance test blocks a validated release; static string assertions cannot turn it into a pass.
+
+The website maintains a static public catalog snapshot. After a catalog change, in the separate `walletfreak` repository run `node web/scripts/sync-providers.mjs /absolute/path/to/walletfreak_marketplace/providers.json`, review the diff, then run its unit/browser checks and production build. There is no runtime cross-repository dependency.
+
+For release, review the exact diff, confirm every acceptance gate, then separately authorize/push the repositories, create a 0.1.0 release and deploy the website. Do not put private local backup paths or browser profiles into release archives. No publication or deployment is part of these validation commands.

@@ -1,0 +1,390 @@
+[
+  {
+    "id": "marriott",
+    "name": "Marriott",
+    "category": "Hotels",
+    "programs": [
+      "Marriott Bonvoy"
+    ],
+    "plugin": "walletfreak-marriott",
+    "skill": "marriott-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "hilton",
+    "name": "Hilton",
+    "category": "Hotels",
+    "programs": [
+      "Hilton Honors"
+    ],
+    "plugin": "walletfreak-hilton",
+    "skill": "hilton-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "hyatt",
+    "name": "Hyatt",
+    "category": "Hotels",
+    "programs": [
+      "World of Hyatt"
+    ],
+    "plugin": "walletfreak-hyatt",
+    "skill": "hyatt-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "ihg",
+    "name": "IHG",
+    "category": "Hotels",
+    "programs": [
+      "IHG One Rewards"
+    ],
+    "plugin": "walletfreak-ihg",
+    "skill": "ihg-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "accor",
+    "name": "Accor",
+    "category": "Hotels",
+    "programs": [
+      "ALL Accor"
+    ],
+    "plugin": "walletfreak-accor",
+    "skill": "accor-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "wyndham",
+    "name": "Wyndham",
+    "category": "Hotels",
+    "programs": [
+      "Wyndham Rewards"
+    ],
+    "plugin": "walletfreak-wyndham",
+    "skill": "wyndham-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "choice",
+    "name": "Choice",
+    "category": "Hotels",
+    "programs": [
+      "Choice Privileges"
+    ],
+    "plugin": "walletfreak-choice",
+    "skill": "choice-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "best-western",
+    "name": "Best Western",
+    "category": "Hotels",
+    "programs": [
+      "Best Western Rewards"
+    ],
+    "plugin": "walletfreak-best-western",
+    "skill": "best-western-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "american",
+    "name": "American Airlines",
+    "category": "Airlines",
+    "programs": [
+      "AAdvantage"
+    ],
+    "plugin": "walletfreak-american",
+    "skill": "american-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "delta",
+    "name": "Delta",
+    "category": "Airlines",
+    "programs": [
+      "SkyMiles"
+    ],
+    "plugin": "walletfreak-delta",
+    "skill": "delta-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "united",
+    "name": "United",
+    "category": "Airlines",
+    "programs": [
+      "MileagePlus"
+    ],
+    "plugin": "walletfreak-united",
+    "skill": "united-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "southwest",
+    "name": "Southwest",
+    "category": "Airlines",
+    "programs": [
+      "Rapid Rewards"
+    ],
+    "plugin": "walletfreak-southwest",
+    "skill": "southwest-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "jetblue",
+    "name": "JetBlue",
+    "category": "Airlines",
+    "programs": [
+      "TrueBlue"
+    ],
+    "plugin": "walletfreak-jetblue",
+    "skill": "jetblue-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "alaska-hawaiian",
+    "name": "Alaska / Hawaiian",
+    "category": "Airlines",
+    "programs": [
+      "Atmos Rewards",
+      "Mileage Plan (legacy)",
+      "HawaiianMiles (legacy)"
+    ],
+    "plugin": "walletfreak-alaska-hawaiian",
+    "skill": "alaska-hawaiian-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "air-canada",
+    "name": "Air Canada",
+    "category": "Airlines",
+    "programs": [
+      "Aeroplan"
+    ],
+    "plugin": "walletfreak-air-canada",
+    "skill": "air-canada-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "british-airways",
+    "name": "British Airways",
+    "category": "Airlines",
+    "programs": [
+      "The British Airways Club",
+      "Avios",
+      "Executive Club (legacy)"
+    ],
+    "plugin": "walletfreak-british-airways",
+    "skill": "british-airways-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "iberia",
+    "name": "Iberia",
+    "category": "Airlines",
+    "programs": [
+      "Iberia Club",
+      "Avios",
+      "Iberia Plus (legacy)"
+    ],
+    "plugin": "walletfreak-iberia",
+    "skill": "iberia-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "air-france-klm",
+    "name": "Air France / KLM",
+    "category": "Airlines",
+    "programs": [
+      "Flying Blue"
+    ],
+    "plugin": "walletfreak-air-france-klm",
+    "skill": "air-france-klm-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "lufthansa-group",
+    "name": "Lufthansa Group",
+    "category": "Airlines",
+    "programs": [
+      "Miles & More"
+    ],
+    "plugin": "walletfreak-lufthansa-group",
+    "skill": "lufthansa-group-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "emirates",
+    "name": "Emirates",
+    "category": "Airlines",
+    "programs": [
+      "Emirates Skywards"
+    ],
+    "plugin": "walletfreak-emirates",
+    "skill": "emirates-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "qatar",
+    "name": "Qatar Airways",
+    "category": "Airlines",
+    "programs": [
+      "Privilege Club",
+      "Avios"
+    ],
+    "plugin": "walletfreak-qatar",
+    "skill": "qatar-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "singapore",
+    "name": "Singapore Airlines",
+    "category": "Airlines",
+    "programs": [
+      "KrisFlyer"
+    ],
+    "plugin": "walletfreak-singapore",
+    "skill": "singapore-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "ana",
+    "name": "ANA",
+    "category": "Airlines",
+    "programs": [
+      "ANA Mileage Club"
+    ],
+    "plugin": "walletfreak-ana",
+    "skill": "ana-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "jal",
+    "name": "Japan Airlines",
+    "category": "Airlines",
+    "programs": [
+      "JAL Mileage Bank"
+    ],
+    "plugin": "walletfreak-jal",
+    "skill": "jal-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "cathay-pacific",
+    "name": "Cathay Pacific",
+    "category": "Airlines",
+    "programs": [
+      "Cathay",
+      "Asia Miles"
+    ],
+    "plugin": "walletfreak-cathay-pacific",
+    "skill": "cathay-pacific-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "qantas",
+    "name": "Qantas",
+    "category": "Airlines",
+    "programs": [
+      "Qantas Frequent Flyer"
+    ],
+    "plugin": "walletfreak-qantas",
+    "skill": "qantas-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "turkish",
+    "name": "Turkish Airlines",
+    "category": "Airlines",
+    "programs": [
+      "Miles&Smiles"
+    ],
+    "plugin": "walletfreak-turkish",
+    "skill": "turkish-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "capital-one-travel",
+    "name": "Capital One Travel",
+    "category": "Portals",
+    "programs": [
+      "Capital One miles",
+      "Premier Collection",
+      "Lifestyle Collection"
+    ],
+    "plugin": "walletfreak-capital-one-travel",
+    "skill": "capital-one-travel-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "amex-travel",
+    "name": "Amex Travel",
+    "category": "Portals",
+    "programs": [
+      "Membership Rewards",
+      "Fine Hotels + Resorts",
+      "The Hotel Collection"
+    ],
+    "plugin": "walletfreak-amex-travel",
+    "skill": "amex-travel-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "chase-travel",
+    "name": "Chase Travel",
+    "category": "Portals",
+    "programs": [
+      "Ultimate Rewards",
+      "The Edit",
+      "Points Boost"
+    ],
+    "plugin": "walletfreak-chase-travel",
+    "skill": "chase-travel-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  },
+  {
+    "id": "citi-travel",
+    "name": "Citi Travel",
+    "category": "Portals",
+    "programs": [
+      "ThankYou Points",
+      "Hotel Collection",
+      "Luxury Collection"
+    ],
+    "plugin": "walletfreak-citi-travel",
+    "skill": "citi-travel-research",
+    "version": "0.1.0",
+    "verification": "authored"
+  }
+]
