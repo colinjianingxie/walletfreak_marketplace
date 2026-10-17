@@ -31,9 +31,13 @@ With only credit-cards installed, the model loaded `lounge-access`, stopped live
 
 Official Delta/United award-discount pages and lounge source routes were reviewed on 2026-10-17. These are sourced research instructions, not authenticated eligibility or inventory verification; unreadable or sign-in-only terms remain unverified. Delta Gold and eligible United-card discounts require current account/product/itinerary evidence, and final quoted miles are used once. The seven repository tests include fee-adjusted arithmetic using final discounted miles. The website now gives lounge tracking prominent placement and illustrates cash-minus-fees value; its four unit tests, production build, four viewport checks and desktop/mobile visual review passed.
 
+## Source publication and website deployment
+
+Category source commit `a1c4bfb87b3165971a5a50170d4b73749c0cbe69` was pushed to public `main`; 43 public catalog/documentation files matched the tested source. On 2026-10-17, website commit `37fea1d128efe248986a57e83fa2fc23ad307b1f` was deployed to the existing Firebase Hosting project with the user's authorization. Both custom domains and the Firebase URL passed HTML/header checks; all six live files matched the build, and the live website passed desktop/mobile behavior checks. See the [website deployment record](https://github.com/colinjianingxie/walletfreak/blob/main/VALIDATION.md#production-deployment--2026-10-17). This establishes website publication, not provider inventory or card-benefit eligibility.
+
 ## Remaining verification
 
-Claude model behavior remains pending at the user's request. Live public inventory, authenticated provider searches, account-specific card eligibility, real login interruptions and concurrent-host behavior remain unverified. All 31 provider ledger entries stay authored. Historical 0.1.0 synthetic checks below do not establish new 0.2.0 host results beyond the checks explicitly recorded above. Release tags and website deployment remain separate actions.
+Claude model behavior remains pending at the user's request. Live public inventory, authenticated provider searches, account-specific card eligibility, real login interruptions and concurrent-host behavior remain unverified. All 31 provider ledger entries stay authored. Historical 0.1.0 synthetic checks below do not establish new 0.2.0 host results beyond the checks explicitly recorded above. Release tagging remains a separate action.
 
 ## Historical 0.1.0 evidence (before initial source publication)
 
