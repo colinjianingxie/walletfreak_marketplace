@@ -13,7 +13,7 @@ async function act(path, body) {
   try { const result = await api(path, body); if (result.message) notice(result.message); await refresh(); return result; }
   catch (error) { notice(error.message, true); await refresh(); return null; }
 }
-function tab(name) { currentTab = name; if (name === 'spending') window.loadSpending(); if (name === 'plugins') loadPlugins(); if (name === 'credentials') refreshVault(); for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed', String(item.dataset.tab === name)); for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== name; }
+function tab(name) { currentTab = name; if (name === 'overview') window.loadOverview(); if (name === 'spending') window.loadSpending(); if (name === 'plugins') loadPlugins(); if (name === 'credentials') refreshVault(); for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed', String(item.dataset.tab === name)); for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== name; }
 document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
 $('#open-wallet').onclick = () => tab('wallet');
 function trip() { return state?.trips.find(t => t.id === activeId); }
@@ -100,7 +100,7 @@ function walletStatus() {
 }
 function loadWallet() {
   draft = structuredClone(state.wallet); draftRevision = draft.revision;
-  delete draft.version; delete draft.revision; for(const row of draft.programs) row.notes ??= ''; dirty = false; renderWallet();
+  delete draft.version; delete draft.revision; for(const row of draft.programs) row.notes ??= ''; dirty = false; renderWallet(); $('#wallet-form').inert = false;
 }
 async function refresh() {
   if (stopped) return;

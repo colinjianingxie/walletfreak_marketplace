@@ -1,6 +1,6 @@
 {
   "name": "walletfreak",
-  "version": "0.3.0+codex.20261018183247",
+  "version": "0.3.0+codex.20261018190145",
   "description": "Plan trips, choose cards and redemptions from your wallet, and explore itineraries in a private local viewer.",
   "author": {
     "name": "WalletFreak contributors"
@@ -26,7 +26,8 @@
     "defaultPrompt": [
       "Plan a trip with flexible dates and show my local trip board.",
       "Open my personal wallet to enter my cards and loyalty balances.",
-      "Choose the best card or points redemption from my wallet using current quotes and offers."
+      "Choose the best card or points redemption from my wallet using current quotes and offers.",
+      "Use dashboard-builder to arrange my wallet, spending metrics and itinerary in a local dashboard."
     ],
     "brandColor": "#0788D9",
     "composerIcon": "./assets/mascot.png",

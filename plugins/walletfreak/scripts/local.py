@@ -28,6 +28,7 @@ from profile_import import parse_profile
 import inventory
 from spending import Ledger
 from documents import Documents
+from layouts import Layouts, CATALOG
 
 PLUGIN = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PLUGIN / 'skills/trip-board/scripts'))
@@ -199,6 +200,7 @@ class Store:
         self.inventory = None
         self.spending = Ledger(root, read_json, atomic_json)
         self.documents = Documents(root, read_json, atomic_json)
+        self.layouts = Layouts(root, read_json, atomic_json)
         # Move the old store once. Manual deletion must never resurrect old results.
         legacy = root / 'state.json'
         if not self.path.exists() and legacy.exists():
@@ -243,6 +245,8 @@ class Store:
         return result
 
     def user_action(self, action, body):
+        if action == 'layout':
+            return self.layouts.save(body)
         if action == 'import-profile':
             fields(body, ('expected_revision',), ('expected_revision',))
             current = self.wallet()
@@ -386,7 +390,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.respond(200, (PLUGIN / 'assets/dashboard/index.html').read_bytes(), 'text/html; charset=utf-8')
         if path.startswith('/assets/'):
             relative = path.removeprefix('/assets/')
-            allowed = {'dashboard/app.js', 'dashboard/spending.js', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+            allowed = {'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
             if relative.startswith('brands/') and re.fullmatch(r'brands/[a-z0-9-]+\.(png|svg|webp|ico)', relative):
                 allowed.add(relative)
             if re.fullmatch(r'cards/[a-zA-Z0-9_-]+\.(png|webp|jpe?g|avif)', relative):
@@ -399,6 +403,11 @@ class Handler(BaseHTTPRequestHandler):
             return self.respond(200, file.read_bytes(), mimetypes.guess_type(file.name)[0] or 'application/octet-stream')
         if not (self.agent() or self.user()):
             return self.respond(401, {'error': 'Open the private link returned by WalletFreak setup.'})
+        if path in ('/api/layout', '/api/catalog'):
+            try:
+                return self.respond(200, CATALOG if path == '/api/catalog' else self.server.store.layouts.state())
+            except (ValueError, KeyError, TypeError, OSError):
+                return self.respond(500, {'error':'Layout could not be read. Preserve layout.json and check its format.'})
         if path == '/api/references':
             try:
                 return self.respond(200, self.server.store.documents.snapshot())
@@ -565,7 +574,7 @@ def start(root, port):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet', 'settings', 'forget', 'stop', 'references', 'insights'))
+    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet', 'settings', 'forget', 'stop', 'references', 'insights', 'layout', 'catalog'))
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--input', type=Path, help='JSON findings or local settings; use - for stdin. Never supply credentials.')
     args = parser.parse_args()
@@ -578,12 +587,14 @@ def main():
             descriptor = start(root, args.port)
             print(descriptor['origin'] + '/#key=' + descriptor['ui_token'])
             return
-        if args.command in ('publish', 'settings', 'forget', 'insights'):
+        if args.command in ('publish', 'settings', 'forget', 'insights') or args.command == 'layout' and args.input:
             if not args.input:
                 raise ValueError('Provide --input with a JSON file or - for stdin.')
             body = json.load(sys.stdin) if str(args.input) == '-' else read_json(args.input)
             route = '/api/agent/' + args.command if args.command in ('publish', 'insights') else '/api/' + args.command
             result = call(root, route, body)
+        elif args.command in ('layout','catalog'):
+            result = call(root, '/api/' + args.command)
         elif args.command == 'references':
             result = call(root, '/api/references')
         elif args.command == 'wallet':

@@ -206,3 +206,12 @@ The core now requests one self-reported balance confirmation at the start of eac
 
 - Refreshed all four existing Codex plugins and installed `walletfreak-trip-board` from the existing local marketplace. CLI listing confirms all five enabled. Each installed file matches its source, and the installed board renderer generated the demo. Start a new conversation to load these updated skills. No remote push or deployment was performed.
 - The separate website synchronized its category catalog and added the Trip board installation choice without putting it in the provider filters. All four website unit tests and the production build passed. Its existing Chrome suite passed at four widths, including Trip board selection, both host command sets, clipboard paths, links and no external/Firebase requests. Browser checks used an identical temporary copy of the built site because Desktop-backed module/server reads stalled.
+
+## Component catalog and local layouts — 2026-10-18
+
+Added catalog v1, five shared components, four templates, three themes, strict revision-checked local layout storage and dashboard-builder. Public gallery and private overview use byte-identical catalog/schema/renderer assets. Layout files contain design choices and named local bindings; the public service receives no private data.
+
+- 43 Python tests passed, including valid templates, malformed layouts, unknown/remote fields, revision conflicts, private file permissions, atomic write failure and corrupt-file preservation.
+- Chrome layout integration passed: template/theme application, agent CLI updates, live refresh, JSON import/export, rejection without overwriting, restart persistence, four widths and no external requests.
+- Wallet/credential/itinerary regression and statement-reference/report regression passed. Wallet controls now remain inert until initial saved data loads; the browser test holds that response to verify the guard. Desktop/mobile screenshots were reviewed.
+- Plugin and new skill validators passed. A fresh native Codex app-server discovered nine core skills including dashboard-builder and the separate Spending skill (ten total). Website gallery and optional public MCP service have their own tests in the website repository. No hosted MCP deployment or provider account actions were performed.

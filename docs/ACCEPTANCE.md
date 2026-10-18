@@ -21,3 +21,9 @@
 
 - Spending uses the existing local server. Posted activity imports preview before saving; invalid rows block the whole import. Review states, exact repeat protection, overlap flags, decimal totals, currency separation, CSV injection protection and browser-only API access are tested.
 - Source downloads and exported CSVs are independent of ledger deletion. PDF conversion requires reconciliation; no universal automated PDF parser or live bank verification is claimed.
+
+## Component layouts
+
+Run `python3 -m unittest discover -s tests -v`, then `PLAYWRIGHT_MODULE=/path/to/playwright node tests/layout-browser.cjs`. Verify template/theme selection, layout JSON import/export, revision conflicts and agent CLI updates without changing wallet or statement data. Layouts must reject unknown components, unsupported sources and executable/remote fields. Check the shared renderer with populated wallet tables and itinerary payment/benefit details on the website gallery. Native discovery should expose dashboard-builder in core (nine skills) plus spending-analysis (ten total across two plugins).
+
+Keep the core assets/components/v1 files byte-identical to the website public copies using its explicit sync script. Public previews use synthetic data only. A hosted MCP deployment is separate from plugin installation and static hosting.

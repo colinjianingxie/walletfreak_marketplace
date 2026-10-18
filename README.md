@@ -19,13 +19,19 @@ claude plugin install walletfreak-spending@walletfreak
 
 Start a fresh host session and ask: **Use walletfreak-setup to open my local dashboard.**
 
-WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer and walletfreak-setup. See [installation and migration](docs/INSTALL.md).
+WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder and walletfreak-setup. See [installation and migration](docs/INSTALL.md).
 
 ## Categorize spending locally
 
 WalletFreak Spending adds the spending-analysis skill and bank-specific guides for Chase, Citi, Capital One, Amex and other mapped CSVs. It uses the same core local dashboard—no second server. Drop downloaded PDF or CSV statements into Spending. Files are saved as local references; ask your agent for metrics, categories or recurring charges, and explore the sourced results in the dashboard. The optional CSV spreadsheet provides category review and transaction/monthly exports. Every row needs review before inclusion. Payments/transfers are excluded from spending; currencies stay separate. PDF extraction is a local assisted workflow, not an automatic transaction parser.
 
 **Your files are processed on your device. No bank credentials required.** Direct import, categorization and exports run locally. The ledger is a private local plaintext file. Content you ask an agent to read may be processed by your host/model provider; this is not an offline language model.
+
+## Compose your dashboard
+
+Use dashboard-builder to choose a template, arrange wallet/spending/itinerary components and select a theme. Dashboard → Choose a template or load a layout also accepts JSON downloaded from the public component gallery. The plugin bundles catalog v1 and the renderer for offline use. Layouts contain component IDs and local data bindings; they contain no financial data, URLs or executable code. Existing wallet, trip and spending views remain available.
+
+The website publishes the same catalog, schema and renderer at /components/v1/ and previews templates at /components.html. A separate read-only catalog MCP prototype lives in the website repository; deploying it is optional, and the local plugin needs no hosted service.
 
 ## Plan a trip
 
@@ -57,7 +63,7 @@ claude plugin validate .
 python3 plugins/walletfreak/scripts/local.py start
 ```
 
-For a separate test data directory, set WALLETFREAK_DATA to a dedicated private directory. Normal data lives in ~/.walletfreak/local: results.json and wallet.json are independent files. Delete individual results or your wallet in the viewer, or remove the corresponding file. Downloaded trip files are separate and exclude wallet data. The legacy optional Markdown profile remains ~/.walletfreak/traveler-profile.md. Never commit real trip or account data.
+For a separate test data directory, set WALLETFREAK_DATA to a dedicated private directory. Normal data lives in ~/.walletfreak/local: results.json, wallet.json and layout.json are independent files. Delete individual results or your wallet in the viewer, or remove the corresponding file. Downloaded trip files are separate and exclude wallet data. The legacy optional Markdown profile remains ~/.walletfreak/traveler-profile.md. Never commit real trip or account data.
 
 [Acceptance](docs/ACCEPTANCE.md) · [Validation](docs/VALIDATION.md) · [Contributing](CONTRIBUTING.md).
 

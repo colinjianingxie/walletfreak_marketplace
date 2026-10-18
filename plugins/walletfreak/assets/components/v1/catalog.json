@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "release": "1.0.0",
+  "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
+  "themes": [
+    "paper",
+    "sage",
+    "midnight"
+  ],
+  "densities": [
+    "compact",
+    "comfortable"
+  ],
+  "components": [
+    {
+      "id": "metric-cards",
+      "name": "Metric cards",
+      "description": "Sourced spending totals and other metrics published by your agent.",
+      "sources": [
+        "spending.metrics"
+      ]
+    },
+    {
+      "id": "data-table",
+      "name": "Wallet table",
+      "description": "Compact cards, loyalty balances or benefits from your personal wallet.",
+      "sources": [
+        "wallet.cards",
+        "wallet.programs",
+        "wallet.benefits"
+      ]
+    },
+    {
+      "id": "reference-list",
+      "name": "Statement references",
+      "description": "Names and availability of locally stored statement copies.",
+      "sources": [
+        "spending.references"
+      ]
+    },
+    {
+      "id": "findings",
+      "name": "Findings",
+      "description": "Explanations and evidence from your spending analysis.",
+      "sources": [
+        "spending.findings"
+      ]
+    },
+    {
+      "id": "itinerary",
+      "name": "Itinerary",
+      "description": "Trip steps with payment cards and benefit usage when provided.",
+      "sources": [
+        "travel.itinerary"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "id": "overview",
+      "name": "Overview",
+      "description": "Wallet, spending and trips together.",
+      "layout": {
+        "version": 1,
+        "title": "Overview",
+        "theme": "paper",
+        "density": "compact",
+        "blocks": [
+          {
+            "id": "metrics",
+            "component": "metric-cards",
+            "source": "spending.metrics",
+            "title": "Spending at a glance"
+          },
+          {
+            "id": "points",
+            "component": "data-table",
+            "source": "wallet.programs",
+            "title": "Points & status"
+          },
+          {
+            "id": "itinerary",
+            "component": "itinerary",
+            "source": "travel.itinerary",
+            "title": "Your itinerary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spending",
+      "name": "Spending",
+      "description": "Statements, metrics and evidence.",
+      "layout": {
+        "version": 1,
+        "title": "Spending",
+        "theme": "paper",
+        "density": "compact",
+        "blocks": [
+          {
+            "id": "references",
+            "component": "reference-list",
+            "source": "spending.references",
+            "title": "Statement references"
+          },
+          {
+            "id": "metrics",
+            "component": "metric-cards",
+            "source": "spending.metrics",
+            "title": "Spending at a glance"
+          },
+          {
+            "id": "findings",
+            "component": "findings",
+            "source": "spending.findings",
+            "title": "Findings"
+          }
+        ]
+      }
+    },
+    {
+      "id": "travel",
+      "name": "Travel",
+      "description": "Itinerary, payment cards and usable benefits.",
+      "layout": {
+        "version": 1,
+        "title": "Travel",
+        "theme": "paper",
+        "density": "compact",
+        "blocks": [
+          {
+            "id": "itinerary",
+            "component": "itinerary",
+            "source": "travel.itinerary",
+            "title": "Your itinerary"
+          },
+          {
+            "id": "cards",
+            "component": "data-table",
+            "source": "wallet.cards",
+            "title": "Cards"
+          },
+          {
+            "id": "benefits",
+            "component": "data-table",
+            "source": "wallet.benefits",
+            "title": "Credits & benefits"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wallet",
+      "name": "Wallet",
+      "description": "Your cards, balances and benefits.",
+      "layout": {
+        "version": 1,
+        "title": "Wallet",
+        "theme": "paper",
+        "density": "compact",
+        "blocks": [
+          {
+            "id": "cards",
+            "component": "data-table",
+            "source": "wallet.cards",
+            "title": "Cards"
+          },
+          {
+            "id": "points",
+            "component": "data-table",
+            "source": "wallet.programs",
+            "title": "Points & status"
+          },
+          {
+            "id": "benefits",
+            "component": "data-table",
+            "source": "wallet.benefits",
+            "title": "Credits & benefits"
+          }
+        ]
+      }
+    }
+  ]
+}

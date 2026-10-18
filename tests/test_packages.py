@@ -50,7 +50,7 @@ class Packages(unittest.TestCase):
             isolated=Path(temporary)/'walletfreak'
             shutil.copytree(PLUGIN,isolated)
             names={s.parent.name for s in isolated.glob('skills/*/SKILL.md')}
-            self.assertEqual(names,{'travel-plan','provider-research','traveler-profile','card-travel-benefits','lounge-access','trip-board','walletfreak-setup','wallet-optimizer'})
+            self.assertEqual(names,{'travel-plan','provider-research','traveler-profile','card-travel-benefits','lounge-access','trip-board','walletfreak-setup','wallet-optimizer','dashboard-builder'})
             for path in isolated.rglob('*.md'):
                 for target in re.findall(r'\]\(([^)]+)\)',path.read_text()):
                     if target.startswith('https://'):
