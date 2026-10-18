@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "release": "1.0.0",
+  "release": "1.0.1",
   "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
   "themes": [
     "paper",

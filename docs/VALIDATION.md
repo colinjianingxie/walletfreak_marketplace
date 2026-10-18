@@ -215,3 +215,7 @@ Added catalog v1, five shared components, four templates, three themes, strict r
 - Chrome layout integration passed: template/theme application, agent CLI updates, live refresh, JSON import/export, rejection without overwriting, restart persistence, four widths and no external requests.
 - Wallet/credential/itinerary regression and statement-reference/report regression passed. Wallet controls now remain inert until initial saved data loads; the browser test holds that response to verify the guard. Desktop/mobile screenshots were reviewed.
 - Plugin and new skill validators passed. A fresh native Codex app-server discovered nine core skills including dashboard-builder and the separate Spending skill (ten total). Website gallery and optional public MCP service have their own tests in the website repository. No hosted MCP deployment or provider account actions were performed.
+
+## Responsive component follow-up — 2026-10-18
+
+Component renderer release 1.0.1 retains layout v1 and the five existing components. Container-width queries display labeled wallet records on narrow screens and tables where space permits. Public gallery and installed dashboard use matching assets. All 43 Python tests passed; the local Chrome layout suite now checks a populated wallet at desktop and phone widths as well as import/export and persistence. Website tests cover all templates, theme selection, desktop phone previews and long data fields.

@@ -14,6 +14,7 @@
     }
     return layout;
   }
+  const value=(row,key)=>`${key==='balance'&&row.approximate?'≈ ':''}${esc(row[key]===null||row[key]===undefined||row[key]===''?'—':row[key])}`;
   const columns={
     'wallet.cards':[['name','Card'],['owner','Owner'],['notes','Details'],['reported_on','Reported']],
     'wallet.programs':[['name','Program'],['balance','Balance'],['status','Status'],['notes','Notes'],['reported_on','Reported']],
@@ -29,7 +30,11 @@
     if(block.component==='findings')html=rows.map(r=>`<article class="wf-finding"><strong>${esc(r.label)}</strong><p>${esc(r.detail)}</p>${sources(r,data)}</article>`).join('');
     if(block.component==='reference-list')html=rows.map(r=>`<article class="wf-reference"><span class="wf-file">${esc(r.name?.split('.').pop()?.toUpperCase()||'FILE')}</span><div><strong>${esc(r.name)}</strong><small>${r.available===false?'File missing':'Local reference'}${Number.isFinite(r.bytes)?' · '+Math.ceil(r.bytes/1024)+' KB':''}</small></div></article>`).join('');
     if(block.component==='itinerary')html=`<ol class="wf-itinerary">${rows.map(r=>`<li><small>${esc(r.trip)} · ${esc(r.when)}</small><strong>${esc(r.title)}</strong><p>${esc(r.detail)}</p>${payment(r.payment)}</li>`).join('')}</ol>`;
-    if(block.component==='data-table')html=`<div class="wf-table-scroll"><table><thead><tr>${columns[block.source].map(([,label])=>`<th scope="col">${label}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${columns[block.source].map(([key])=>`<td>${key==='balance'&&r.approximate?'≈ ':''}${esc(r[key]===null||r[key]===undefined||r[key]===''?'—':r[key])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    if(block.component==='data-table') {
+      const cols=columns[block.source];
+      html=`<div class="wf-table-scroll"><table><caption class="wf-sr-only">${esc(block.title)}</caption><thead><tr>${cols.map(([,label])=>`<th scope="col">${label}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(([key])=>`<td>${value(r,key)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      html+=`<div class="wf-records">${rows.map(r=>`<article class="wf-record"><h4>${value(r,cols[0][0])}</h4><dl>${cols.slice(1).map(([key,label])=>`<div><dt>${label}</dt><dd>${value(r,key)}</dd></div>`).join('')}</dl></article>`).join('')}</div>`;
+    }
     return html+(all.length>100?'<p class="wf-empty">Showing the first 100 entries. Open the full workspace view for more.</p>':'');
   }
   function render(target,layout,catalog,data){
