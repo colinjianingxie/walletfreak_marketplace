@@ -1,97 +1,51 @@
-# Installation and setup
+# Installation and upgrading
 
-Version 0.2.0 uses the supported `.codex-plugin/plugin.json` compatibility format and Claude’s `.claude-plugin/plugin.json`. Both catalogs point to the same `plugins/` directories. Install one core and whichever categories you choose; do not install a separate Playwright server for each provider.
+Requires Python 3.10+, Node.js 18+ and Chrome. Both hosts install the same walletfreak package and one walletfreak-browser MCP connection.
 
-## Prepare a local browser
+## Fresh install
 
-Install Node.js 18+ and Chrome. `npx` must be on the agent host’s PATH. The core pins `@playwright/mcp@0.0.68`; the first run downloads that exact package. Python 3 is optional for the bundled arithmetic helper.
+Codex: `codex plugin marketplace add colinjianingxie/walletfreak_marketplace`, then `codex plugin add walletfreak@walletfreak`.
 
-The bundled configuration starts headed Chrome with `--isolated`, `--output-mode stdout` and `--codegen none`. Each host gets its own dedicated temporary profile outside the repositories. Session cookies are discarded when that browser closes; sign in again next time. Both agents can run concurrently because they have separate isolated profiles. No profile environment variables or password files are needed.
+Claude Code: `claude plugin marketplace add colinjianingxie/walletfreak_marketplace`, then `claude plugin install walletfreak@walletfreak`.
 
-Observations are returned to the agent instead of automatically saved as snapshot/log files. They may still enter model context and host conversation history. Do not enable session recording, import/export storage state, attach your personal browser or save account screenshots by default. This is not a technical transaction firewall; skills instruct the agent to stop before transactions.
+Start a fresh host session and invoke walletfreak-setup. For an unpublished development build, add the explicit marketplace checkout path instead of the GitHub source. Verify which source the host is using before reinstalling.
 
-The version pin preserves this tested output behavior. A newer release must pass the profile/output checks before adoption. See [bundled browser details](../plugins/walletfreak/skills/travel-plan/references/browser.md).
+## Upgrade from 0.1 or 0.2
 
-## Codex
+1. Retain existing trip files and ~/.walletfreak/traveler-profile.md. The revised viewer migrates old dashboard findings and selections once into results.json; obsolete intake/request/account controls are removed. The optional Markdown profile is unchanged.
+2. Stop an already-running dashboard before updating; saved records remain. Update the marketplace and install walletfreak 0.3. Verify eight skills: travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer and walletfreak-setup.
+3. Remove previously installed category plugins walletfreak-hotels, walletfreak-flights, walletfreak-credit-cards and walletfreak-trip-board. Codex uses `codex plugin remove <name>@walletfreak`; Claude uses `claude plugin uninstall <name>@walletfreak`. Remove 0.1 individual provider plugins too if still installed.
+4. Close the old host session and start a fresh one. Verify exactly one walletfreak-browser connection.
+5. Old provider commands such as united-research map to provider-research and the united reference. Every old skill name remains in the provider catalog's legacySkill field.
 
-Run these commands in your shell using the public GitHub marketplace:
+Plugin removal should remove installed package code only, not the private WalletFreak data directory. Do not delete a personal profile to resolve package discovery.
 
-```sh
-codex plugin marketplace add colinjianingxie/walletfreak_marketplace
-codex plugin add walletfreak@walletfreak
-codex plugin add walletfreak-hotels@walletfreak
-codex plugin add walletfreak-flights@walletfreak
-codex plugin add walletfreak-credit-cards@walletfreak
-```
+## Local dashboard
 
-The three category plugins are optional; each includes all of its provider skills. Inspect available packages with `codex plugin list`. Start a fresh session after installation and ask for `walletfreak-setup`, then `travel-plan`. In a desktop client that supports local marketplaces, use the Plugins UI to select the WalletFreak source and install core first. CLI commands were checked against the local CLI; desktop discovery still needs its own acceptance test.
+Resolve the installed plugin path from walletfreak-setup, then run `python3 <plugin>/scripts/local.py start`. It reuses an existing healthy service or chooses an available port and prints a private loopback URL. Keep the fragment access key private. No cloud account or API key is required.
 
-## Claude Code
+Plan in the host conversation. The agent publishes findings to Your trips, where you can explore itinerary components, compare options, download a standalone trip file or delete results. Personal wallet separately saves cards, loyalty balances, status, credits and certificates. `local.py stop` stops the service without deleting saved data.
 
-In your shell:
+WALLETFREAK_DATA can point to a dedicated private directory for tests or another local user-selected location. Keep it consistent between the dashboard and host browser process. Default: ~/.walletfreak/local. Never use a repository, home directory itself, shared folder or installed plugin directory.
 
-```sh
-claude plugin marketplace add colinjianingxie/walletfreak_marketplace
-claude plugin install walletfreak@walletfreak
-claude plugin install walletfreak-hotels@walletfreak
-claude plugin install walletfreak-flights@walletfreak
-claude plugin install walletfreak-credit-cards@walletfreak
-```
+## Compact wallet and optional sign-in vault
 
-Inside an interactive Claude session, the equivalent commands begin `/plugin marketplace add` and `/plugin install`. Restart the session, run `/walletfreak:walletfreak-setup`, then `/walletfreak:travel-plan`. Provider skill invocations include `/walletfreak-hotels:hyatt-research`. Use `claude plugin list` to inspect installation.
+The viewer starts on Wallet. If an older traveler-profile.md exists beside the local data directory, Load existing wallet imports it into an empty wallet without changing the original. Import is explicit and does not silently refresh old reporting dates. Add separate rows for gift cards, TravelBank, airline credits, certificates, passes and other assets; blank values remain unknown.
 
-## Card benefits in the credit-cards category
+Sign-ins accepts any provider name and keeps usernames/passwords in an encrypted local vault. The optional dependency is `python3 -m pip install -r <plugin>/requirements-vault.txt` in the Python environment used to run local.py; use an isolated environment if required by your Python installation. The wallet and results viewer require no additional package. Never enter secrets in shell arguments or chat. Create/unlock the vault in the private browser. There is no master-password recovery or automatic provider login.
 
-Ask `card-travel-benefits` to evaluate your existing cards alongside flight/hotel quotes. Claude supports `/walletfreak-credit-cards:card-travel-benefits`. `travel-plan` and provider skills also discover it when card benefits matter. Install `walletfreak-credit-cards@walletfreak` for this skill; it reuses core’s browser. Core alone does not provide card-benefit research in 0.2.0. Without it, hotel/flight comparisons can continue at gross prices with card savings explicitly unverified.
+Plugins & skills displays local Codex installations and their skill documents. If the native CLI is unavailable it shows this bundled WalletFreak package with an explicit discovery limitation. Restart the viewer after installing/removing plugins to refresh its inventory.
 
-## Lounge tracking
+## Browser sessions
 
-With core and `walletfreak-credit-cards` installed, ask for `lounge-access` (Claude: `/walletfreak-credit-cards:lounge-access`). Supply card products/countries, airports/terminals, travel times and guests; only share remaining visits or pass expiry when relevant. The skill keeps a conversation ledger of eligibility, fees and planned versus used visits. It does not enroll you, reserve entry or monitor your account automatically.
+Temporary mode is default. Ask the setup skill to remember sign-ins or forget saved sessions; it updates the local setting only at your request. Mode changes apply on the first browser action after the next MCP connection start. Fully close/restart the host's WalletFreak connection after changing it; browser_close alone does not restart the wrapper.
 
-## Local development
+The wrapper prevents concurrent hosts from sharing a profile. Tool discovery remains available without a lock. The first browser action acquires ownership until that host connection closes; close the other connection if locked. Never delete lock files or connect a personal browser. Sign in on the provider's official page; handle MFA/CAPTCHA directly. A prior sign-in is not a guarantee that a session remains valid.
 
-To try changes before they are pushed, use the absolute checkout directory as the marketplace source:
+Forget all local sessions schedules removal of the dedicated saved profile when the restarted connection first uses the browser, after checking exclusive ownership. Close any remaining dedicated Chrome window first. It preserves trips and the optional traveler profile; provider-side sessions are not revoked.
 
-```sh
-codex plugin marketplace add /absolute/path/to/walletfreak_marketplace
-claude plugin marketplace add /absolute/path/to/walletfreak_marketplace
-```
+If starting fails, run `local.py serve` in a terminal for the error. Preserve data on failures; do not reset settings to hide corruption. Port conflicts do not require killing other applications.
 
-Then install core and categories using the same package selectors above. Category packages must work when copied out of the checkout: no neighboring-plugin files, relative imports or symlinks may be required. Core’s skills may read their own bundled references and helper script.
+## Spending plugin
 
-## Diagnose before research
-
-| Symptom | Recovery |
-| --- | --- |
-| Category installed but core absent | Stop; install `walletfreak@walletfreak`, start a new session, load core instructions |
-| Marketplace not found | Add the repository (or local checkout for development), then retry installation |
-| Installed skills missing | Check enabled status and host version, restart the session, use the namespaced Claude invocation or Codex skill picker |
-| Browser tools missing | Verify core is installed/enabled, Node/npx and Chrome exist, package download works and the host permitted its MCP connection |
-| Host refuses MCP tool approval | Stop the search; use a host session that can request normal approval. A noninteractive `never` policy cannot approve browser tools. Do not bypass the policy or report this as provider blocking |
-| Two browser servers | Use core’s `walletfreak-browser`; do not add another server or remove unrelated integrations automatically |
-| Profile already in use | Close the other WalletFreak session and verify isolated mode; do not delete lock files |
-| Login/MFA/CAPTCHA | Pause for the user to complete it in the browser; never request a password or code in chat |
-| Blocked provider | Stop bypass attempts; use user-supplied redacted results and label them unverified |
-
-Successful setup requires actual host discovery of core, the selected provider, and a single functioning browser connection. A manifest validation pass alone does not establish it. Verify current installation syntax using each CLI’s help if its version differs.
-
-## Updating
-
-Codex: refresh the marketplace using `codex plugin marketplace upgrade walletfreak`, then use the host’s install/update UI or `codex plugin add <plugin>@walletfreak` to refresh the selected package. Claude: `claude plugin marketplace update walletfreak`, then `claude plugin update <plugin>@walletfreak`. For a local directory marketplace, edit the source and re-run `codex plugin add <plugin>@walletfreak`; `marketplace upgrade` requires a Git marketplace. Start a new session after changes. Keep all manifests and catalog metadata on 0.2.0 for this category release; subsequent releases must update metadata consistently and repeat acceptance checks.
-
-## Upgrading from 0.1.0
-
-The individual provider packages were replaced, not aliased. Skill names such as `hilton-research` stay the same; their plugin namespaces change. This is a source/package migration, not a change to your travel accounts.
-
-| Previous installation | Replacement |
-| --- | --- |
-| Any hotel provider, e.g. `walletfreak-hilton`, `walletfreak-hyatt` | `walletfreak-hotels` |
-| Any airline provider, e.g. `walletfreak-united`, `walletfreak-delta` | `walletfreak-flights` |
-| Any portal, e.g. `walletfreak-chase-travel`, `walletfreak-amex-travel` | `walletfreak-credit-cards` |
-| Core’s `card-travel-benefits` skill | `walletfreak-credit-cards` plus updated core |
-
-1. Refresh the marketplace with the updating command above. Reinstall/update `walletfreak@walletfreak` and install the desired category plugins using the commands above. Users who relied on card benefits in 0.1.0 core need the credit-cards category.
-2. Inspect `codex plugin list` or `claude plugin list`. Remove only the retired WalletFreak provider plugins you actually installed, for example `codex plugin remove walletfreak-hilton@walletfreak` or `claude plugin uninstall walletfreak-hilton@walletfreak`. Do not remove core, the new categories or unrelated plugins. Updating the catalog does not automatically remove cached old packages.
-3. Start a fresh session and run `walletfreak-setup`. Confirm one core, the intended categories, no duplicate legacy skills, and one shared browser. Claude invocations now include `/walletfreak-hotels:hilton-research`, `/walletfreak-flights:united-research` and `/walletfreak-credit-cards:card-travel-benefits`.
-
-Sources: [OpenAI packaging](https://developers.openai.com/plugins/build/plugins), [Claude marketplaces](https://code.claude.com/docs/en/plugin-marketplaces), [Claude plugin reference](https://code.claude.com/docs/en/plugins-reference), [pinned Playwright MCP](https://github.com/microsoft/playwright-mcp/tree/v0.0.68).
+Install walletfreak-spending@walletfreak with the same host plugin command after installing WalletFreak core. Start a new thread and ask for spending-analysis. Both use the same dashboard. The CSV importer has no third-party dependencies. PDF text extraction optionally uses an already-installed pdftotext; scanned/unusual PDFs need local conversion and reconciliation. No automatic PDF transaction import or XLSX export is claimed.

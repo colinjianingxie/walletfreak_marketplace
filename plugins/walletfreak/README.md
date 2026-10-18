@@ -1,11 +1,11 @@
-# WalletFreak · Shared core
+# WalletFreak
 
-Version 0.2.0. MIT licensed. Required by every category plugin.
+The complete travel toolkit: guided intake, 31 provider references, a personal wallet, current card/redemption optimization, card benefits, lounge tracking and a private local trip dashboard.
 
-- [Trip planning](skills/travel-plan/SKILL.md): intake, category discovery, comparable findings and itinerary synthesis.
-- [Traveler profile](skills/traveler-profile/SKILL.md): optional honor-system intake for cards, balances, status, certificates, credits and preferences. Fill the [template](skills/traveler-profile/assets/profile-template.md) or ask “Save my travel wallet”; reuse it in future searches without repeating intake.
-- [Setup diagnostics](skills/walletfreak-setup/SKILL.md): missing-core recovery and the sole local browser connection.
+Use walletfreak-setup after installation. Python 3.10+, Node.js 18+ and Chrome are required. Start the dashboard with `python3 scripts/local.py start` from this plugin directory. Its private link works on this device only.
 
-Install `walletfreak@walletfreak` first. Add `walletfreak-hotels`, `walletfreak-flights` and/or `walletfreak-credit-cards` from the WalletFreak marketplace. The credit-cards plugin owns card benefits and booking portals; these are not bundled in core. Categories coordinate through host skill discovery and reuse core’s browser.
+Planning stays in the Codex or Claude conversation. The browser displays published results and an editable personal wallet; it has no agent controls. Results can be downloaded or deleted without changing the wallet. Users sign in and book themselves. Temporary browser sessions are default; remembered sessions are opt-in. Profiles and trips stay outside this package.
 
-Users sign in and book themselves. See [installation](https://github.com/colinjianingxie/walletfreak_marketplace/blob/main/docs/INSTALL.md) and [privacy](https://github.com/colinjianingxie/walletfreak_marketplace/blob/main/docs/PRIVACY.md).
+See [planning](skills/travel-plan/SKILL.md), [dashboard](skills/trip-board/SKILL.md) and [browser/session guidance](skills/travel-plan/references/browser.md).
+
+The shared MCP launch command accepts Claude's expanded plugin-root argument; Codex uses the plugin-relative working directory. The path is a separate process argument, never interpolated into shell or Python source. Both routes run the same browser wrapper.

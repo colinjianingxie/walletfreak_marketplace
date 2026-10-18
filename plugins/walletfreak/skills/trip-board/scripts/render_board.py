@@ -1,0 +1,238 @@
+#!/usr/bin/env python3
+"""Render sanitized trip research as one portable, offline HTML document."""
+import argparse
+import base64
+from datetime import datetime
+import hashlib
+from html import escape
+import json
+import os
+from pathlib import Path
+import tempfile
+import re
+from urllib.parse import urlsplit, urlunsplit
+
+ASSETS = Path(__file__).resolve().parents[1] / "assets"
+KINDS = ("flight", "hotel", "lounge", "transport", "other")
+STATUSES = ("available", "unavailable", "waitlisted", "blocked", "unverified")
+DETAILS = ("search", "product", "terms", "benefits", "uncertainty", "reproduce")
+
+
+def text(value, field, required=False):
+    if not isinstance(value, str) or (required and not value.strip()):
+        raise ValueError(f"{field} must be {'nonempty ' if required else ''}text")
+    return value
+
+
+def timestamp(value, field):
+    text(value, field, True)
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        raise ValueError(f"{field} needs an ISO timestamp with a time zone") from None
+    if parsed.utcoffset() is None:
+        raise ValueError(f"{field} needs a time zone")
+
+
+def source_url(value):
+    text(value, "source URL", True)
+    if any(c.isspace() or ord(c) < 32 for c in value) or "\\" in value:
+        raise ValueError("Source URLs cannot contain whitespace or backslashes")
+    parsed = urlsplit(value)
+    if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+        raise ValueError("Source URLs must be HTTPS without credentials")
+    # Entry points plus separate reproduction steps avoid exporting session queries.
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+
+
+def validate(data):
+    if not isinstance(data, dict):
+        raise ValueError("Board input must be an object")
+    allowed = {"title", "summary", "generated_at", "illustrative", "options", "research", "itinerary", "gaps"}
+    if data.keys() - allowed:
+        raise ValueError("Unknown board fields; do not include wallet balances or profiles")
+    text(data.get("title"), "title", True)
+    timestamp(data.get("generated_at"), "generated_at")
+    text(data.get("summary", ""), "summary")
+    if type(data.get("illustrative", False)) is not bool:
+        raise ValueError("illustrative must be true or false")
+    for name in ("options", "research", "itinerary", "gaps"):
+        if not isinstance(data.get(name, []), list):
+            raise ValueError(f"{name} must be a list")
+    ids = set()
+    for option in data.get("options", []):
+        if not isinstance(option, dict):
+            raise ValueError("Each option must be an object")
+        allowed_option = {"id", "kind", "status", "title", "provider", "program", "price", "observed_at", "sources", "cost", "choice_group", "payment", *DETAILS}
+        if option.keys() - allowed_option:
+            raise ValueError("Unknown option fields")
+        identifier = text(option.get("id"), "option id", True)
+        if identifier in ids:
+            raise ValueError("Option IDs must be unique")
+        ids.add(identifier)
+        if 'choice_group' in option:
+            text(option['choice_group'], 'choice group', True)
+        if 'cost' in option:
+            cost = option['cost']
+            if not isinstance(cost, dict) or set(cost) - {'cash', 'currency', 'points', 'program', 'complete'} or not {'cash', 'currency', 'complete'} <= set(cost):
+                raise ValueError('Cost needs cash, currency and completeness; optional points and program')
+            if type(cost['complete']) is not bool or not isinstance(cost['currency'], str) or not re.fullmatch('[A-Z]{3}', cost['currency']):
+                raise ValueError('Invalid cost currency or completeness')
+            if not isinstance(cost['cash'], str) or not re.fullmatch(r'\d+(\.\d{1,4})?', cost['cash']) or len(cost['cash']) > 20:
+                raise ValueError('Cash must be a nonnegative decimal string')
+            if 'points' in cost and (type(cost['points']) is not int or not 0 <= cost['points'] <= 10**12):
+                raise ValueError('Points must be a nonnegative integer')
+            if cost.get('points'):
+                text(cost.get('program'), 'points program', True)
+            if not option.get('choice_group'):
+                raise ValueError('Structured costs need an itinerary choice group')
+        if 'payment' in option:
+            payment = option['payment']
+            if not isinstance(payment, dict) or payment.keys() - {'card','reason','benefits'}:
+                raise ValueError('Invalid payment recommendation')
+            text(payment.get('card'), 'payment card (or To confirm / Not required)', True)
+            text(payment.get('reason'), 'payment reason', True)
+            if not isinstance(payment.get('benefits',[]), list):
+                raise ValueError('Payment benefits must be a list')
+            for benefit in payment.get('benefits',[]):
+                if not isinstance(benefit,dict) or benefit.keys() - {'name','status','detail','recorded_at'}:
+                    raise ValueError('Invalid payment benefit')
+                text(benefit.get('name'),'benefit name',True)
+                text(benefit.get('detail'),'benefit detail',True)
+                if benefit.get('status') not in ('planned','used','not-used','conditional','unavailable'):
+                    raise ValueError('Invalid benefit usage status')
+                if benefit['status']=='used' or 'recorded_at' in benefit:
+                    timestamp(benefit.get('recorded_at'),'benefit recorded_at')
+        text(option.get("title"), "option title", True)
+        if option.get("kind") not in KINDS or option.get("status") not in STATUSES:
+            raise ValueError("Unknown option kind or availability status")
+        for name in ("provider", "program", "price", *DETAILS):
+            if name in option:
+                text(option[name], name)
+        observed = option.get("observed_at")
+        if observed is not None:
+            timestamp(observed, "observed_at")
+        sources = option.get("sources", [])
+        if not isinstance(sources, list):
+            raise ValueError("sources must be a list")
+        for source in sources:
+            if not isinstance(source, dict) or set(source) != {"label", "url"}:
+                raise ValueError("Each source needs only label and url")
+            text(source["label"], "source label", True)
+            source_url(source["url"])
+        if option["status"] == "available" and (observed is None or not sources):
+            raise ValueError("Available options need an observation timestamp and a source")
+    for item in data.get("research", []):
+        if not isinstance(item, dict) or item.keys() - {"title", "detail", "observed_at", "url"}:
+            raise ValueError("Invalid research entry")
+        text(item.get("title"), "research title", True)
+        text(item.get("detail"), "research detail", True)
+        if item.get("observed_at") is not None:
+            timestamp(item["observed_at"], "research observed_at")
+        if item.get("url") is not None:
+            source_url(item["url"])
+    for item in data.get("itinerary", []):
+        if not isinstance(item, dict) or item.keys() - {"when", "title", "detail", "option_id"}:
+            raise ValueError("Invalid itinerary entry")
+        for name in ("when", "title", "detail"):
+            text(item.get(name), f"itinerary {name}", True)
+        if "option_id" in item and item["option_id"] not in ids:
+            raise ValueError("Itinerary references an unknown option")
+    for gap in data.get("gaps", []):
+        text(gap, "gap", True)
+
+
+def link(label, url):
+    return f'<a href="{escape(source_url(url), quote=True)}" target="_blank" rel="noopener noreferrer">{escape(label)} ↗</a>'
+
+
+def payment_html(option):
+    payment = option.get('payment') if option else None
+    if not payment:
+        return '<div class="payment"><strong>Payment card: To confirm</strong><p>No benefit usage recorded.</p></div>'
+    labels = {'planned':'Planned · not spent','used':'Already used','not-used':'Not used','conditional':'Conditional','unavailable':'Unavailable'}
+    rows = ''.join(f'<li><span class="benefit-state {b["status"]}">{labels[b["status"]]}</span> <strong>{escape(b["name"])}</strong> — {escape(b["detail"])}' + (f' <small>Recorded {escape(b["recorded_at"])}</small>' if b.get('recorded_at') else '') + '</li>' for b in payment.get('benefits',[]))
+    return f'<div class="payment"><strong>Pay with: {escape(payment["card"])}</strong><p>{escape(payment["reason"])}</p>' + (f'<ul>{rows}</ul>' if rows else '<p>No benefit usage recorded.</p>') + '</div>'
+
+
+def render(data):
+    validate(data)
+    options = data.get("options", [])
+    anchors = {option["id"]: f"option-{i}" for i, option in enumerate(options)}
+    cards = []
+    for option in options:
+        anchor = anchors[option["id"]]
+        detail = "".join(f'<dt>{name.title()}</dt><dd>{escape(option.get(name) or "Not recorded")}</dd>' for name in DETAILS)
+        sources = " · ".join(link(source["label"], source["url"]) for source in option.get("sources", [])) or "No source recorded"
+        cards.append(f'''<article class="option" id="{anchor}" data-kind="{option['kind']}" data-status="{option['status']}">
+<div class="eyebrow"><span>{option['kind'].title()}</span><span class="status {option['status']}">{option['status'].title()} at observation</span></div>
+<h3>{escape(option['title'])}</h3><p class="provider">{escape(option.get('provider') or 'Provider not recorded')} · {escape(option.get('program') or 'Cash / program not recorded')}</p>
+<p class="price">{escape(option.get('price') or 'Price unknown')}</p><p class="observed">Observed: {escape(option.get('observed_at') or 'Not recorded')}</p>
+{payment_html(option)}
+<label class="shortlist"><input type="checkbox" aria-label="Shortlist {escape(option['title'], quote=True)}"> Add to shortlist</label>
+<details><summary>Research &amp; restrictions</summary><dl>{detail}</dl><p>{sources}</p></details></article>''')
+    research = []
+    for item in data.get("research", []):
+        source = link("Official source", item["url"]) if item.get("url") else "No source recorded"
+        research.append(f'<article class="note"><h3>{escape(item["title"])}</h3><p>{escape(item["detail"])}</p><p class="observed">Observed: {escape(item.get("observed_at") or "Not recorded")} · {source}</p></article>')
+    itinerary = []
+    for item in data.get("itinerary", []):
+        ref = f'<a href="#{anchors[item["option_id"]]}">View option</a>' if "option_id" in item else "Unpriced / separate item"
+        payment = payment_html(next((o for o in options if o['id']==item.get('option_id')),None)) if item.get('option_id') else ''
+        itinerary.append(f'<li><p class="when">{escape(item["when"])}</p><h3>{escape(item["title"])}</h3><p>{escape(item["detail"])}</p>{payment}{ref}</li>')
+    style = (ASSETS / "board.css").read_text()
+    script = (ASSETS / "board.js").read_text()
+    digest = lambda value: base64.b64encode(hashlib.sha256(value.encode()).digest()).decode()
+    replacements = {
+        "TITLE": escape(data["title"]), "SUMMARY": escape(data.get("summary", "")),
+        "GENERATED": escape(data["generated_at"]), "COUNT": str(len(options)),
+        "NOTICE": "Illustrative example · Fictional prices and availability, not live quotes." if data.get("illustrative") else "Research snapshot · Recheck prices, availability and terms before booking.",
+        "OPTIONS": "".join(cards) or '<p class="empty">No options researched yet.</p>',
+        "RESEARCH": "".join(research) or '<p class="empty">No additional research notes yet. Evidence for each option is under Research &amp; restrictions.</p>',
+        "ITINERARY": "".join(itinerary) or '<li class="empty">No itinerary drafted yet.</li>',
+        "GAPS": "".join(f'<li>{escape(gap)}</li>' for gap in data.get("gaps", [])) or '<li>No gaps recorded. Confirm completeness before treating any quoted amount as a trip total.</li>',
+        "KINDS": "".join(f'<option value="{kind}">{kind.title()}</option>' for kind in KINDS),
+        "STATUSES": "".join(f'<option value="{status}">{status.title()}</option>' for status in STATUSES),
+        "STYLE": style, "SCRIPT": script, "STYLE_HASH": digest(style), "SCRIPT_HASH": digest(script),
+    }
+    # Replace once so input containing template tokens remains literal text.
+    import re
+    return re.sub(r"\{\{([A-Z_]+)\}\}", lambda match: replacements[match[1]], (ASSETS / "board.html").read_text())
+
+
+def write_board(destination, html, overwrite=False):
+    destination = Path(destination)
+    if destination.is_symlink() or (destination.exists() and not overwrite):
+        raise ValueError("Output exists or is a symlink; choose a new file or use --overwrite for an existing board")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    old = destination.read_bytes() if destination.exists() else None
+    fd, temporary = tempfile.mkstemp(prefix=".trip-board-", dir=destination.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as output:
+            output.write(html)
+        if destination.is_symlink() or (destination.read_bytes() if destination.exists() else None) != old:
+            raise ValueError("Output changed during rendering; original retained")
+        os.replace(temporary, destination)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", type=Path, help="Sanitized trip JSON (not a traveler profile)")
+    parser.add_argument("output", type=Path, help="Destination HTML file")
+    parser.add_argument("--overwrite", action="store_true", help="Replace a previously generated board")
+    args = parser.parse_args()
+    try:
+        if args.input.resolve() == args.output.resolve():
+            raise ValueError("Input and output must be different files")
+        html = render(json.loads(args.input.read_text(encoding="utf-8")))
+        write_board(args.output, html, args.overwrite)
+    except (OSError, ValueError, TypeError) as error:
+        parser.exit(1, f"Board not written: {error}\n")
+    print(args.output.resolve())
+
+
+if __name__ == "__main__":
+    main()

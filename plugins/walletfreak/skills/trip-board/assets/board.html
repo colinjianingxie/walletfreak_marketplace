@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-{{STYLE_HASH}}'; script-src 'sha256-{{SCRIPT_HASH}}'; base-uri 'none'; form-action 'none'">
+<title>{{TITLE}} · WalletFreak</title>
+<style>{{STYLE}}</style>
+</head>
+<body>
+<a class="skip" href="#options">Skip to options</a>
+<header><a class="brand" href="#top"><span class="mark">W</span> WalletFreak <span class="edition">TRIP BOARD</span></a><nav aria-label="Trip sections"><a href="#options">Options</a><a href="#research">Research</a><a href="#itinerary">Itinerary</a></nav></header>
+<main id="top">
+<section class="hero"><div><p class="eyebrow">YOUR NEXT CHAPTER</p><h1>{{TITLE}}</h1><p class="intro">{{SUMMARY}}</p></div><div class="snapshot"><strong>{{COUNT}}</strong><span>options to explore</span><small>Snapshot created<br>{{GENERATED}}</small></div></section>
+<p class="notice">{{NOTICE}}</p>
+<section id="options" aria-labelledby="options-title"><div class="section-heading"><div><p class="eyebrow">01 / THE POSSIBILITIES</p><h2 id="options-title">Compare your options</h2></div><p>Quoted totals per option.<br>Alternatives are not added together.</p></div>
+<noscript><p>All options are shown below. Enable JavaScript to filter or shortlist.</p></noscript>
+<div class="filters" hidden><label>Search<input id="search" type="search" placeholder="Destination, airline, terms…"></label><label>Type<select id="kind" aria-label="Type"><option value="">All types</option>{{KINDS}}</select></label><label>Availability<select id="status" aria-label="Availability"><option value="">All statuses</option>{{STATUSES}}</select></label><label class="only"><input id="only-shortlist" type="checkbox"> Shortlisted only</label><button id="reset" type="button">Reset filters</button></div>
+<p id="result-count" class="count" aria-live="polite">{{COUNT}} options · Shortlist selections last until you reload this page.</p>
+<div class="options">{{OPTIONS}}</div><p id="no-results" class="empty" hidden>No options match. Try another search or reset the filters.</p></section>
+<div class="lower"><section id="research" aria-labelledby="research-title"><p class="eyebrow">02 / BEHIND THE CHOICES</p><h2 id="research-title">The research</h2>{{RESEARCH}}<aside class="gaps"><h3>Still to check</h3><ul>{{GAPS}}</ul></aside></section>
+<section id="itinerary" aria-labelledby="itinerary-title"><p class="eyebrow">03 / PUT IT TOGETHER</p><h2 id="itinerary-title">Your proposed itinerary</h2><p class="muted">A draft plan. Nothing is reserved. Shortlisting an alternative does not change this itinerary.</p><ol class="timeline">{{ITINERARY}}</ol></section></div>
+</main><footer><strong>WalletFreak</strong><p>A research snapshot you can keep. No live inventory or account connection.<br>Recheck the official sources and complete bookings yourself.</p></footer>
+<script>{{SCRIPT}}</script>
+</body></html>

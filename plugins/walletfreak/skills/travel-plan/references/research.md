@@ -24,11 +24,11 @@ Match dates, nights, number of rooms, exact room/bed/occupancy, meals, payment t
 
 ## Card travel benefits
 
-Use `walletfreak-credit-cards`’s `card-travel-benefits` skill through host discovery when cards could change flight/hotel/portal choices. If missing, give the category installation guidance in `travel-plan` and leave card savings unverified. Attach its per-card benefit ledger to the shared findings: eligibility evidence, exact period and remaining allowance, booking/payment constraints, quote/charge allocation and unresolved checks. Keep gross price, checkout amount, expected statement credits and noncash perks distinct. Allocate shared allowances once across the chosen itinerary. For a card-adjusted redemption scenario, adjust the cash comparator and award charges consistently; retain the gross comparison and mark uncertain credits conditional.
+Use `walletfreak`’s `card-travel-benefits` skill through host discovery when cards could change flight/hotel/portal choices. If missing, run setup diagnostics in `travel-plan` and leave card savings unverified. Attach its per-card benefit ledger to the shared findings: eligibility evidence, exact period and remaining allowance, booking/payment constraints, quote/charge allocation and unresolved checks. Keep gross price, checkout amount, expected statement credits and noncash perks distinct. Allocate shared allowances once across the chosen itinerary. For a card-adjusted redemption scenario, adjust the cash comparator and award charges consistently; retain the gross comparison and mark uncertain credits conditional.
 
 ## Lounge tracker
 
-Use the host-discovered `lounge-access` skill in `walletfreak-credit-cards` for airport/terminal eligibility, hours, traveler/guest costs and visit/pass ledgers. Include proposed versus user-reported used visits, period/expiry and evidence gaps. Eligibility is separate from capacity and actual admission. Keep lounge perks separate from cash avoided and cents per point. Missing category instructions or terms mean unverified access.
+Use the host-discovered `lounge-access` skill in `walletfreak` for airport/terminal eligibility, hours, traveler/guest costs and visit/pass ledgers. Include proposed versus user-reported used visits, period/expiry and evidence gaps. Eligibility is separate from capacity and actual admission. Keep lounge perks separate from cash avoided and cents per point. Missing instructions or terms mean unverified access.
 
 ## Portals, points and offers
 

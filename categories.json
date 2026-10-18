@@ -2,19 +2,25 @@
   {
     "id": "hotels",
     "name": "Hotels",
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "description": "Cash stays, award nights and hotel terms across eight hotel groups."
   },
   {
     "id": "flights",
     "name": "Flights",
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "description": "Fares, award seats and flight terms across 19 airlines and programs."
   },
   {
     "id": "credit-cards",
     "name": "Credit cards",
-    "plugin": "walletfreak-credit-cards",
+    "plugin": "walletfreak",
     "description": "Lounge access tracker, Hilton Aspire/Surpass and other card benefits, plus four travel portals."
+  },
+  {
+    "id": "trip-board",
+    "name": "Trip board",
+    "plugin": "walletfreak",
+    "description": "Self-hostable display of flight and hotel options, research sources, a shortlist and itinerary."
   }
 ]

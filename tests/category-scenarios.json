@@ -1,33 +1,79 @@
 [
   {
-    "id": "category-discovery",
-    "configuration": "core and all three categories",
-    "prompt": "Use WalletFreak to compare a synthetic United flight, Hilton stay and Chase Travel quote. Discover and load the relevant installed skills, including card-travel-benefits. Do not browse. Same refundable room: cash USD 900, award 50,000 points plus USD 100; a verified USD 100 credit applies only to cash. Show gross and adjusted redemption values using core\u2019s calculator, and identify each skill\u2019s plugin. Do not read marketplace source or neighboring plugin files.",
+    "id": "unified-discovery",
+    "configuration": "walletfreak only",
+    "prompt": "Use WalletFreak to compare a synthetic United flight, Hilton stay and Chase Travel quote. Discover provider-research, the matching references and card-travel-benefits. Do not browse. Same refundable room: cash USD 900, award 50,000 points plus USD 100; a verified USD 100 credit applies only to cash. Show gross and adjusted redemption values.",
     "expected": [
-      "United from walletfreak-flights, Hilton from walletfreak-hotels, Chase and card benefits from walletfreak-credit-cards",
-      "Core travel-plan and one walletfreak-browser",
+      "All skills belong to walletfreak; no category installation required",
+      "One walletfreak-browser",
       "Gross 1.6 and adjusted 1.4 US cents/point",
-      "Calculator reached through discovered core skill, no neighboring-plugin paths"
+      "Provider-specific rules retained"
     ]
   },
   {
-    "id": "missing-credit-cards",
-    "configuration": "core, hotels and flights only",
-    "prompt": "Use WalletFreak to compare this synthetic Hilton stay: direct USD 500, equivalent portal USD 450 including all mandatory fees. I have Hilton Aspire and Surpass; subtract whichever credits make direct cheaper. Do not browse or install anything. Explain what your installed skills can verify and how to enable card-benefit research.",
+    "id": "legacy-alias",
+    "configuration": "walletfreak only",
+    "prompt": "Use united-research and hilton-research to plan a trip. I already gave you my dates and balances.",
     "expected": [
-      "Gross USD 500 and USD 450 retained; no assumed credit reduction",
-      "Explain missing walletfreak-credit-cards and give exact install/fresh-session guidance",
-      "Do not claim refreshing core adds card benefits or read absent/neighboring files"
+      "Resolve legacySkill aliases through providers.json",
+      "Load provider-research with United and Hilton references",
+      "Reuse intake; do not request category plugins"
     ]
   },
   {
-    "id": "credit-cards-without-core",
-    "configuration": "credit-cards only",
-    "prompt": "Use card-travel-benefits to research Hilton Aspire and Surpass for my next stay. Identify any setup blocker before research. Do not browse or install anything.",
+    "id": "results-and-wallet",
+    "configuration": "walletfreak only",
+    "prompt": "Show the supplied trip findings in my local browser and let me enter my cards and points. I want to delete the results later.",
     "expected": [
-      "Stop because core instructions/browser are missing",
-      "Give exact walletfreak@walletfreak install command and fresh-session guidance",
-      "No extra browser or cross-plugin filesystem reads"
+      "Publish sanitized findings directly; do not create agent requests",
+      "Show itinerary components without requiring selections",
+      "Open Personal wallet for optional self-reported entries",
+      "Keep wallet separate from trip results and exports",
+      "Deleted results are not recreated by stale updates"
+    ]
+  },
+  {
+    "id": "wallet-card-earning-break-even",
+    "configuration": "walletfreak only; synthetic offline exercise",
+    "prompt": "Use wallet-optimizer. This is a fictional USD 1,000 purchase with no fees, credits or caps. I own Card A earning 5 points per dollar and Card B earning 2% cash back. My achievable redemption for A is 0.5 US cents per point; compare it with 0.3 cents and find the break-even value. All eligibility is stipulated for this exercise. Do not browse or save my wallet.",
+    "expected": [
+      "Card A earns 5,000 points, worth USD 25 at 0.5 cents; B earns USD 20",
+      "At 0.3 cents A earns USD 15 in estimated value, so B wins",
+      "Break-even is 0.4 US cents per point",
+      "Distinguish estimated future reward value from cash due; no new-card recommendation or wallet mutation"
+    ]
+  },
+  {
+    "id": "wallet-cash-only-credit",
+    "configuration": "walletfreak only; synthetic offline exercise",
+    "prompt": "Use wallet-optimizer for a fictional identical hotel stay. Cash USD 900 or 50,000 points plus USD 100 mandatory fees. My existing card has a verified usable USD 100 statement credit only for the cash booking; remaining eligibility is stipulated. Ignore earnings. Value my points at 1.5 US cents each. Compare gross and credit-adjusted redemption value and recommend. Do not browse.",
+    "expected": [
+      "Gross redemption is 1.6 US cents per point; cash-only-credit scenario is 1.4",
+      "Cash costs USD 900 today, expected USD 800 after credit; award economic cost USD 850 at supplied valuation",
+      "Recommend eligible cash card under stated assumptions; do not reduce cash due today by a future credit",
+      "Show the 1.4 cents break-even and conditional nature of future credit posting"
+    ]
+  },
+  {
+    "id": "wallet-transfer-increments",
+    "configuration": "walletfreak only; synthetic offline exercise",
+    "prompt": "Fictional available award: 62,000 Program P points plus USD 100. I have 10,000 P points and 50,000 Bank B points. Stipulate an eligible 1:1 transfer with a 25% bonus and transfers only in 1,000-bank-point increments. Show the source points needed and leftovers. Do not transfer, browse or update my wallet.",
+    "expected": [
+      "Shortfall 52,000 P points; transfer requires 42,000 Bank B points, yielding 52,500 P points",
+      "Total P balance 62,500 before hypothetical redemption; 500 P points remain afterward",
+      "Keep source and destination currencies distinct; do not charge both transferred source points and generated destination points as separate costs",
+      "Current availability/bonus would need official verification for a real recommendation; perform no transfer or balance update"
+    ]
+  },
+  {
+    "id": "wallet-current-offer-unknown",
+    "configuration": "walletfreak only",
+    "prompt": "Pick my best card for a hotel. Card A used to have a targeted portal bonus, but I do not know if it is still active or if I enrolled. Card B earns cash back. The award quote does not include fees yet. I want to preserve Bank B points.",
+    "expected": [
+      "Reuse wallet facts and ask only for missing decision-changing details",
+      "Verify current official terms and actual quote fees; do not apply a historical targeted bonus as guaranteed",
+      "Respect preserved currency; no unconditional award value or winner using unknown fees",
+      "Offer a provisional comparison and explain the evidence needed; use the results viewer only for output"
     ]
   }
 ]

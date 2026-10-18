@@ -1,0 +1,7 @@
+# Chase activity
+
+Reviewed 2026-10-18. Chase documents downloadable CSV data in its [Spending Budget help](https://www.chase.com/personal/financial-tools/build/spending-budget). Availability and navigation vary by account; use the signed-in account's download controls and select posted activity for the desired period. Download each account separately. Do not assume the visible transaction page contains the full date range.
+
+Supported card CSV shape: Transaction Date, Post Date, Description, Category, Type, Amount, Memo. Map Transaction Date for purchase-month reporting; use Post Date consistently if reconciling posted periods. Common credit-card exports show purchases negative and payments/refunds positive: select negative purchases and verify a known transaction. Checking exports may use Details/Posting Date/Description/Amount/Type/Balance: inspect the sign, ignore running balance and map explicitly if needed.
+
+Preserve bank Category and Type as source evidence. Payment/automatic payment rows are excluded from spending; positive credits are not all refunds. For a PDF, separate Payments and Other Credits, Purchases, Fees and Interest sections. Do not parse previous/new balance, available credit, minimum payment or year-to-date totals as transactions. Cross-year statements need the correct year for each row. Follow [PDF and other formats](other-formats.md) and reconcile counts and section amounts before importing a normalized CSV.

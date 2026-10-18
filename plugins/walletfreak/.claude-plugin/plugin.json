@@ -1,7 +1,7 @@
 {
   "name": "walletfreak",
-  "version": "0.2.0",
-  "description": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser.",
+  "version": "0.3.0",
+  "description": "Plan trips, choose cards and redemptions from your wallet, and explore itineraries in a private local viewer.",
   "author": {
     "name": "WalletFreak contributors"
   },

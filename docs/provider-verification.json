@@ -1,281 +1,281 @@
 [
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "marriott",
-    "skill": "marriott-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "hilton",
-    "skill": "hilton-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "hyatt",
-    "skill": "hyatt-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "ihg",
-    "skill": "ihg-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "accor",
-    "skill": "accor-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "wyndham",
-    "skill": "wyndham-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "choice",
-    "skill": "choice-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-hotels",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "best-western",
-    "skill": "best-western-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "american",
-    "skill": "american-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "delta",
-    "skill": "delta-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "united",
-    "skill": "united-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "southwest",
-    "skill": "southwest-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "jetblue",
-    "skill": "jetblue-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "alaska-hawaiian",
-    "skill": "alaska-hawaiian-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "air-canada",
-    "skill": "air-canada-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "british-airways",
-    "skill": "british-airways-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "iberia",
-    "skill": "iberia-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "air-france-klm",
-    "skill": "air-france-klm-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "lufthansa-group",
-    "skill": "lufthansa-group-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "emirates",
-    "skill": "emirates-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "qatar",
-    "skill": "qatar-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "singapore",
-    "skill": "singapore-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "ana",
-    "skill": "ana-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "jal",
-    "skill": "jal-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "cathay-pacific",
-    "skill": "cathay-pacific-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "qantas",
-    "skill": "qantas-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-flights",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "turkish",
-    "skill": "turkish-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-credit-cards",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "capital-one-travel",
-    "skill": "capital-one-travel-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-credit-cards",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "amex-travel",
-    "skill": "amex-travel-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-credit-cards",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "chase-travel",
-    "skill": "chase-travel-research"
+    "skill": "provider-research"
   },
   {
-    "plugin": "walletfreak-credit-cards",
+    "plugin": "walletfreak",
     "stage": "authored",
     "publicSearch": null,
     "authenticatedSearch": null,
     "notes": "Guidance authored; live inventory and eligibility not certified.",
     "id": "citi-travel",
-    "skill": "citi-travel-research"
+    "skill": "provider-research"
   }
 ]

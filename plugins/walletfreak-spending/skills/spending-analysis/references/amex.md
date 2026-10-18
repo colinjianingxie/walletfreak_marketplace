@@ -1,0 +1,7 @@
+# American Express activity
+
+Reviewed 2026-10-18. Amex's [transaction history help](https://www.americanexpress.com/us/customer-service/faq.transaction-billing-statements-history.html) describes viewing and downloading history in PDF, Excel or CSV. Its [export help](https://www.americanexpress.com/us/customer-service/faq.download-export-transactions-software.html) also documents CSV. Use the account's desired period and download CSV where available; limits and product/country interfaces vary.
+
+Supported shape: Date, Description, Amount, plus optional extended merchant/category/cardholder columns. Use positive purchases only after checking a known charge; credits/payments are commonly negative in this layout. Date/Description/Amount are required; Category is optional. The importer scans up to 30 preamble rows to find recognizable headers. For unfamiliar headings, use column mapping. Foreign spending may include original foreign amounts alongside billed account amounts: import billed amount and billed currency once, not both values.
+
+Treat payments, merchant refunds, offer credits and Membership Rewards statement credits separately. A credit with no explicit source type remains unknown until reviewed. PDFs may separate cardmembers, Pay Over Time balances, fees and interest. Do not count payment due, totals, foreign-currency detail lines or rewards summaries as additional purchases. Follow [PDF/other formats](other-formats.md) and reconcile before approving.

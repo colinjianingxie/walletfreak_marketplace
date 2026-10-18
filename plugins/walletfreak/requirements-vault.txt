@@ -1,0 +1,2 @@
+# Optional: needed only for the encrypted local sign-in vault.
+cryptography>=46.0.5,<47

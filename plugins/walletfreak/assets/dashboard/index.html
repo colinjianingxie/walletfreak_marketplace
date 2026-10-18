@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WalletFreak · Your local toolkit</title><link rel="icon" href="/assets/mascot.png"><link rel="stylesheet" href="/assets/dashboard/app.css"><script defer src="/assets/dashboard/app.js"></script><script defer src="/assets/dashboard/spending.js"></script></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><a class="brand" href="/"><img src="/assets/mascot.png" width="44" height="44" alt="">walletfreak<span>.</span></a><span class="local-badge">● Private on this device</span><button id="stop" class="quiet">Close local server</button></header>
+<main id="main">
+<p id="notice" role="status" aria-live="polite"></p>
+<nav class="tabs" aria-label="Workspace"><button data-tab="wallet" aria-pressed="true">▦ Wallet</button><button data-tab="findings" aria-pressed="false">↗ Itineraries</button><button data-tab="spending" aria-pressed="false">▤ Spending</button><button data-tab="credentials" aria-pressed="false">⌑ Sign-ins</button><button data-tab="plugins" aria-pressed="false">◇ Plugins & skills</button></nav>
+<div id="wallet-summary" class="summary-strip"></div>
+<section id="findings" class="panel" hidden>
+<div class="section-heading"><div><h2>Itineraries & findings</h2></div><label>Saved results<select id="trip-select"><option value="">Choose a trip</option></select></label></div>
+<div id="empty-results" class="note"><h3>Your itineraries will appear here.</h3><p>Plan your trip in your conversation with WalletFreak. Your findings open here when they are ready.</p><button type="button" id="open-wallet">Add your cards & points →</button></div>
+<div id="result-content" hidden>
+<div id="brief"></div><div class="actions"><button id="export" class="quiet">Download trip file</button><button id="delete-results" class="quiet danger">Delete these results</button></div>
+<h3>Your itinerary</h3><p class="muted">A proposed plan, with flights, stays and activities together. Nothing is reserved.</p><ol id="itinerary" class="timeline"></ol>
+<h3>Explore your options</h3><div class="filters"><label>Search findings<input id="search" type="search" placeholder="Provider, route, room, restriction…"></label><label>Type<select id="kind" aria-label="Type"><option value="">All types</option><option>flight</option><option>hotel</option><option>lounge</option><option>transport</option><option>other</option></select></label><label>Availability<select id="availability" aria-label="Availability"><option value="">All statuses</option><option>available</option><option>unavailable</option><option>waitlisted</option><option>blocked</option><option>unverified</option></select></label><label class="check"><input type="checkbox" id="shortlisted"> Shortlist only</label></div>
+<p id="count" class="muted" role="status"></p><div id="options" class="option-grid"></div><h3>Compare your shortlist</h3><div id="comparison" class="table-scroll"></div><div id="totals" class="note"></div><h3>Evidence & open questions</h3><div id="evidence"></div><ul id="gaps"></ul>
+<p class="muted">Download a standalone trip file to keep or delete whenever you like. Deleting results here keeps your wallet; downloaded copies are separate files.</p>
+</div></section>
+<section id="wallet" class="panel">
+<div class="section-heading"><h2>Wallet</h2><span class="muted">Self-reported · saved on this device</span></div>
+<div id="legacy-profile" class="note" hidden>A saved traveler profile is available. <button id="import-profile" type="button">Load existing wallet</button><span class="muted">Imports into an empty wallet; keeps the original file and report dates.</span></div>
+<div class="wallet-toolbar"><input id="wallet-search" type="search" aria-label="Search wallet" placeholder="Find a card, program, gift card or credit…"><span id="wallet-status" role="status"></span></div>
+<div id="wallet-conflict" class="note" hidden>Your saved wallet changed in another tab. Unsaved edits are still here. Copy anything you want to keep before reloading.</div>
+<form id="wallet-form">
+<div class="actions sheet-actions"><button type="submit" class="primary">Save wallet</button><button type="button" id="reload-wallet" class="quiet">Reload saved wallet</button><button type="button" id="delete-wallet" class="quiet danger">Delete personal wallet</button></div>
+<section><div class="section-heading"><h3>Cards</h3><button type="button" data-add="cards">+ Add card</button></div><div id="wallet-cards" class="sheet-scroll"></div></section>
+<section><div class="section-heading"><h3>Points, miles & status</h3><button type="button" data-add="programs">+ Add loyalty program</button></div><div id="wallet-programs" class="sheet-scroll"></div></section>
+<section><div class="section-heading"><h3>Gift cards, travel funds & benefits</h3><button type="button" data-add="benefits">+ Add asset</button></div><div id="wallet-benefits" class="sheet-scroll"></div></section>
+<label class="preferences">Travel & wallet preferences<textarea id="wallet-preferences" maxlength="4000" rows="2" placeholder="Airports, travel preferences and points you want to preserve…"></textarea></label>
+<p class="muted">Tab across cells; Enter moves down a column. Blank = unknown. Saving retains each reporting date. Put account passwords in Sign-ins; keep redemption codes out of wallet notes.</p>
+</form><details id="asset-guide"><summary>Asset ideas & official references</summary><div id="asset-catalog"></div></details>
+<datalist id="card-names"></datalist><datalist id="program-names"></datalist><datalist id="asset-names"></datalist>
+</section>
+<section id="credentials" class="panel" hidden>
+<div class="section-heading"><h2>Sign-ins</h2><button id="lock-vault" type="button" hidden>Lock vault</button></div>
+<p class="muted">Usernames and passwords are encrypted in a separate local vault. Unlocks expire after 15 minutes without vault changes. Keep your master password: it cannot be recovered. Saving a sign-in does not connect or log into the account.</p>
+<p id="vault-status" role="status"></p>
+<form id="vault-unlock" class="inline-form" hidden><label>Master password<input id="master-password" type="password" minlength="12" maxlength="1024" required autocomplete="off"></label><button id="unlock-vault" type="submit" class="primary">Unlock vault</button></form>
+<div id="vault-open" hidden><div id="vault-list" class="sheet-scroll"></div>
+<form id="credential-form" autocomplete="off">
+<input id="credential-id" type="hidden">
+<div class="credential-grid"><label>Provider<input id="credential-provider" list="provider-names" required maxlength="300" placeholder="United, Hilton, Amex or any provider"></label><label>Account label<input id="credential-label" maxlength="300" placeholder="Personal, household member…"></label><label>Username<input id="credential-username" required maxlength="300" autocomplete="off"></label><label>Password<input id="credential-password" type="password" required maxlength="4096" autocomplete="new-password"></label></div>
+<div class="actions"><button type="submit" class="primary">Save sign-in</button><button type="button" id="new-credential">New sign-in</button></div></form>
+</div><datalist id="provider-names"></datalist>
+</section>
+<section id="spending" class="panel" hidden>
+<div class="section-heading"><h2>Spending</h2><button id="references-refresh">Refresh</button></div>
+<div id="reference-drop" class="reference-drop"><strong>Drop statements here</strong><span>PDF or CSV · up to 20 MB each</span><button id="reference-choose" type="button">Choose files</button><input id="reference-files" type="file" accept=".pdf,.csv,application/pdf,text/csv" multiple hidden></div>
+<p id="reference-status" role="status" class="muted">Saved on this device. Ask your agent what you’d like to learn.</p>
+<div id="reference-list"></div><button id="reference-copy" type="button" hidden>Copy references for your agent</button>
+<p class="muted reference-privacy">Uploading saves a local copy; it does not start analysis. When you ask your agent to read it, your host’s model data handling applies.</p>
+<div id="spending-report"><p class="muted">Your metrics and findings will appear here.</p></div>
+
+<details id="spend-advanced"><summary>Transaction spreadsheet (CSV)</summary>
+<div class="section-heading"><h3>Transaction spreadsheet</h3><div class="actions"><button id="spend-reload">Reload spending</button><a href="/api/spending/transactions.csv" download>Download transactions CSV</a><a href="/api/spending/summary.csv" download>Download category totals CSV</a><button id="spend-delete" class="danger">Delete spending</button></div></div>
+<p class="muted">Download activity from your bank, then import it here. Files are processed on this device. No bank credentials required. This is a local spending ledger, not a tax report.</p>
+<details id="spend-import-panel"><summary>Import downloaded activity</summary><form id="spend-import-form">
+<div class="credential-grid"><label>Bank<select id="spend-bank"><option>Chase</option><option>Citi</option><option>Capital One</option><option>Amex</option><option>Other bank</option></select></label><label>Account alias<input id="spend-account" required maxlength="300" placeholder="Sapphire personal · avoid full account numbers"></label><label>Default currency<input id="spend-currency" value="USD" pattern="[A-Za-z]{3}" required maxlength="3"></label><label>Purchases in this CSV<select id="spend-sign"><option value="negative">Negative amounts (typical Chase card export)</option><option value="positive">Positive amounts (typical Amex card export)</option></select></label></div>
+<p class="muted">Check one known purchase against the preview. Debit/Credit columns override the sign setting. Dates must include a year: YYYY-MM-DD or US month/day/year. Amounts support up to two decimal places.</p>
+<label>Activity CSV<input type="file" id="spend-file" accept=".csv,text/csv" required></label><p class="muted">One account per import, up to 10,000 transactions in the ledger and 1.2 MB per file. PDF, scanned and Excel statements need conversion and reconciliation first; the Spending skill includes bank-specific guides. Original downloads are not stored by this app.</p>
+<div id="spend-mapping" class="credential-grid"></div><div class="actions"><button type="submit">Preview import</button><button type="button" id="spend-template">Download CSV template</button></div></form>
+<p id="spend-preview-note" role="status"></p><div id="spend-preview" class="sheet-scroll"></div><button id="spend-confirm" hidden>Add preview to ledger</button></details>
+<div class="filters"><label>Search transactions<input id="spend-search" type="search" placeholder="Merchant, category, account…"></label><label>Review state<select id="spend-filter"><option value="">All transactions</option><option>needs-review</option><option>approved</option><option>excluded</option></select></label><label>Month<input id="spend-month" type="month"></label></div>
+<div class="actions"><button id="spend-save">Save row edits</button><button id="spend-approve">Approve this page</button><span id="spend-count" role="status"></span></div><p class="muted">Positive = money out; negative = money in. Confirm each category and transaction type. “Approve this page” skips unknown types and possible duplicates. Payments, transfers and income are excluded from spending totals. Refunds reduce spending in the month received.</p>
+<div id="spend-table" class="sheet-scroll"></div><div class="actions"><button id="spend-prev">Previous page</button><button id="spend-next">Next page</button></div>
+<h3>Monthly category totals</h3><p class="muted">Approved expenses minus approved refunds, grouped by currency. Totals cover the complete ledger; search and page filters apply only to the transaction table.</p><div id="spend-totals" class="sheet-scroll"></div>
+</details>
+</section>
+
+<section id="plugins" class="panel" hidden><div class="section-heading"><h2>Plugins & skills</h2><input id="skill-search" type="search" aria-label="Search plugins and skills" placeholder="Find a capability…"></div><p id="plugin-note" class="muted"></p><div id="plugin-list"></div></section>
+</main><footer>Your local workspace. Review spending classifications and current travel terms before acting. You make the final booking.</footer>
+</body></html>

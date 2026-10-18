@@ -1,7 +1,7 @@
 {
   "name": "walletfreak",
-  "version": "0.2.0+codex.20261017221236",
-  "description": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser.",
+  "version": "0.3.0+codex.20261018183247",
+  "description": "Plan trips, choose cards and redemptions from your wallet, and explore itineraries in a private local viewer.",
   "author": {
     "name": "WalletFreak contributors"
   },
@@ -15,19 +15,22 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "WalletFreak \u00b7 Travel core",
-    "shortDescription": "Travel research with optional cards, points and preferences profiles.",
-    "longDescription": "Shared trip intake, optional self-reported traveler profiles, travel comparison, setup and one browser. Users sign in and book themselves.",
+    "displayName": "WalletFreak",
+    "shortDescription": "One travel toolkit. Your own local trip dashboard.",
+    "longDescription": "Plan trips, choose cards and redemptions from your wallet, and explore itineraries in a private local viewer.",
     "developerName": "WalletFreak",
     "category": "Productivity",
     "capabilities": [
       "Interactive"
     ],
     "defaultPrompt": [
-      "Help me research travel with Travel core.",
-      "Help me fill in my cards, points balances and travel preferences."
+      "Plan a trip with flexible dates and show my local trip board.",
+      "Open my personal wallet to enter my cards and loyalty balances.",
+      "Choose the best card or points redemption from my wallet using current quotes and offers."
     ],
-    "brandColor": "#167347"
+    "brandColor": "#0788D9",
+    "composerIcon": "./assets/mascot.png",
+    "logo": "./assets/mascot.png"
   },
   "mcpServers": "./.mcp.json"
 }

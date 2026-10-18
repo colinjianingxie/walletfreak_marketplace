@@ -1,0 +1,33 @@
+---
+name: trip-board
+description: "Display WalletFreak research as a private local results viewer with itinerary components, searchable findings, comparisons and downloadable trip files. Open the editable personal wallet for cards, loyalty balances, status, credits and certificates."
+---
+
+# Trips and personal wallet
+
+The browser is a results viewer and personal wallet, not an agent interface. Trip intake, research requests, clarifications and sign-in coordination belong in the host conversation. There is no request queue, chat, Research button or account-connect workflow in the dashboard. Use [travel-plan](../travel-plan/SKILL.md) for new research; rendering supplied findings needs no account access.
+
+Resolve the plugin root from this installed skill. Run `python3 <plugin>/scripts/local.py start` and return its private local link. The access key is private; the loopback link works only on the machine running the server. Opening the viewer does not trigger research or a wallet balance prompt.
+
+## Publish results from the conversation
+
+1. Read the [example](assets/example-trip.json) and [data contract](references/data.md). Produce sanitized findings for the requested trip. Include itinerary entries linked to flight, hotel, transport or lounge option IDs, plus dated activities. State local time zones in schedule text and preserve input order. Display the proposed itinerary immediately without requiring users to select options first. For every purchase, include its payment card, reason and benefit-usage ledger as defined in the data contract. Show planned, used, not-used, conditional or unavailable; used requires dated evidence or a dated user report. Missing card details stay To confirm, and selections never spend benefits.
+2. Run `local.py publish --input <private-json-file>` or `--input -` with `{"findings": {...}}`. It saves a new result and returns its id/revision. This command only publishes data; it does not start research. Return the private viewer link and a concise recommendation.
+3. To refresh an existing result, run `local.py status`, then publish `{"id":"<id>","expected_revision":<revision>,"findings":{...}}`. Full snapshots must retain selected/shortlisted options; mark stale options appropriately. Concurrent edits or deleted results reject the update. Never recreate deleted results unless the user asks to create a new result.
+4. Use only sanitized display data: no owner identities, account balances, credentials, account/card numbers, confirmation codes or private URLs. Public HTTPS source links are required; query strings/fragments are stripped, but remove sensitive path segments and free text yourself. Publishing results does not authorize copying the personal wallet into an export.
+
+All research stays in the active conversation. Closing the host does not start background work. The viewer keeps existing results available while its local server runs; it cannot send work to the agent or refresh inventory.
+
+## Personal wallet
+
+The Wallet tab lets users add/edit/remove cards, loyalty programs, approximate points/miles, status, owner aliases, preservation preferences, gift cards, TravelBank/stored funds, airline credits, certificates, upgrades, companion awards, lounge visits and reporting/expiry dates. It uses compact editable tables with search and keyboard navigation. Saving explicitly stores their entries locally. Blank balances/dates remain unknown; never automatically date facts, infer a live balance or deduct proposed spending. Follow [traveler-profile](../traveler-profile/SKILL.md) for optional reuse and one balance check per planning session. `local.py wallet` reads the saved wallet without starting the server; use only when relevant to the user's request. `status` omits wallet contents.
+
+The Load existing wallet action imports a supported legacy traveler-profile.md only into an empty wallet and leaves the original unchanged. Sign-ins uses a separate browser-only encrypted vault, not wallet.json. Do not read credentials or automate that form; saving is not an account connection. Plugins & skills provides a lightweight read-only local skill browser.
+
+## Keep or delete
+
+Results are in `~/.walletfreak/local/results.json`; the separate wallet is `~/.walletfreak/local/wallet.json` (or the dedicated WALLETFREAK_DATA directory). Delete these results removes only the displayed result. Delete personal wallet removes only wallet.json. Files are private local plain text, not an encrypted vault. Manually deleting results.json clears results on the next refresh without affecting wallet.json. Downloaded files and prior conversation history are independent copies.
+
+Download trip file exports standalone HTML containing the research itinerary, saved shortlist and comparison selections/subtotals, never the wallet. Users may keep or delete that file later; it works without the server. For an explicitly requested standalone board, run `python3 <this-skill>/scripts/render_board.py <sanitized-trip.json> <output>/index.html`; existing output requires intentional --overwrite. Offline filters/shortlists are temporary. Public hosting needs a separate user request. The fictional example is only for development or a requested demo.
+
+Check option counts, filters, evidence links, itinerary components, costs, dates/time zones and unresolved gaps. Available means at observation, never guaranteed now. No booking, polling or automatic balance changes.

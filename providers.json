@@ -6,10 +6,13 @@
     "programs": [
       "Marriott Bonvoy"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "marriott-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "marriott-research",
+    "guide": "skills/provider-research/references/marriott.md",
+    "url": "https://www.marriott.com/"
   },
   {
     "id": "hilton",
@@ -18,10 +21,13 @@
     "programs": [
       "Hilton Honors"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "hilton-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "hilton-research",
+    "guide": "skills/provider-research/references/hilton.md",
+    "url": "https://www.hilton.com/"
   },
   {
     "id": "hyatt",
@@ -30,10 +36,13 @@
     "programs": [
       "World of Hyatt"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "hyatt-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "hyatt-research",
+    "guide": "skills/provider-research/references/hyatt.md",
+    "url": "https://www.hyatt.com/"
   },
   {
     "id": "ihg",
@@ -42,10 +51,13 @@
     "programs": [
       "IHG One Rewards"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "ihg-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "ihg-research",
+    "guide": "skills/provider-research/references/ihg.md",
+    "url": "https://www.ihg.com/"
   },
   {
     "id": "accor",
@@ -54,10 +66,13 @@
     "programs": [
       "ALL Accor"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "accor-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "accor-research",
+    "guide": "skills/provider-research/references/accor.md",
+    "url": "https://all.accor.com/"
   },
   {
     "id": "wyndham",
@@ -66,10 +81,13 @@
     "programs": [
       "Wyndham Rewards"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "wyndham-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "wyndham-research",
+    "guide": "skills/provider-research/references/wyndham.md",
+    "url": "https://www.wyndhamhotels.com/"
   },
   {
     "id": "choice",
@@ -78,10 +96,13 @@
     "programs": [
       "Choice Privileges"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "choice-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "choice-research",
+    "guide": "skills/provider-research/references/choice.md",
+    "url": "https://www.choicehotels.com/"
   },
   {
     "id": "best-western",
@@ -90,10 +111,13 @@
     "programs": [
       "Best Western Rewards"
     ],
-    "plugin": "walletfreak-hotels",
-    "skill": "best-western-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "best-western-research",
+    "guide": "skills/provider-research/references/best-western.md",
+    "url": "https://www.bestwestern.com/"
   },
   {
     "id": "american",
@@ -102,10 +126,13 @@
     "programs": [
       "AAdvantage"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "american-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "american-research",
+    "guide": "skills/provider-research/references/american.md",
+    "url": "https://www.aa.com/"
   },
   {
     "id": "delta",
@@ -114,10 +141,13 @@
     "programs": [
       "SkyMiles"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "delta-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "delta-research",
+    "guide": "skills/provider-research/references/delta.md",
+    "url": "https://www.delta.com/"
   },
   {
     "id": "united",
@@ -126,10 +156,13 @@
     "programs": [
       "MileagePlus"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "united-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "united-research",
+    "guide": "skills/provider-research/references/united.md",
+    "url": "https://www.united.com/"
   },
   {
     "id": "southwest",
@@ -138,10 +171,13 @@
     "programs": [
       "Rapid Rewards"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "southwest-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "southwest-research",
+    "guide": "skills/provider-research/references/southwest.md",
+    "url": "https://www.southwest.com/"
   },
   {
     "id": "jetblue",
@@ -150,10 +186,13 @@
     "programs": [
       "TrueBlue"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "jetblue-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "jetblue-research",
+    "guide": "skills/provider-research/references/jetblue.md",
+    "url": "https://www.jetblue.com/"
   },
   {
     "id": "alaska-hawaiian",
@@ -164,10 +203,13 @@
       "Mileage Plan (legacy)",
       "HawaiianMiles (legacy)"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "alaska-hawaiian-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "alaska-hawaiian-research",
+    "guide": "skills/provider-research/references/alaska-hawaiian.md",
+    "url": "https://www.alaskaair.com/"
   },
   {
     "id": "air-canada",
@@ -176,10 +218,13 @@
     "programs": [
       "Aeroplan"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "air-canada-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "air-canada-research",
+    "guide": "skills/provider-research/references/air-canada.md",
+    "url": "https://www.aircanada.com/"
   },
   {
     "id": "british-airways",
@@ -190,10 +235,13 @@
       "Avios",
       "Executive Club (legacy)"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "british-airways-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "british-airways-research",
+    "guide": "skills/provider-research/references/british-airways.md",
+    "url": "https://www.britishairways.com/"
   },
   {
     "id": "iberia",
@@ -204,10 +252,13 @@
       "Avios",
       "Iberia Plus (legacy)"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "iberia-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "iberia-research",
+    "guide": "skills/provider-research/references/iberia.md",
+    "url": "https://www.iberia.com/"
   },
   {
     "id": "air-france-klm",
@@ -216,10 +267,13 @@
     "programs": [
       "Flying Blue"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "air-france-klm-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "air-france-klm-research",
+    "guide": "skills/provider-research/references/air-france-klm.md",
+    "url": "https://www.airfrance.com/"
   },
   {
     "id": "lufthansa-group",
@@ -228,10 +282,13 @@
     "programs": [
       "Miles & More"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "lufthansa-group-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "lufthansa-group-research",
+    "guide": "skills/provider-research/references/lufthansa-group.md",
+    "url": "https://www.lufthansa.com/"
   },
   {
     "id": "emirates",
@@ -240,10 +297,13 @@
     "programs": [
       "Emirates Skywards"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "emirates-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "emirates-research",
+    "guide": "skills/provider-research/references/emirates.md",
+    "url": "https://www.emirates.com/"
   },
   {
     "id": "qatar",
@@ -253,10 +313,13 @@
       "Privilege Club",
       "Avios"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "qatar-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "qatar-research",
+    "guide": "skills/provider-research/references/qatar.md",
+    "url": "https://www.qatarairways.com/"
   },
   {
     "id": "singapore",
@@ -265,10 +328,13 @@
     "programs": [
       "KrisFlyer"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "singapore-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "singapore-research",
+    "guide": "skills/provider-research/references/singapore.md",
+    "url": "https://www.singaporeair.com/sg/en/plan-travel/destinations/"
   },
   {
     "id": "ana",
@@ -277,10 +343,13 @@
     "programs": [
       "ANA Mileage Club"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "ana-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "ana-research",
+    "guide": "skills/provider-research/references/ana.md",
+    "url": "https://www.ana.co.jp/en/us/"
   },
   {
     "id": "jal",
@@ -289,10 +358,13 @@
     "programs": [
       "JAL Mileage Bank"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "jal-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "jal-research",
+    "guide": "skills/provider-research/references/jal.md",
+    "url": "https://www.jal.co.jp/"
   },
   {
     "id": "cathay-pacific",
@@ -302,10 +374,13 @@
       "Cathay",
       "Asia Miles"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "cathay-pacific-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "cathay-pacific-research",
+    "guide": "skills/provider-research/references/cathay-pacific.md",
+    "url": "https://www.cathaypacific.com/"
   },
   {
     "id": "qantas",
@@ -314,10 +389,13 @@
     "programs": [
       "Qantas Frequent Flyer"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "qantas-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "qantas-research",
+    "guide": "skills/provider-research/references/qantas.md",
+    "url": "https://www.qantas.com/"
   },
   {
     "id": "turkish",
@@ -326,10 +404,13 @@
     "programs": [
       "Miles&Smiles"
     ],
-    "plugin": "walletfreak-flights",
-    "skill": "turkish-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "turkish-research",
+    "guide": "skills/provider-research/references/turkish.md",
+    "url": "https://www.turkishairlines.com/"
   },
   {
     "id": "capital-one-travel",
@@ -340,10 +421,13 @@
       "Premier Collection",
       "Lifestyle Collection"
     ],
-    "plugin": "walletfreak-credit-cards",
-    "skill": "capital-one-travel-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "capital-one-travel-research",
+    "guide": "skills/provider-research/references/capital-one-travel.md",
+    "url": "https://travel.capitalone.com/"
   },
   {
     "id": "amex-travel",
@@ -354,10 +438,13 @@
       "Fine Hotels + Resorts",
       "The Hotel Collection"
     ],
-    "plugin": "walletfreak-credit-cards",
-    "skill": "amex-travel-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "amex-travel-research",
+    "guide": "skills/provider-research/references/amex-travel.md",
+    "url": "https://www.americanexpress.com/en-us/travel/"
   },
   {
     "id": "chase-travel",
@@ -368,10 +455,13 @@
       "The Edit",
       "Points Boost"
     ],
-    "plugin": "walletfreak-credit-cards",
-    "skill": "chase-travel-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "chase-travel-research",
+    "guide": "skills/provider-research/references/chase-travel.md",
+    "url": "https://www.chase.com/travel"
   },
   {
     "id": "citi-travel",
@@ -382,9 +472,12 @@
       "Hotel Collection",
       "Luxury Collection"
     ],
-    "plugin": "walletfreak-credit-cards",
-    "skill": "citi-travel-research",
-    "version": "0.2.0",
-    "verification": "authored"
+    "plugin": "walletfreak",
+    "skill": "provider-research",
+    "version": "0.3.0",
+    "verification": "authored",
+    "legacySkill": "citi-travel-research",
+    "guide": "skills/provider-research/references/citi-travel.md",
+    "url": "https://www.citi.com/citi-partner/cititravel/login"
   }
 ]

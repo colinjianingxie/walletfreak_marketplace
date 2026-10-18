@@ -1,4 +1,58 @@
-# Validation record — 0.2.0
+# Validation record
+
+## Statement references and minimal workspace — 2026-10-18
+
+40 Python tests pass, including private PDF/CSV storage, signature checks, duplicate copies, rollback, path/symlink checks, sourced metrics, stale revisions and enabled WalletFreak-only plugin filtering. Chrome verifies drag/drop, private references, agent CLI publication, live metrics, downloads, removal and responsive layouts with fictional statements. Original downloads are untouched. The CSV spreadsheet remains available under a collapsed section. Public workspace and itinerary demos use synthetic content only.
+
+## Local wallet, credentials, payment results and Spending — 2026-10-18
+
+35 Python tests pass, covering the profile importer, encrypted browser-only credential vault, wallet asset types, payment-card/benefit result schema, spending bank-shaped CSV fixtures, Decimal totals, malformed imports, duplicate handling, revision conflicts, formula-safe CSV exports and independent deletion. Bank fixtures are synthetic supported shapes; no customer statements or real account login were used as fixtures.
+
+Chrome dashboard tests pass for the compact wallet, asset entry, card images, vault create/unlock/lock/replace/delete, installed skill browsing, payment/benefit itineraries, cross-tab conflicts, private exports, deletion and restart. Spending browser checks pass for preview/import, editable classification, reviewed totals, repeated files and overlap detection, exports, browser-only authorization, revision conflicts and deletion. Four viewport widths (320/390/768/1440) have no document overflow; desktop spending, mobile wallet and public-site layouts were visually reviewed. Direct spending use made no external requests.
+
+Both plugin manifests, all nine skills and Claude marketplace validate. A fresh native Codex app-server discovers eight core skills plus walletfreak-spending:spending-analysis. Reinstalled versions 0.3.0+codex.20261018181640 and 0.1.0+codex.20261018181640 match all staged package files byte for byte. The saved legacy wallet was imported into an empty local wallet without changing its original Markdown file or reporting dates. Public-site tests (4), production build and Chrome tests pass. The new package supplies spending-analysis and five bank/format references; core hosts the shared local sheet, so there is still one server and one browser MCP.
+
+Limits: automatic account login/SMS reading, universal PDF/OCR transaction parsing and XLSX workbook export are not implemented. CSVs open in Excel; PDF extraction requires local tools and reconciliation. Real bank export variants and live provider inventory remain unverified. Credentials encrypt locally; wallet, ledger and downloaded files are plaintext local data. Agent-assisted analysis can use the host/model provider. No public deployment or source push is part of this change.
+
+
+## Wallet optimizer — 2026-10-18
+
+Added the eighth skill, wallet-optimizer, within the same single plugin. It selects existing payment cards and redemption routes using current official terms/quotes, explicit point valuations, ownership, transfer increments, benefits and user preservation preferences. Travel-plan and card-travel-benefits route relevant decisions to it; browser results remain output-only.
+
+The official skill/plugin validators, all 19 Python tests and four website tests passed; the site production build passed. Added four synthetic behavior scenarios for earning break-even, a cash-only credit, transfer rounding and uncertain current offers. Their mathematical expectations were checked locally; these are evaluation prompts, not a claim of executed end-to-end model behavior or live issuer verification.
+
+
+## Results viewer and personal wallet — 2026-10-18
+
+Replaced dashboard intake, queued requests, claims/heartbeats and account-connect controls with direct, revision-checked result publication from the host conversation. Added independently saved/deletable personal wallet entries and itinerary components that display immediately. Previous validation below is historical and includes controls that have now been removed.
+
+- All 19 Python tests passed, including wallet validation/unknowns, cross-tab revisions, atomic save failure, separate wallet/results deletion, manual file deletion without resurrection, old-state migration, export privacy and HTTP authentication/origin/path restrictions.
+- Chrome exercised result publication, flight/stay/activity itinerary components, wallet CRUD and bundled card artwork, save conflicts, selections, search, download, stale publication rejection, independent deletion and server restart with fictional data only.
+- Responsive checks passed at 320, 390, 768 and 1440px. Mobile and desktop itinerary and wallet screenshots were inspected.
+- Official Codex plugin validation, all seven skill validators, and native Claude package/marketplace validation passed.
+- The public website's four tests and production build passed after replacing trip-form messaging with conversational planning and the separate personal wallet.
+
+Not rerun for this change: live provider sign-in, Windows runtime, or the unchanged browser MCP wrapper's native navigation suite. No remote publication or deployment.
+
+## Historical: 0.3.0 unified plugin — 2026-10-18
+
+One package, seven skills and 31 provider references. The existing unpublished profile/balance and trip-board work was retained during consolidation. No private travel/account data was used in these checks.
+
+- All 18 Python tests passed: package coverage/portability, calculator, export validation/escaping, brief revisions, leases/resume/cancellation, exact currency totals, selection preservation, account evidence, private storage, locking and HTTP authentication/origin/path boundaries.
+- The official Codex plugin validator and all seven skill validators passed; native Claude marketplace validation passed.
+- Native Claude package validation also passed. Installed Codex 0.3.0+codex.20261018171303 passed fresh app-server discovery of all seven skills, 22 browser tools and an actual navigate/close against the local website. Codex uses a plugin-relative working directory; Claude uses its plugin-root placeholder. The wrapper permits discovery connections and acquires exclusive ownership before browser use. Native Claude runtime browsing has not been retested for this release.
+- Dashboard Chrome checks passed at 320, 390, 768 and 1440px: guided form, queued research, agent updates, persistent shortlist/itinerary, conflicting alternatives, search, export, account requests, remembered-session settings, logo decoding and service restart. Desktop and mobile screenshots were reviewed.
+- Portable exports passed file/HTTP use, filters, temporary shortlist, itinerary links, no-JavaScript fallback and four viewport checks.
+- The pinned Playwright MCP passed real Chrome startup/tool discovery, temporary-session isolation, remembered-session reuse, concurrent browser-use rejection and forget-all. This used only a synthetic cookie on loopback, never a travel account.
+- The companion website passed four unit tests, production build and browser checks including the public demo under its real hosting CSP. All 31 provider logos and 149 historical card images decode; the artwork records and the original mascot were restored with provenance.
+
+Reproduce with `python3 -m unittest discover -s tests -v`. Browser checks: `PLAYWRIGHT_MODULE=/path/to/playwright node tests/dashboard-browser.cjs` and `node tests/trip-board-browser.cjs` with the same environment; use `CHROME_PATH` for another Chrome installation. `python3 tests/browser-mcp-smoke.py` is an opt-in integration check that opens real dedicated Chrome windows, using temporary data. The dashboard and MCP require local process/socket permissions.
+
+Not established by these checks: live authenticated provider search/eligibility, Windows behavior, current issuer card artwork, or production publication. Password storage/autofill and automatic SMS retrieval are deferred; sign-in and verification remain user-operated on official pages. The dashboard requires an active agent for queued work. Existing provider verification stages are unchanged.
+
+The records below describe earlier versions and are retained as history, not current package structure.
+
+## Historical 0.2.0 validation
 
 Checked locally on 2026-10-17. This version replaces individual provider packages with three categories; the required core retains planning, setup and one browser. Package validation is not certification of live prices or account benefits.
 
@@ -139,3 +193,16 @@ Resume public searches in an interactive host that can request normal browser ap
 - Marketplace publication, release tagging, remote-link verification and website deployment are separate, unperformed actions. No remote refs were created.
 
 The separate website passed its unit tests, production build and Chrome checks at 320, 390, 768 and 1440px, including installation controls and no external/Firebase application requests. Its own `VALIDATION.md` records migration and hosting evidence. See [acceptance instructions](ACCEPTANCE.md) before declaring a fully validated release.
+
+## Startup balances and trip board — 2026-10-17
+
+The core now requests one self-reported balance confirmation at the start of each travel session, including provider-first entry, while handoffs reuse the result. This is a skill-entry workflow, not an app-launch hook. Added `walletfreak-trip-board` to both catalogs and category discovery, with a standard-library Python renderer and portable HTML/CSS/JS.
+
+- All 12 Python tests passed, covering packaging, isolated resources, financial arithmetic, input validation, escaped untrusted content, unsafe URLs, session-query removal, unknown prices and safe output replacement.
+- All five Codex manifests and 37 skill frontmatter files passed the bundled validators. Claude validated the marketplace and new plugin.
+- Chrome tests passed from disk and local HTTP at 320, 390, 768 and 1440px: search, type/status filters, shortlist, itinerary links revealing filtered options, reload and no-JavaScript fallback. No JavaScript/CSP errors or external requests. Desktop/mobile screenshots were visually inspected.
+- Example data is fictional and prominently labeled. No real wallet data, account access, provider search or publication was involved.
+- Fresh-model execution of the startup-balance and trip-board behavior scenarios remains unrun; renderer tests do not establish agent instruction-following.
+
+- Refreshed all four existing Codex plugins and installed `walletfreak-trip-board` from the existing local marketplace. CLI listing confirms all five enabled. Each installed file matches its source, and the installed board renderer generated the demo. Start a new conversation to load these updated skills. No remote push or deployment was performed.
+- The separate website synchronized its category catalog and added the Trip board installation choice without putting it in the provider filters. All four website unit tests and the production build passed. Its existing Chrome suite passed at four widths, including Trip board selection, both host command sets, clipboard paths, links and no external/Firebase requests. Browser checks used an identical temporary copy of the built site because Desktop-backed module/server reads stalled.

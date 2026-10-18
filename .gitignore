@@ -7,3 +7,10 @@ node_modules/
 .artifacts/
 playwright-mcp/
 .playwright-mcp/
+
+# Private local runtime files must never enter a release.
+**/credentials.enc.json
+**/wallet.json
+**/results.json
+**/spending.json
+**/documents.json
