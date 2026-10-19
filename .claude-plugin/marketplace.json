@@ -14,8 +14,13 @@
       "version": "0.4.0"
     },
     {
-      "name": "walletfreak-finance",
-      "source": "./plugins/walletfreak-finance",
+      "name": "walletfreak-credit-cards",
+      "source": "./plugins/walletfreak-credit-cards",
+      "version": "0.3.0"
+    },
+    {
+      "name": "walletfreak-spending",
+      "source": "./plugins/walletfreak-spending",
       "version": "0.1.0"
     },
     {

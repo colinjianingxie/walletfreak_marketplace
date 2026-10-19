@@ -22,8 +22,8 @@ Before publication, commit and publish the matching marketplace release, verify 
 
 ## Spending extension
 
-The marketplace now has three focused packages: walletfreak retains the eight travel/wallet skills and the single local runtime; walletfreak-finance supplies spending-analysis and bank-specific guides. The core server owns the separate spending.json ledger and browser-only CSV APIs. This keeps one workspace, one browser MCP and no duplicated server. No per-bank plugins are needed. Direct browser imports never invoke a model; agent-assisted document interpretation follows host data handling.
+The marketplace has four focused packages. Travel retains the single local runtime, and Spending supplies spending-analysis and bank-specific guides. The core server owns the separate spending.json ledger and browser-only CSV APIs. This keeps one workspace, one browser MCP and no duplicated server. Direct browser imports never invoke a model; agent-assisted document interpretation follows host data handling.
 
 ## Current package split
 
-Travel (`walletfreak`) owns the local runtime, private wallet, confirmation import and visual itineraries. Finance (`walletfreak-finance`) supplies statement analysis and category/month chart guidance. Shopping (`walletfreak-shopping`) supplies sourced deal research. These are three installable packages with one local workspace. The public workspace demo uses the same timeline and chart scripts as the local dashboard.
+Travel (`walletfreak`) owns the local runtime, provider research and visual itineraries. Credit Cards (`walletfreak-credit-cards`) supplies profile, card-benefit, wallet-optimization and balance-sync skills. Spending (`walletfreak-spending`) supplies statement analysis and category/month chart guidance. Shopping (`walletfreak-shopping`) supplies sourced deal research. Four installable packages share one private local workspace.

@@ -14,7 +14,7 @@
   {
     "id": "credit-cards",
     "name": "Credit cards",
-    "plugin": "walletfreak",
+    "plugin": "walletfreak-credit-cards",
     "description": "Lounge access tracker, Hilton Aspire/Surpass and other card benefits, plus four travel portals."
   },
   {

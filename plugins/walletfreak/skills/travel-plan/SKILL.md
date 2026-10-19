@@ -5,17 +5,17 @@ description: "Plan trips with WalletFreak: guided dates/destinations intake, fli
 
 # Travel planning
 
-Read the [intake guide](references/intake.md), [research contract](references/research.md) and [browser boundaries](references/browser.md). All eight skills and all 31 provider guides are included in the single WalletFreak plugin.
+Read the [intake guide](references/intake.md), [research contract](references/research.md) and [browser boundaries](references/browser.md). All 31 provider guides are in WalletFreak Travel. Card-specific skills are in the optional WalletFreak Credit Cards plugin.
 
 ## Start with the user's trip
 
-Reuse trip facts supplied in the conversation. Run the [traveler profile](../traveler-profile/SKILL.md) startup balance check once per planning session. A cash-only choice, skipped wallet intake or balances supplied in the opening request complete it. Optional unanswered profile questions do not block public research; do not treat silence as confirmation or assume a saved balance is current. Displaying trip results does not authorize saving a separate traveler profile.
+Reuse trip facts supplied in the conversation. When Credit Cards is installed, run its `traveler-profile` startup balance check once per planning session. A cash-only choice, skipped wallet intake or balances supplied in the opening request complete it. Optional unanswered profile questions do not block public research; do not treat silence as confirmation or assume a saved balance is current. Displaying trip results does not authorize saving a separate traveler profile.
 
 Gather only essential gaps; show the route, dates and exact flexibility, duration, travelers/rooms, budget currency/basis, priorities and assumptions. Keep intake and follow-up questions in the conversation; the dashboard displays results and the optional personal wallet.
 
 ## Research and compare
 
-Load [provider-research](../provider-research/SKILL.md) and only the matching provider references. Use the one existing browser; no separate plugin installation is needed. Use [card-travel-benefits](../card-travel-benefits/SKILL.md) for exact card eligibility and shared credit allocations, and [lounge-access](../lounge-access/SKILL.md) when lounges matter.
+Load [provider-research](../provider-research/SKILL.md) and only the matching provider references. Use the one existing browser. When Credit Cards is installed, use `card-travel-benefits` for exact card eligibility and shared credit allocations; use [lounge-access](../lounge-access/SKILL.md) when lounges matter.
 
 Keep equivalent products and complete party/stay totals. Preserve unknown charges, blocked access and unavailable inventory. Rank only verified comparable options. Sources must establish dates, fare/room, full party, fees and cancellation terms. Check official terms each time; guidance is not live inventory certification.
 
@@ -25,7 +25,7 @@ This fictional example returns 1.6 US cents/point. Use final quoted miles once, 
 
 Show gross payable cost first. Conditional statement credits, property benefits, upgrades and future earnings remain separate. Allocate shared credits once across the selected itinerary; alternative options are mutually exclusive. Do not subtract planned spending from saved balances.
 
-Use [wallet-optimizer](../wallet-optimizer/SKILL.md) when choosing which existing card to pay with or which points/certificates to redeem. Reuse these quotes and the completed benefit ledger; compare feasible current value and the user’s priorities without repeating intake.
+When Credit Cards is installed, use `wallet-optimizer` when choosing which existing card to pay with or which points/certificates to redeem. Reuse these quotes and the completed benefit ledger; compare feasible current value and the user’s priorities without repeating intake.
 
 ## Deliver and resume
 

@@ -10,7 +10,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  try{
   const url=cli('start','--port','0');browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
   const page=await browser.newPage({viewport:{width:390,height:900}});page.setDefaultTimeout(10000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(url);await page.getByRole('button',{name:'Wallet',exact:true}).click();await page.locator('#setup-wallet').click();await page.locator('#setup-name').fill('Alex');await page.locator('#setup-next').click();
+  await page.goto(url);await page.getByRole('button',{name:'Credit Cards',exact:true}).click();await page.locator('#setup-wallet').click();await page.locator('#setup-name').fill('Alex');await page.locator('#setup-next').click();
   await page.locator('#wallet-setup [data-setup-add=cards]').click();await page.locator('#wallet-setup [data-field=name]').fill('Chase Sapphire Preferred Card');await page.locator('#setup-next').click();
   await page.getByRole('button',{name:'Add Chase Ultimate Rewards',exact:true}).click();await page.locator('#wallet-setup [data-field=balance]').fill('42000');await page.locator('#wallet-setup [data-field=member_hint]').fill('1234');
   for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`/tmp/wf-guided-${width}.png`,fullPage:true});}
@@ -29,7 +29,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const detail=page.locator('#overview-content .wf-trip details').first();await detail.locator('summary').click();await page.locator('#overview-reload').click();assert.equal(await detail.getAttribute('open'),'');
   // Upload an archive through the same file control the user sees, then extract via the agent CLI.
   const zip=join(data,'statements.zip');execFileSync('python3',['-c',"import zipfile,sys\nwith zipfile.ZipFile(sys.argv[1],'w') as z: z.writestr('October/example.pdf',b'%PDF-1.4\\nsynthetic')",zip]);
-  await page.getByRole('button',{name:'Finance',exact:true}).click();await page.locator('#reference-files').setInputFiles(zip);await page.getByText('Saved locally. Ask your agent to analyze these references and show the findings here.',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Spending',exact:true}).click();await page.locator('#reference-files').setInputFiles(zip);await page.getByText('Saved locally. Ask your agent to analyze these references and show the findings here.',{exact:true}).waitFor();
   let refs=JSON.parse(cli('references'));assert.equal(refs.files.length,1);execFileSync('python3',[script,'extract-references','--input','-'],{env,input:JSON.stringify({id:refs.files[0].id,expected_revision:refs.revision})});refs=JSON.parse(cli('references'));assert.equal(refs.files.length,2);assert.equal(refs.files[1].member,'October/example.pdf');await page.locator('#references-refresh').click();await page.getByText('From statements.zip / October/example.pdf',{exact:true}).waitFor();
   assert.deepEqual(errors,[]);console.log('Passed full mobile setup, cancel rollback, account sign-in linkage, single-trip overview, refresh preservation and ZIP UI/agent extraction.');
  }finally{if(browser)await browser.close();try{cli('stop');}catch{}rmSync(data,{recursive:true,force:true});}

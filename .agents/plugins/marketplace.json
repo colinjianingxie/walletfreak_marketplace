@@ -17,10 +17,22 @@
       "category": "Productivity"
     },
     {
-      "name": "walletfreak-finance",
+      "name": "walletfreak-credit-cards",
       "source": {
         "source": "local",
-        "path": "./plugins/walletfreak-finance"
+        "path": "./plugins/walletfreak-credit-cards"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "walletfreak-spending",
+      "source": {
+        "source": "local",
+        "path": "./plugins/walletfreak-spending"
       },
       "policy": {
         "installation": "AVAILABLE",

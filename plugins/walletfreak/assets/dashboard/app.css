@@ -24,3 +24,37 @@
 .travel-costs{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}.travel-costs article{border:1px solid var(--border);border-radius:12px;padding:14px 18px;min-width:160px}.travel-costs strong{display:block;font-size:23px;color:var(--ink)}.travel-costs p{font-size:12px;color:var(--soft);max-width:340px}#brief .brief{border-radius:14px;background:#f8fbf7;padding:22px;border:1px solid var(--border)}#brief h3{font-size:clamp(25px,3vw,34px);letter-spacing:-.03em;margin:0 0 10px}
 
 .finance-track .finance-fill-0{width:0%}.finance-column .finance-fill-0{height:0%}.finance-track .finance-fill-1{width:10%}.finance-column .finance-fill-1{height:10%}.finance-track .finance-fill-2{width:20%}.finance-column .finance-fill-2{height:20%}.finance-track .finance-fill-3{width:30%}.finance-column .finance-fill-3{height:30%}.finance-track .finance-fill-4{width:40%}.finance-column .finance-fill-4{height:40%}.finance-track .finance-fill-5{width:50%}.finance-column .finance-fill-5{height:50%}.finance-track .finance-fill-6{width:60%}.finance-column .finance-fill-6{height:60%}.finance-track .finance-fill-7{width:70%}.finance-column .finance-fill-7{height:70%}.finance-track .finance-fill-8{width:80%}.finance-column .finance-fill-8{height:80%}.finance-track .finance-fill-9{width:90%}.finance-column .finance-fill-9{height:90%}.finance-track .finance-fill-10{width:100%}.finance-column .finance-fill-10{height:100%}
+
+/* Routed research views share one quiet shell; each domain keeps its own accent. */
+:root{--ink:#171d2b;--soft:#657083;--paper:#f9fafc;--border:#e2e6ee;--green:#5267e9;--blue:#5267e9}
+body{background:var(--paper);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body[data-view=wallet]{--green:#6857db;--blue:#6857db}
+body[data-view=spending]{--green:#087f84;--blue:#087f84}
+body[data-view=shopping]{--green:#b76532;--blue:#b76532}
+header{background:#f9fafcf0;border-bottom:1px solid var(--border);backdrop-filter:blur(16px);padding-block:14px}
+.brand{font-weight:750;letter-spacing:-.05em}.brand span{color:var(--green)}
+.local-badge{background:transparent;color:var(--soft);border:1px solid var(--border)}
+main{max-width:1380px;padding-top:34px}.tabs{gap:clamp(4px,1.5vw,24px);border-bottom:1px solid var(--border);padding-bottom:0;margin-bottom:30px}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;padding:14px 3px;background:transparent;color:var(--soft);white-space:nowrap}
+.tabs [aria-pressed=true]{border-color:var(--green);background:transparent;color:var(--ink)}
+.tabs .workspace-more summary{border-radius:0}.workspace-more>div{border-color:var(--border);box-shadow:0 12px 36px #19203714}
+.panel{background:transparent;box-shadow:none;border:0;border-radius:0;padding:0 0 56px}
+.travel-hero,.finance-hero{background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;padding:8px 0 38px;margin-bottom:30px}
+.travel-hero h1,.finance-hero h2,.section-heading h2{font-size:clamp(36px,5vw,68px);line-height:1.03;letter-spacing:-.065em;font-weight:650;margin:12px 0 18px}
+.travel-hero p,.finance-hero p{font-size:clamp(15px,1.6vw,18px);max-width:52ch;line-height:1.5}
+.eyebrow{font:700 11px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.16em;color:var(--green)}
+.section-heading{border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:22px}
+button,.primary{min-height:40px;border-radius:8px}.primary{background:var(--green);border-color:var(--green);color:white}.primary:hover{background:var(--ink);border-color:var(--ink)}
+.note,.brief,#brief .brief{background:transparent;border:0;border-left:2px solid var(--green);border-radius:0;padding:8px 0 8px 20px}
+.option-grid{grid-template-columns:1fr;gap:0}.option,.shop-deal,.wallet-tile,.finance-card,.finance-kpis article,.travel-costs article{background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;box-shadow:none}
+.option{padding:24px 0}.option h3,.shop-deal h3{font-size:clamp(18px,2vw,24px);letter-spacing:-.025em}
+.wallet-tile{padding:20px 2px}.wallet-tiles{gap:clamp(12px,2vw,28px)}.shop-deal{padding:24px 0}
+.finance-kpis article{padding:16px 0}.finance-card{padding:20px 0}.finance-track,.finance-column{background:#e9edf5}.finance-track i,.finance-column i{background:var(--green)}
+.reference-drop{background:transparent;border-color:#aeb8ce;border-radius:12px}
+#overview-content.wf-dashboard{background:transparent;border:0;border-radius:0;padding:4px 0;--wf-bg:transparent;--wf-panel:#f0f2f8;--wf-line:var(--border);--wf-accent:var(--green)}
+#overview-content.wf-dashboard .wf-metrics article,#overview-content.wf-dashboard .wf-record{background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0}
+#overview-content.wf-dashboard[data-theme=midnight]{--wf-bg:#15202c;--wf-panel:#1e2c3b;--wf-text:#e5edf6;--wf-muted:#adc0d1;--wf-line:#3a5065;--wf-accent:#8ed3ff;background:#15202c;border-radius:12px;padding:24px}
+@media(max-width:700px){main{padding:18px 16px 44px}.tabs{display:flex;overflow-x:auto;gap:18px;margin-bottom:24px}.tabs button{padding:12px 2px}.tabs .workspace-more{margin-left:0}.panel{padding:0 0 36px}.travel-hero,.finance-hero{padding-bottom:26px}.travel-hero-actions{display:flex;flex-wrap:wrap}.finance-kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){main{padding-inline:12px}.finance-kpis{grid-template-columns:1fr}.tabs{gap:14px}}
+.tabs .subtab{font-size:12px;color:#818b9d;margin-right:clamp(2px,2vw,28px)}
+.tabs .subtab[aria-pressed=true]{color:var(--green)}

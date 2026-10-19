@@ -15,7 +15,7 @@ Ask only for missing facts that could change the choice: purchase amount/currenc
 
 ## Verify today's feasible options
 
-For travel, use [provider-research](../provider-research/SKILL.md) for current comparable quotes and [card-travel-benefits](../card-travel-benefits/SKILL.md) for payment requirements, credits, certificates, award discounts and protections. Reuse completed research and ledgers instead of restarting them. For other purchases, check current official issuer earning/redemption terms and relevant merchant offers.
+For travel, use `provider-research` for current comparable quotes and [card-travel-benefits](../card-travel-benefits/SKILL.md) for payment requirements, credits, certificates, award discounts and protections. Reuse completed research and ledgers instead of restarting them. For other purchases, check current official issuer earning/redemption terms and relevant merchant offers.
 
 - Record observation time and official source links. Check exact card variant, country, category/channel, caps, activation/enrollment, exclusions, offer targeting and dates. An old guide, search snippet, historical promotion or a generic blog valuation cannot establish current value. Do not assume a merchant's rewards category from its name.
 - Get the actual cash and points totals for the same acceptable product, dates, travelers, baggage/room, cancellation rights and all mandatory fees. Check direct, eligible portal and partner routes when relevant. Expensive products the user would never buy are not a meaningful cash baseline.
@@ -27,7 +27,7 @@ For travel, use [provider-research](../provider-research/SKILL.md) for current c
 
 Evaluate two related decisions: **how to fund the purchase** (cash, points, certificate, or a combination) and **which card pays any remaining cash**. The card paying award taxes may differ from the card/program supplying points; protections may require more than paying taxes. Enforce verified booking/payment conditions before ranking either decision.
 
-Use the existing [redemption calculator](../travel-plan/scripts/redemption_value.py) for known, same-currency amounts:
+Use the existing redemption calculator in `travel-plan` for known, same-currency amounts:
 
 `(equivalent cash price − mandatory award cash charges) / points spent`
 
@@ -47,6 +47,6 @@ For an economic-cost scenario, show the assumptions explicitly:
 
 Lead with the best supported choice: **redeem from this program / pay cash, then use this existing card for the charge**, with the reason, cash due, points/certificates spent, expected rewards and any conditional credit. Show the runner-up and the assumption or price threshold that would reverse the choice. Do not force a definitive winner when essential facts remain unknown.
 
-For a substantive travel comparison, publish through [trip-board](../trip-board/SKILL.md). Put the recommendation and assumptions in summary/research, and each eligible route in options with its payment-card requirement in terms, evidence and a shared choice_group for alternatives. Also populate each purchase option’s structured payment object with the recommended card, reason and benefit usage statuses; planned allocations are not already used benefits. Structured costs contain gross cash due and points actually redeemed, never an estimated “net” figure. Explain transfer source costs separately because the display contract has one points currency per option. Exclude private owners and wallet balances from findings and exports; include the card product and program names needed to understand the choice. Intake and decisions stay in the conversation, with no new dashboard agent controls.
+For a substantive travel comparison, publish through `trip-board`. Put the recommendation and assumptions in summary/research, and each eligible route in options with its payment-card requirement in terms, evidence and a shared choice_group for alternatives. Also populate each purchase option’s structured payment object with the recommended card, reason and benefit usage statuses; planned allocations are not already used benefits. Structured costs contain gross cash due and points actually redeemed, never an estimated “net” figure. Explain transfer source costs separately because the display contract has one points currency per option. Exclude private owners and wallet balances from findings and exports; include the card product and program names needed to understand the choice. Intake and decisions stay in the conversation, with no new dashboard agent controls.
 
 Recommendations never spend points, change saved balances, activate offers, enroll benefits, apply for cards, transfer, reserve or buy. The user performs those actions. Do not store passwords, card/account numbers or verification codes.

@@ -1,5 +1,5 @@
 {
-  "name": "walletfreak-finance",
+  "name": "walletfreak-spending",
   "version": "0.1.0+codex.20261019023701",
   "description": "Local spending reports, category charts and statement analysis.",
   "author": {
@@ -7,14 +7,14 @@
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "WalletFreak Finance",
+    "displayName": "WalletFreak Spending",
     "shortDescription": "Understand spending by category and month.",
     "longDescription": "Import PDF, CSV or ZIP statement references, review transactions and explore local spending charts with source-linked findings.",
     "developerName": "WalletFreak",
     "category": "Productivity",
     "capabilities": [],
     "defaultPrompt": [
-      "Analyze my downloaded activity and show category spending in WalletFreak Finance.",
+      "Analyze my downloaded activity and show category spending in WalletFreak Spending.",
       "Compare my month-by-month spending and explain large changes."
     ],
     "brandColor": "#0788D9",

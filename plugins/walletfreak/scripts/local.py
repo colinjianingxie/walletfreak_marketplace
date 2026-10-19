@@ -520,7 +520,7 @@ class Handler(BaseHTTPRequestHandler):
         if route.query or route.fragment:
             return self.respond(400, {'error': 'Unexpected URL parameters.'})
         path = route.path
-        if path == '/':
+        if path in ('/', '/travel', '/travel/trips', '/credit-cards', '/spending', '/shopping', '/settings/sign-ins', '/settings/plugins'):
             try:
                 return self.respond(200, (PLUGIN / 'assets/dashboard/index.html').read_bytes(), 'text/html; charset=utf-8')
             except OSError:
@@ -744,6 +744,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'extract-references', 'insights', 'shopping', 'shopping-publish', 'layout', 'catalog'))
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--view', choices=('travel', 'credit-cards', 'spending', 'shopping'), default='travel', help='Private dashboard view to open with start.')
     parser.add_argument('--input', type=Path, help='JSON findings or local settings; use - for stdin. Never supply credentials.')
     args = parser.parse_args()
     try:
@@ -753,7 +754,7 @@ def main():
             return
         if args.command == 'start':
             descriptor = start(root, args.port)
-            print(descriptor['origin'] + '/#key=' + descriptor['ui_token'])
+            print(descriptor['origin'] + '/' + args.view + '#key=' + descriptor['ui_token'])
             return
         if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync', 'extract-references', 'shopping-publish') or args.command == 'layout' and args.input:
             if not args.input:

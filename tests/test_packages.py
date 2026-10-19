@@ -19,8 +19,8 @@ class Packages(unittest.TestCase):
         for path in (ROOT/'.agents/plugins/marketplace.json', ROOT/'.claude-plugin/marketplace.json'):
             catalog=json.loads(path.read_text())
             self.assertEqual(catalog['name'],'walletfreak')
-            self.assertEqual([p['name'] for p in catalog['plugins']],['walletfreak','walletfreak-finance','walletfreak-shopping'])
-        self.assertEqual(sorted(p.name for p in (ROOT/'plugins').iterdir()),['walletfreak','walletfreak-finance','walletfreak-shopping'])
+            self.assertEqual([p['name'] for p in catalog['plugins']],['walletfreak','walletfreak-credit-cards','walletfreak-spending','walletfreak-shopping'])
+        self.assertEqual(sorted(p.name for p in (ROOT/'plugins').iterdir()),['walletfreak','walletfreak-credit-cards','walletfreak-shopping','walletfreak-spending'])
         for host in ('codex','claude'):
             m=json.loads((PLUGIN/f'.{host}-plugin/plugin.json').read_text())
             self.assertEqual(m['name'],'walletfreak')
@@ -50,7 +50,7 @@ class Packages(unittest.TestCase):
             isolated=Path(temporary)/'walletfreak'
             shutil.copytree(PLUGIN,isolated)
             names={s.parent.name for s in isolated.glob('skills/*/SKILL.md')}
-            self.assertEqual(names,{'travel-plan','provider-research','traveler-profile','card-travel-benefits','lounge-access','trip-board','walletfreak-setup','wallet-optimizer','dashboard-builder','stay-route-map','wallet-sync','confirmation-import'})
+            self.assertEqual(names,{'travel-plan','provider-research','lounge-access','trip-board','walletfreak-setup','dashboard-builder','stay-route-map','confirmation-import'})
             for path in isolated.rglob('*.md'):
                 for target in re.findall(r'\]\(([^)]+)\)',path.read_text()):
                     if target.startswith('https://'):
@@ -59,6 +59,14 @@ class Packages(unittest.TestCase):
                     self.assertTrue(resolved.is_relative_to(isolated.resolve()),(path,target))
                     self.assertTrue(resolved.is_file(),(path,target))
             self.assertFalse(any(p.is_symlink() for p in isolated.rglob('*')))
+            cards=Path(temporary)/'walletfreak-credit-cards'
+            shutil.copytree(ROOT/'plugins/walletfreak-credit-cards',cards)
+            self.assertEqual({p.parent.name for p in cards.glob('skills/*/SKILL.md')},{'traveler-profile','wallet-optimizer','card-travel-benefits','wallet-sync'})
+            for path in cards.rglob('*.md'):
+                for target in re.findall(r'\]\(([^)]+)\)',path.read_text()):
+                    if target.startswith('https://'): continue
+                    self.assertTrue((path.parent/target.split('#')[0]).resolve().is_relative_to(cards.resolve()),(path,target))
+                    self.assertTrue((path.parent/target.split('#')[0]).is_file(),(path,target))
 
 spec = importlib.util.spec_from_file_location("redemption_value", ROOT / "plugins/walletfreak/skills/travel-plan/scripts/redemption_value.py")
 calculator = importlib.util.module_from_spec(spec)

@@ -243,6 +243,10 @@ class LauncherTests(unittest.TestCase):
                     with urlopen(descriptor['origin'], timeout=3) as response:
                         self.assertEqual(response.status, 200)
                         self.assertIn(b'/assets/dashboard/app.js', response.read())
+                    for view in ('travel', 'travel/trips', 'credit-cards', 'spending', 'shopping'):
+                        with urlopen(descriptor['origin'] + '/' + view, timeout=3) as response:
+                            self.assertEqual(response.status, 200)
+                            self.assertIn(b'/assets/dashboard/app.js', response.read())
                     subprocess.check_output([sys.executable, str(current_script), 'start', '--port', '0'])
                     self.assertEqual(local.read_json(root / 'server.json'), descriptor)
                     self.assertEqual(local.call(root, '/api/state')['trips'][0]['id'], trip_id)

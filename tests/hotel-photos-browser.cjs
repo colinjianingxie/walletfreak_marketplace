@@ -25,7 +25,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await route.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
     });
     const page=await context.newPage();page.setDefaultTimeout(10000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(url);await page.getByRole('button',{name:'Trips',exact:true}).click();
+    await page.goto(url);await page.getByRole('button',{name:'Saved trips',exact:true}).click();
     await page.getByRole('heading',{name:'Photo test',exact:true}).waitFor();
     await page.locator('#trip-alternatives>summary').click();await page.locator('#options img[alt="Hotel pool"]').scrollIntoViewIfNeeded();
     await page.locator('#options img[alt="Hotel pool"]').evaluate(img=>img.decode());

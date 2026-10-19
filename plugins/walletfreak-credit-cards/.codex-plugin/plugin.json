@@ -1,0 +1,32 @@
+{
+  "name": "walletfreak-credit-cards",
+  "version": "0.3.0",
+  "description": "Research card benefits, points and payment choices using the shared private WalletFreak wallet.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "homepage": "https://github.com/walletfreak/walletfreak_marketplace",
+  "repository": "https://github.com/walletfreak/walletfreak_marketplace",
+  "license": "MIT",
+  "keywords": [
+    "credit-cards",
+    "rewards",
+    "research"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "WalletFreak Credit Cards",
+    "shortDescription": "Cards, points and benefits.",
+    "longDescription": "Review your cards and loyalty accounts, verify current benefits, and choose cards or points for travel and shopping.",
+    "developerName": "WalletFreak",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Open my Credit Cards workspace.",
+      "Compare the cards in my wallet for this purchase."
+    ],
+    "brandColor": "#0788D9",
+    "composerIcon": "./assets/mascot.png",
+    "logo": "./assets/mascot.png"
+  }
+}

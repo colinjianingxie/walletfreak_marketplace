@@ -1,6 +1,6 @@
 # WalletFreak
 
-The complete travel toolkit: guided intake, 31 provider references, a personal wallet, current card/redemption optimization, card benefits, lounge tracking and a private local trip dashboard.
+WalletFreak Travel: guided intake, 31 provider references, lounge tracking and a private local trip dashboard. The optional Credit Cards plugin adds wallet profile, card benefit, optimization and balance sync skills.
 
 Use walletfreak-setup after installation. Python 3.10+, Node.js 18+ and Chrome are required. Start the dashboard with `python3 scripts/local.py start` from this plugin directory. Its private link works on this device only.
 

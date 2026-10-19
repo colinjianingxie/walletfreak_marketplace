@@ -1,6 +1,6 @@
 # WalletFreak
 
-Three focused plugins for Codex and Claude Code: Travel, Finance and Shopping, with one private local workspace. Plan with flexible dates, compare 31 provider groups, evaluate existing card benefits and lounges, and explore findings in a private local dashboard. Users sign in and book themselves.
+Four focused plugins for Codex and Claude Code: Travel, Credit Cards, Spending and Shopping, with one private local workspace. Plan with flexible dates, compare 31 provider groups, evaluate existing card benefits and lounges, and explore findings in a private local dashboard. Users sign in and book themselves.
 
 ## Install
 
@@ -9,23 +9,25 @@ Prerequisites: Python 3.10+, Node.js 18+ and Chrome.
 ```sh
 codex plugin marketplace add walletfreak/walletfreak_marketplace
 codex plugin add walletfreak@walletfreak
-codex plugin add walletfreak-finance@walletfreak
+codex plugin add walletfreak-credit-cards@walletfreak
+codex plugin add walletfreak-spending@walletfreak
 codex plugin add walletfreak-shopping@walletfreak
 
 # Or Claude Code:
 claude plugin marketplace add walletfreak/walletfreak_marketplace
 claude plugin install walletfreak@walletfreak
-claude plugin install walletfreak-finance@walletfreak
+claude plugin install walletfreak-credit-cards@walletfreak
+claude plugin install walletfreak-spending@walletfreak
 claude plugin install walletfreak-shopping@walletfreak
 ```
 
 Start a fresh host session and ask: **Use walletfreak-setup to open my local dashboard.**
 
-WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder, stay-route-map, wallet-sync, walletfreak-setup and confirmation-import. See [installation and migration](docs/INSTALL.md).
+WalletFreak Travel covers all 31 travel providers, trip planning and the shared local server. Credit Cards supplies traveler-profile, card-travel-benefits, wallet-optimizer and wallet-sync. Both use the same saved wallet. Spending and Shopping add their own research skills. See [installation and migration](docs/INSTALL.md).
 
-## Travel, finance and shopping
+## Four research views
 
-WalletFreak Finance adds the spending-analysis skill and bank-specific guides for Chase, Citi, Capital One, Amex and other mapped CSVs. It uses the same core local dashboard—no second server. Drop downloaded PDF, CSV or ZIP statements into Finance. Files are saved as local references; ask your agent for metrics, categories or recurring charges, and explore the sourced results in the dashboard. The optional CSV spreadsheet provides category review and transaction/monthly exports. Every row needs review before inclusion. Payments/transfers are excluded from spending; currencies stay separate. PDF extraction is a local assisted workflow, not an automatic transaction parser.
+WalletFreak Spending adds the spending-analysis skill and bank-specific guides for Chase, Citi, Capital One, Amex and other mapped CSVs. It uses the same core local dashboard—no second server. Drop downloaded PDF, CSV or ZIP statements into Spending. Files are saved as local references; ask your agent for metrics, categories or recurring charges, and explore the sourced results in the dashboard. The optional CSV spreadsheet provides category review and transaction/monthly exports. Every row needs review before inclusion. Payments/transfers are excluded from spending; currencies stay separate. PDF extraction is a local assisted workflow, not an automatic transaction parser.
 
 **Your files are processed on your device. No bank credentials required.** Direct import, categorization and exports run locally. The ledger is a private local plaintext file. Content you ask an agent to read may be processed by your host/model provider; this is not an offline language model.
 

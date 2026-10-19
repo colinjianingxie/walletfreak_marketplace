@@ -17,8 +17,17 @@ async function act(path, body) {
   try { const result = await api(path, body); if (result.message) notice(result.message); await refresh(); return result; }
   catch (error) { notice(error.message, true); await refresh(); return null; }
 }
-function tab(name) { currentTab = name; $('.workspace-more').open=false; if (name === 'overview') window.loadOverview(); if (name === 'spending') window.loadSpending(); if (name === 'shopping') window.loadShopping(); if (name === 'plugins') loadPlugins(); if (name === 'credentials') refreshVault(); for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed', String(item.dataset.tab === name)); for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== name; }
+const routes = {overview:'/travel',findings:'/travel/trips',wallet:'/credit-cards',spending:'/spending',shopping:'/shopping',credentials:'/settings/sign-ins',plugins:'/settings/plugins'};
+function tab(name, navigate=true) {
+  if (!routes[name]) name='overview';
+  currentTab=name; document.body.dataset.view=name; $('.workspace-more').open=false;
+  if (navigate && location.pathname!==routes[name]) history.pushState(null,'',routes[name]);
+  if (name==='overview') window.loadOverview(); if (name==='spending') window.loadSpending(); if (name==='shopping') window.loadShopping(); if (name==='plugins') loadPlugins(); if (name==='credentials') refreshVault();
+  for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed',String(item.dataset.tab===name));
+  for (const panel of document.querySelectorAll('.panel')) panel.hidden=panel.id!==name;
+}
 document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
+window.addEventListener('popstate',()=>tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false));
 $('#open-wallet').onclick = () => tab('wallet');
 $('#open-confirmations').onclick=()=>{$('#confirmation-import').open=true;$('#confirmation-text').focus();};
 function trip() { return state?.trips.find(t => t.id === activeId); }
@@ -209,6 +218,7 @@ window.addEventListener('beforeunload', event => { if (dirty && !stopped) { even
     $('#asset-catalog').innerHTML=assetCatalog.map(a=>`<p><a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(a.name)} ↗</a> <span class="muted">${esc(a.note)}</span></p>`).join('');
     $('#card-names').innerHTML = cards.map(c=>`<option value="${esc(c.name)}"></option>`).join('');
     await refresh();
+    tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false);
     $('#program-names').innerHTML = (state?.providers || []).flatMap(p=>p.programs).map(p=>`<option value="${esc(p)}"></option>`).join('');
     $('#provider-names').innerHTML=(state?.providers || []).map(p=>`<option value="${esc(p.name)}"></option>`).join('');
     setInterval(refresh,3000);
