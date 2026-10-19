@@ -1,4 +1,8 @@
 'use strict';
+document.addEventListener('error', event => {
+  if (event.target.matches?.('img.hotel-photo-image')) event.target.hidden = true;
+}, true);
+
 const cards = [...document.querySelectorAll('.option')];
 const search = document.querySelector('#search');
 const kind = document.querySelector('#kind');

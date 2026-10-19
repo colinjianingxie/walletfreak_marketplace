@@ -1,4 +1,8 @@
 'use strict';
+document.addEventListener('error', event => {
+  if (event.target.matches?.('img.hotel-photo-image')) event.target.hidden = true;
+}, true);
+
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let state, activeId = '', brands = {}, cards = [], draft, draftRevision, dirty = false, stopped = false, assetCatalog = [], vaultState, pluginInventory, currentTab = 'wallet';
@@ -25,6 +29,11 @@ function logo(name) {
   const asset = brands[provider?.id];
   return asset?.path ? `<img src="/assets/${esc(asset.path)}" alt="">` : '';
 }
+function hotelPhoto(option) {
+  const image = option?.image;
+  return image ? `<figure class="hotel-photo"><img class="hotel-photo-image" src="${esc(image.url)}" alt="${esc(image.alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="800" height="450"><figcaption>${sourceLinks([{label:'Hotel photo source',url:image.source_url}])}</figcaption></figure>` : '';
+}
+
 function sourceLinks(sources = []) { return sources.map(source => `<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.label)} ↗</a>`).join(' · '); }
 function paymentView(option) {
   const p=option?.payment;
@@ -35,7 +44,7 @@ function paymentView(option) {
 function itineraryItem(item, option) {
   const kind = option?.kind || 'other';
   const names = {flight:'Flight', hotel:'Stay', transport:'Getting around', lounge:'Lounge', other:'Plan'};
-  return `<li class="itinerary-item ${kind}"><div class="itinerary-label">${names[kind]}<small>${esc(item.when || 'Schedule to confirm')}</small></div><article><div class="provider">${logo(option?.provider)}${esc(option?.provider || '')}</div><h4>${esc(item.title)}</h4><p>${esc(item.detail || option?.product || '')}</p>${option ? `<p class="price">${esc(option.price || 'Price unknown')}</p><span class="status ${esc(option.status)}">${esc(option.status)} at observation</span><p class="muted">${esc(option.terms || 'Confirm terms before booking.')}</p>${paymentView(option)}${sourceLinks(option.sources)}` : ''}</article></li>`;
+  return `<li class="itinerary-item ${kind}"><div class="itinerary-label">${names[kind]}<small>${esc(item.when || 'Schedule to confirm')}</small></div><article><div class="provider">${logo(option?.provider)}${esc(option?.provider || '')}</div><h4>${esc(item.title)}</h4>${hotelPhoto(option)}<p>${esc(item.detail || option?.product || '')}</p>${option ? `<p class="price">${esc(option.price || 'Price unknown')}</p><span class="status ${esc(option.status)}">${esc(option.status)} at observation</span><p class="muted">${esc(option.terms || 'Confirm terms before booking.')}</p>${paymentView(option)}${sourceLinks(option.sources)}` : ''}</article></li>`;
 }
 function renderFindings() {
   const t = trip();
@@ -51,9 +60,9 @@ function renderFindings() {
   const words = $('#search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);
   const options = (f.options || []).filter(o => words.every(w=>JSON.stringify(o).toLowerCase().includes(w)) && (!$('#kind').value || o.kind === $('#kind').value) && (!$('#availability').value || o.status === $('#availability').value) && (!$('#shortlisted').checked || t.shortlist.includes(o.id)));
   $('#count').textContent = `${options.length} of ${(f.options || []).length} options · ${t.shortlist.length} shortlisted`;
-  $('#options').innerHTML = options.length ? options.map(o => `<article class="option"><div class="provider">${logo(o.provider)}<span>${esc(o.provider)} · ${esc(o.kind)}</span></div><h3>${esc(o.title)}</h3><span class="status ${esc(o.status)}">${esc(o.status)} at observation</span><p class="price">${esc(o.price || 'Price unknown')}</p><p class="muted">${esc(o.program)} · Observed ${esc(o.observed_at || 'not recorded')}</p>${paymentView(o)}<label class="check"><input type="checkbox" data-shortlist="${esc(o.id)}" ${t.shortlist.includes(o.id)?'checked':''}> Add to shortlist</label><label class="check"><input type="checkbox" data-select="${esc(o.id)}" ${t.selected.includes(o.id)?'checked':''}> Include in my comparison</label><details><summary>Evidence & restrictions</summary><dl>${['search','product','terms','benefits','uncertainty','reproduce'].map(key=>`<dt>${esc(key)}</dt><dd>${esc(o[key] || 'Not recorded')}</dd>`).join('')}</dl>${sourceLinks(o.sources)}</details></article>`).join('') : '<p class="muted">No matching findings.</p>';
+  $('#options').innerHTML = options.length ? options.map(o => `<article class="option">${hotelPhoto(o)}<div class="provider">${logo(o.provider)}<span>${esc(o.provider)} · ${esc(o.kind)}</span></div><h3>${esc(o.title)}</h3><span class="status ${esc(o.status)}">${esc(o.status)} at observation</span><p class="price">${esc(o.price || 'Price unknown')}</p><p class="muted">${esc(o.program)} · Observed ${esc(o.observed_at || 'not recorded')}</p>${paymentView(o)}<label class="check"><input type="checkbox" data-shortlist="${esc(o.id)}" ${t.shortlist.includes(o.id)?'checked':''}> Add to shortlist</label><label class="check"><input type="checkbox" data-select="${esc(o.id)}" ${t.selected.includes(o.id)?'checked':''}> Include in my comparison</label><details><summary>Evidence & restrictions</summary><dl>${['search','product','terms','benefits','uncertainty','reproduce'].map(key=>`<dt>${esc(key)}</dt><dd>${esc(o[key] || 'Not recorded')}</dd>`).join('')}</dl>${sourceLinks(o.sources)}</details></article>`).join('') : '<p class="muted">No matching findings.</p>';
   const shortlisted = (f.options || []).filter(o=>t.shortlist.includes(o.id));
-  $('#comparison').innerHTML = shortlisted.length ? `<table><thead><tr><th scope="col">Compare</th>${shortlisted.map(o=>`<th scope="col">${esc(o.title)}</th>`).join('')}</tr></thead><tbody>${['provider','price','status','payment','product','terms','benefits','uncertainty'].map(key=>`<tr><th scope="row">${esc(key==='payment'?'Card & benefits':key)}</th>${shortlisted.map(o=>`<td>${key==='payment'?paymentView(o):esc(o[key] || 'Not recorded')}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '<p class="muted">Shortlist options to compare their prices, terms and benefits here.</p>';
+  $('#comparison').innerHTML = shortlisted.length ? `<table><thead><tr><th scope="col">Compare</th>${shortlisted.map(o=>`<th scope="col">${hotelPhoto(o)}${esc(o.title)}</th>`).join('')}</tr></thead><tbody>${['provider','price','status','payment','product','terms','benefits','uncertainty'].map(key=>`<tr><th scope="row">${esc(key==='payment'?'Card & benefits':key)}</th>${shortlisted.map(o=>`<td>${key==='payment'?paymentView(o):esc(o[key] || 'Not recorded')}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '<p class="muted">Shortlist options to compare their prices, terms and benefits here.</p>';
   const totals = [...Object.entries(t.totals.cash).map(([c,v])=>`${c} ${v}`), ...Object.entries(t.totals.points).map(([p,v])=>`${v.toLocaleString()} ${p} points`)];
   $('#totals').innerHTML = `<strong>Selected items only: ${esc(totals.join(' + ') || 'No verified costs selected')}</strong><p>Partial subtotal, not a whole-trip price. Points programs and cash currencies remain separate. Conditional credits are excluded.</p>${t.totals.unknown.length ? `<p>Unpriced or unverified selections: ${esc(t.totals.unknown.join('; '))}</p>` : ''}`;
   $('#evidence').innerHTML = (f.research || []).map(i=>`<article><h4>${esc(i.title)}</h4><p>${esc(i.detail)}</p>${i.url ? sourceLinks([{label:'Official source',url:i.url}]) : ''}</article>`).join('');

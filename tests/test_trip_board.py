@@ -89,6 +89,28 @@ class TripBoard(unittest.TestCase):
         option['payment']['password']='secret'
         with self.assertRaises(ValueError):board.validate(self.data)
 
+    def test_hotel_photos_are_safe_optional_and_exported(self):
+        option = next(o for o in self.data['options'] if o['kind'] == 'hotel')
+        option['image'] = {'url': 'https://images.example.com/pool.jpg?imwidth=800&impolicy=crop&session=SECRET#PRIVATE', 'alt': 'Pool <view>', 'source_url': 'https://example.com/hotel?session=SECRET'}
+        html = board.render(self.data)
+        self.assertIn('src="https://images.example.com/pool.jpg?imwidth=800&amp;impolicy=crop"', html)
+        self.assertIn('alt="Pool &lt;view&gt;"', html)
+        self.assertIn('loading="lazy" decoding="async" referrerpolicy="no-referrer"', html)
+        self.assertIn('img-src https:', html)
+        self.assertNotIn('SECRET', html)
+        self.assertNotIn('PRIVATE', html)
+        for url in ('http://example.com/p.jpg', 'data:image/png;base64,abc', 'javascript:alert(1)', 'https://user:secret@example.com/p.jpg', 'https://localhost/p.jpg', 'https://127.0.0.1/p.jpg', 'https://192.168.1.2/p.jpg', 'https://[::1]/p.jpg', 'https://hotel.local/p.jpg'):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                board.photo_url(url)
+        for change in (lambda i: i.update(alt=''), lambda i: i.update(cookie='secret'), lambda i: i.pop('source_url')):
+            bad = copy.deepcopy(self.data)
+            change(next(o for o in bad['options'] if o['kind'] == 'hotel')['image'])
+            with self.assertRaises(ValueError):
+                board.validate(bad)
+        option['kind'] = 'flight'
+        with self.assertRaises(ValueError):
+            board.validate(self.data)
+
     def test_self_contained_copy_and_safe_replacement(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

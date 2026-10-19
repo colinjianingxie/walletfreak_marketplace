@@ -121,6 +121,9 @@ def clean_findings(value):
     board.validate(value)
     result = deepcopy(value)
     for option in result.get('options', []):
+        if 'image' in option:
+            option['image']['url'] = board.photo_url(option['image']['url'])
+            option['image']['source_url'] = board.source_url(option['image']['source_url'])
         for source in option.get('sources', []):
             source['url'] = board.source_url(source['url'])
     for item in result.get('research', []):
@@ -357,7 +360,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'")
+        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'")
         for key, value in (headers or {}).items():
             self.send_header(key, value)
         self.end_headers()

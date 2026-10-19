@@ -64,6 +64,14 @@ class DataTests(unittest.TestCase):
         if os.name != 'nt':
             self.assertEqual((self.root/'results.json').stat().st_mode & 0o777, 0o600)
 
+    def test_photo_urls_are_sanitized_when_published(self):
+        data = findings()
+        data['options'][2]['image'] = {'url': 'https://hotel.example.com/pool.jpg?rw=640&token=SECRET#PRIVATE', 'alt': 'Hotel pool', 'source_url': 'https://hotel.example.com/?session=SECRET'}
+        self.store.agent_action('publish', {'id': self.id, 'expected_revision': 0, 'findings': data})
+        saved = self.store.trip(self.id)['findings']['options'][2]['image']
+        self.assertEqual(saved['url'], 'https://hotel.example.com/pool.jpg?rw=640')
+        self.assertEqual(saved['source_url'], 'https://hotel.example.com/')
+
     def test_itinerary_visible_without_selection_and_exports_exclude_wallet(self):
         self.save_wallet()
         data = findings()

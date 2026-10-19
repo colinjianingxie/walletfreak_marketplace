@@ -4,13 +4,14 @@ import argparse
 import base64
 from datetime import datetime
 import hashlib
+import ipaddress
 from html import escape
 import json
 import os
 from pathlib import Path
 import tempfile
 import re
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 KINDS = ("flight", "hotel", "lounge", "transport", "other")
@@ -45,6 +46,26 @@ def source_url(value):
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
 
 
+def photo_url(value):
+    url = source_url(value)
+    sizes = {'imwidth', 'width', 'height', 'w', 'h', 'q', 'quality', 'rw', 'rh', 'cw', 'ch', 'xposition', 'yposition', 'cx', 'cy'}
+    crops = {'impolicy': {'crop'}, 'gravity': {'NorthWest', 'North', 'NorthEast', 'West', 'Center', 'East', 'SouthWest', 'South', 'SouthEast'}}
+    query = urlencode([(key, val) for key, val in parse_qsl(urlsplit(value).query)
+                       if (key in sizes and re.fullmatch(r'-?[0-9]{1,5}', val)) or val in crops.get(key, set())])
+    if query:
+        url += '?' + query
+    host = urlsplit(url).hostname.lower()
+    if '.' not in host or host.endswith(('.localhost', '.local', '.internal')):
+        raise ValueError('Hotel photos need a public HTTPS host')
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return url
+    if not address.is_global:
+        raise ValueError('Hotel photos cannot use private network addresses')
+    return url
+
+
 def validate(data):
     if not isinstance(data, dict):
         raise ValueError("Board input must be an object")
@@ -63,9 +84,16 @@ def validate(data):
     for option in data.get("options", []):
         if not isinstance(option, dict):
             raise ValueError("Each option must be an object")
-        allowed_option = {"id", "kind", "status", "title", "provider", "program", "price", "observed_at", "sources", "cost", "choice_group", "payment", *DETAILS}
+        allowed_option = {"id", "kind", "status", "title", "provider", "program", "price", "observed_at", "sources", "cost", "choice_group", "payment", "image", *DETAILS}
         if option.keys() - allowed_option:
             raise ValueError("Unknown option fields")
+        if 'image' in option:
+            image = option['image']
+            if option.get('kind') != 'hotel' or not isinstance(image, dict) or set(image) != {'url', 'alt', 'source_url'}:
+                raise ValueError('Hotel image needs url, alt and source_url')
+            photo_url(image['url'])
+            text(image['alt'], 'hotel photo description', True)
+            source_url(image['source_url'])
         identifier = text(option.get("id"), "option id", True)
         if identifier in ids:
             raise ValueError("Option IDs must be unique")
@@ -146,6 +174,13 @@ def link(label, url):
     return f'<a href="{escape(source_url(url), quote=True)}" target="_blank" rel="noopener noreferrer">{escape(label)} ↗</a>'
 
 
+def photo_html(option):
+    image = option.get('image') if option else None
+    if not image:
+        return ''
+    return f'<figure class="hotel-photo"><img class="hotel-photo-image" src="{escape(photo_url(image["url"]), quote=True)}" alt="{escape(image["alt"], quote=True)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="800" height="450"><figcaption>{link("Hotel photo source", image["source_url"])}</figcaption></figure>'
+
+
 def payment_html(option):
     payment = option.get('payment') if option else None
     if not payment:
@@ -165,6 +200,7 @@ def render(data):
         detail = "".join(f'<dt>{name.title()}</dt><dd>{escape(option.get(name) or "Not recorded")}</dd>' for name in DETAILS)
         sources = " · ".join(link(source["label"], source["url"]) for source in option.get("sources", [])) or "No source recorded"
         cards.append(f'''<article class="option" id="{anchor}" data-kind="{option['kind']}" data-status="{option['status']}">
+{photo_html(option)}
 <div class="eyebrow"><span>{option['kind'].title()}</span><span class="status {option['status']}">{option['status'].title()} at observation</span></div>
 <h3>{escape(option['title'])}</h3><p class="provider">{escape(option.get('provider') or 'Provider not recorded')} · {escape(option.get('program') or 'Cash / program not recorded')}</p>
 <p class="price">{escape(option.get('price') or 'Price unknown')}</p><p class="observed">Observed: {escape(option.get('observed_at') or 'Not recorded')}</p>
@@ -178,8 +214,9 @@ def render(data):
     itinerary = []
     for item in data.get("itinerary", []):
         ref = f'<a href="#{anchors[item["option_id"]]}">View option</a>' if "option_id" in item else "Unpriced / separate item"
-        payment = payment_html(next((o for o in options if o['id']==item.get('option_id')),None)) if item.get('option_id') else ''
-        itinerary.append(f'<li><p class="when">{escape(item["when"])}</p><h3>{escape(item["title"])}</h3><p>{escape(item["detail"])}</p>{payment}{ref}</li>')
+        option = next((o for o in options if o['id'] == item.get('option_id')), None)
+        payment = payment_html(option) if option else ''
+        itinerary.append(f'<li><p class="when">{escape(item["when"])}</p><h3>{escape(item["title"])}</h3>{photo_html(option)}<p>{escape(item["detail"])}</p>{payment}{ref}</li>')
     style = (ASSETS / "board.css").read_text()
     script = (ASSETS / "board.js").read_text()
     digest = lambda value: base64.b64encode(hashlib.sha256(value.encode()).digest()).decode()
