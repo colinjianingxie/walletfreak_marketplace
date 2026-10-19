@@ -36,6 +36,7 @@ import render_board as board
 
 PROVIDERS = json.loads((PLUGIN / 'providers.json').read_text())
 LIMIT = 2_000_000
+UI_ASSETS = {'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
 
 
 def now():
@@ -387,10 +388,13 @@ class Handler(BaseHTTPRequestHandler):
             return self.respond(400, {'error': 'Unexpected URL parameters.'})
         path = route.path
         if path == '/':
-            return self.respond(200, (PLUGIN / 'assets/dashboard/index.html').read_bytes(), 'text/html; charset=utf-8')
+            try:
+                return self.respond(200, (PLUGIN / 'assets/dashboard/index.html').read_bytes(), 'text/html; charset=utf-8')
+            except OSError:
+                return self.respond(503, {'error': 'Dashboard files are unavailable. Run local.py start from the current plugin installation.'})
         if path.startswith('/assets/'):
             relative = path.removeprefix('/assets/')
-            allowed = {'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+            allowed = UI_ASSETS.copy()
             if relative.startswith('brands/') and re.fullmatch(r'brands/[a-z0-9-]+\.(png|svg|webp|ico)', relative):
                 allowed.add(relative)
             if re.fullmatch(r'cards/[a-zA-Z0-9_-]+\.(png|webp|jpe?g|avif)', relative):
@@ -446,7 +450,10 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, KeyError, TypeError, OSError):
                 return self.respond(500, {'error': 'Local data could not be read. Preserve the files and check their format and permissions.'})
         if path == '/api/health':
-            return self.respond(200, {'application': 'walletfreak', 'version': 1})
+            return self.respond(200, {
+                'application': 'walletfreak', 'version': 1, 'plugin_root': str(PLUGIN),
+                'ready': all((PLUGIN / 'assets' / asset).is_file() for asset in UI_ASSETS | {'dashboard/index.html'}),
+            })
         if re.fullmatch(r'/api/export/[a-f0-9]{32}', path):
             try:
                 trip = self.server.store.trip(path.rsplit('/', 1)[1])
@@ -552,20 +559,34 @@ def call(root, route, body=None):
 
 
 def start(root, port):
-    try:
-        if call(root, '/api/health').get('application') == 'walletfreak':
-            return read_json(root / 'server.json')
-    except (ValueError, OSError, URLError):
-        pass
     with exclusive(root / 'launcher.lock'):
+        try:
+            health = call(root, '/api/health')
+        except (ValueError, OSError, URLError):
+            health = {}
+        if health.get('application') == 'walletfreak':
+            descriptor = read_json(root / 'server.json')
+            if health.get('plugin_root') == str(PLUGIN) and health.get('ready'):
+                return descriptor
+            # Plugin upgrades can remove the old server's cached assets.
+            call(root, '/api/stop', {})
+            deadline = time.monotonic() + 10
+            while read_json(root / 'server.json') == descriptor:
+                if time.monotonic() >= deadline:
+                    raise ValueError('The previous dashboard did not stop. Saved data has been retained.')
+                time.sleep(0.1)
         process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), 'serve', '--port', str(port)], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         deadline = time.monotonic() + 10
         while time.monotonic() < deadline:
             try:
-                if call(root, '/api/health').get('application') == 'walletfreak':
-                    return read_json(root / 'server.json')
+                health = call(root, '/api/health')
             except (ValueError, OSError, URLError):
-                pass
+                health = {}
+            if health.get('application') == 'walletfreak' and health.get('plugin_root') == str(PLUGIN):
+                if not health.get('ready'):
+                    call(root, '/api/stop', {})
+                    raise ValueError('Dashboard files are missing. Reinstall the current plugin; saved data has been retained.')
+                return read_json(root / 'server.json')
             if process.poll() is not None:
                 raise ValueError('Dashboard failed to start. Run the serve command to inspect the local error.')
             time.sleep(0.1)

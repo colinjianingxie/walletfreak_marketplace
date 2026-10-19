@@ -2,6 +2,8 @@ import copy
 from http.server import HTTPServer
 import json
 import os
+import shutil
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -181,6 +183,15 @@ class HTTPTests(unittest.TestCase):
         code,_,raw=self.request('/api/agent/publish',{'findings':findings()},headers={'Authorization':'Bearer agent-secret'})
         self.assertEqual(code,200)
 
+    def test_missing_dashboard_files_are_unhealthy_and_return_a_useful_error(self):
+        with patch.object(local, 'PLUGIN', Path(self.temp.name) / 'removed-plugin'):
+            code, _, raw = self.request('/api/health', headers={'Authorization': 'Bearer agent-secret'})
+            self.assertEqual(code, 200)
+            self.assertFalse(json.loads(raw)['ready'])
+            code, _, raw = self.request('/')
+            self.assertEqual(code, 503)
+            self.assertIn(b'current plugin installation', raw)
+
     def test_vault_api_is_browser_only_and_absent_from_state(self):
         agent={'Authorization':'Bearer agent-secret'}
         self.assertEqual(self.request('/api/vault',headers=agent)[0],403)
@@ -188,6 +199,54 @@ class HTTPTests(unittest.TestCase):
         code,_,raw=self.request('/api/vault',headers={'Cookie':'walletfreak=session'})
         self.assertEqual(code,200);self.assertEqual(json.loads(raw)['entries'],[])
         self.assertEqual(self.request('/credentials.enc.json',headers={'Cookie':'walletfreak=session'})[0],404)
+
+
+class LauncherTests(unittest.TestCase):
+    def test_replaces_removed_plugin_installation_and_keeps_private_data(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / 'data'
+            root.mkdir()
+            old_plugin = Path(temporary) / 'old-plugin'
+            shutil.copytree(local.PLUGIN, old_plugin)
+            script = old_plugin / 'scripts/local.py'
+            # Reproduce a pre-fix server whose health endpoint outlives its files.
+            source = script.read_text()
+            source = source.replace("'plugin_root': str(PLUGIN)", "'legacy_root': str(PLUGIN)")
+            script.write_text(source)
+            store = local.Store(root)
+            trip_id = store.agent_action('publish', {'findings': findings()})['id']
+            store.user_action('wallet', {'wallet': wallet(), 'expected_revision': 'empty'})
+            saved = {name: (root / name).read_bytes() for name in ('wallet.json', 'results.json')}
+            with patch.dict(os.environ, WALLETFREAK_DATA=str(root)):
+                process = subprocess.Popen([sys.executable, str(script), 'serve', '--port', '0'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                try:
+                    deadline = time.monotonic() + 10
+                    while not (root / 'server.json').exists():
+                        self.assertIsNone(process.poll())
+                        self.assertLess(time.monotonic(), deadline)
+                        time.sleep(0.05)
+                    old = local.read_json(root / 'server.json')
+                    shutil.rmtree(old_plugin)
+                    current_script = local.PLUGIN / 'scripts/local.py'
+                    subprocess.check_output([sys.executable, str(current_script), 'start', '--port', '0'])
+                    descriptor = local.read_json(root / 'server.json')
+                    self.assertNotEqual(descriptor['ui_token'], old['ui_token'])
+                    self.assertEqual(local.call(root, '/api/health')['plugin_root'], str(local.PLUGIN))
+                    with urlopen(descriptor['origin'], timeout=3) as response:
+                        self.assertEqual(response.status, 200)
+                        self.assertIn(b'/assets/dashboard/app.js', response.read())
+                    subprocess.check_output([sys.executable, str(current_script), 'start', '--port', '0'])
+                    self.assertEqual(local.read_json(root / 'server.json'), descriptor)
+                    self.assertEqual(local.call(root, '/api/state')['trips'][0]['id'], trip_id)
+                    for name, content in saved.items():
+                        self.assertEqual((root / name).read_bytes(), content)
+                finally:
+                    if (root / 'server.json').exists():
+                        local.call(root, '/api/stop', {})
+                    process.wait(timeout=10)
+                    deadline = time.monotonic() + 10
+                    while (root / 'server.json').exists() and time.monotonic() < deadline:
+                        time.sleep(0.05)
 
 
 class BrowserTests(unittest.TestCase):
