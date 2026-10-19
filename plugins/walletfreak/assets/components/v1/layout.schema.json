@@ -62,7 +62,8 @@
               "data-table",
               "reference-list",
               "findings",
-              "itinerary"
+              "itinerary",
+              "wallet-cards"
             ]
           },
           "source": {
@@ -165,6 +166,24 @@
                 "source": {
                   "enum": [
                     "travel.itinerary"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "component": {
+                  "const": "wallet-cards"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "source": {
+                  "enum": [
+                    "wallet.cards"
                   ]
                 }
               }

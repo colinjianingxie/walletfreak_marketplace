@@ -219,3 +219,12 @@ Added catalog v1, five shared components, four templates, three themes, strict r
 ## Responsive component follow-up — 2026-10-18
 
 Component renderer release 1.0.1 retains layout v1 and the five existing components. Container-width queries display labeled wallet records on narrow screens and tables where space permits. Public gallery and installed dashboard use matching assets. All 43 Python tests passed; the local Chrome layout suite now checks a populated wallet at desktop and phone widths as well as import/export and persistence. Website tests cover all templates, theme selection, desktop phone previews and long data fields.
+
+
+## Linked wallets, mapped stays and requested portal refresh
+
+Shared component release 1.1.0 retains layout v1 and adds wallet-cards. Trips now use a compact timeline with expandable payment/evidence details, a route list and opt-in Leaflet street tiles. Standalone HTML uses the same renderer with offline route lists. People and stable card/rewards/benefit links migrate without changing legacy balances; migration keeps a private backup removed by Delete personal wallet.
+
+Added stay-route-map and wallet-sync (11 core skills, 12 total across two plugins). Device-encrypted sign-ins use macOS Keychain on Mac, a private device key elsewhere, and retain a one-time migration path for old master-password vaults. The browser MCP bridge checks the exact saved origin in the same DOM operation that fills each field, suppresses fill diagnostics, redacts known credential strings and disables inherited debug logging. Balance publication uses person/account IDs and revision checks. No real provider login or balance sync was performed; MFA and provider-specific form behavior remain unverified.
+
+Python tests cover migration, backup/delete, unknown references, account ownership, stale updates, zero balances, timestamp/source validation, route ranges/dates, export escaping, ciphertext and device-key restart. Chrome integration covers shared accounts, people filters, table editing, 320/390/768/1440 widths, optional tiles and failed-tile fallback, private export, and full MCP discovery/login with synthetic intercepted origins. Real OS Keychain prompts are not automated by these tests.

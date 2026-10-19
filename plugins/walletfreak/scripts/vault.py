@@ -5,6 +5,8 @@ import json
 import os
 import time
 import uuid
+from urllib.parse import urlsplit
+from device_key import device_key
 
 try:
     from cryptography.exceptions import InvalidTag
@@ -31,6 +33,7 @@ class Vault:
         self.read, self.write = read, write
         self.key = self.salt = self.payload = self.revision = None
         self.owner = None
+        self.device = False
         self.touched = self.retry_after = 0
 
     def lock(self):
@@ -40,10 +43,30 @@ class Vault:
     def status(self, owner):
         if self.key and (time.monotonic() - self.touched > IDLE_SECONDS or not self.path.exists()):
             self.lock()
+        envelope = self.read(self.path) if owner is not None else None
+        is_device = (envelope or {}).get('version') == 2
+        if owner is not None and is_device and (not self.key or self.owner != owner):
+            self.open_device(owner)
         unlocked = bool(self.key and self.owner == owner)
         return {'supported': AESGCM is not None, 'exists': self.path.exists(), 'unlocked': unlocked,
-                'revision': self.revision if unlocked else None,
-                'entries': [{k: row[k] for k in ('id', 'provider', 'label', 'username')} for row in self.payload['entries']] if unlocked else []}
+                'device':is_device, 'revision': self.revision if unlocked else None,
+                'entries': [{k: row.get(k,'') for k in ('id', 'provider', 'label', 'username', 'login_origin')} for row in self.payload['entries']] if unlocked else []}
+
+    def open_device(self, owner, create=False):
+        if AESGCM is None: raise ValueError('Install requirements-vault.txt to save sign-ins.')
+        envelope = self.read(self.path)
+        if envelope and envelope.get('version') != 2:
+            raise ValueError('Unlock your existing vault once in Sign-ins, then choose Use device sign-in.')
+        if not envelope and not create: raise ValueError('Add a sign-in in your local dashboard first.')
+        key = device_key(self.path.parent, create=not envelope)
+        if envelope:
+            try: payload = json.loads(AESGCM(key).decrypt(decode(envelope['nonce']), decode(envelope['ciphertext']), AAD))
+            except (InvalidTag, ValueError, KeyError): raise ValueError('Could not open saved sign-ins. Original file retained.') from None
+        else: payload = {'entries':[]}
+        self.key, self.salt, self.payload, self.owner, self.device = key, b'', payload, owner, True
+        self.revision = envelope['revision'] if envelope else None
+        self.touched = time.monotonic()
+        if not envelope: self.persist(payload)
 
     def derive(self, password, salt):
         if AESGCM is None:
@@ -60,18 +83,28 @@ class Vault:
         revision = uuid.uuid4().hex
         nonce = os.urandom(12)
         encrypted = AESGCM(self.key).encrypt(nonce, json.dumps(payload).encode(), AAD)
-        self.write(self.path, {'version':1, 'revision':revision, 'salt':encode(self.salt), 'nonce':encode(nonce), 'ciphertext':encode(encrypted)})
+        self.write(self.path, {'version':2 if self.device else 1, 'revision':revision, 'salt':encode(self.salt), 'nonce':encode(nonce), 'ciphertext':encode(encrypted)})
         self.revision, self.payload, self.touched = revision, payload, time.monotonic()
 
     def action(self, action, body, owner):
         from local import fields, short_text
-        if action in ('create', 'unlock'):
+        if action == 'device':
+            fields(body, ())
+            self.open_device(owner, create=True)
+        elif action == 'migrate-device':
+            fields(body, ())
+            if not self.status(owner)['unlocked']: raise ValueError('Unlock the old vault once to migrate it.')
+            key = device_key(self.path.parent, create=True)
+            self.key, self.device = key, True
+            self.persist(self.payload)
+        elif action in ('create', 'unlock'):
             fields(body, ('master_password',), ('master_password',))
             if time.monotonic() < self.retry_after:
                 raise ValueError('Wait a few seconds before trying to unlock again.')
             if AESGCM is None:
                 raise ValueError('Install the credential-vault dependency from requirements-vault.txt.')
             self.lock()
+            self.device = False
             envelope = self.read(self.path)
             if action == 'create':
                 if envelope is not None:
@@ -114,12 +147,18 @@ class Vault:
                 raise ValueError('Saved sign-ins changed. Refresh the vault list before editing.')
             payload = deepcopy(self.payload)
             if action == 'save':
-                fields(body, ('id', 'provider', 'label', 'username', 'password', 'expected_revision'), ('provider', 'label', 'username', 'password', 'expected_revision'))
+                fields(body, ('id', 'provider', 'label', 'username', 'password', 'expected_revision', 'login_origin'), ('provider', 'label', 'username', 'password', 'expected_revision'))
                 row = {k: short_text(body[k], k, k in ('provider','username'), 300) for k in ('provider','label','username')}
                 # Password whitespace is significant and must survive unchanged.
                 if not isinstance(body['password'], str) or not 1 <= len(body['password']) <= 4096:
                     raise ValueError('Enter a password of 1–4096 characters.')
                 row['password'] = body['password']
+                origin = body.get('login_origin','')
+                if origin:
+                    parsed = urlsplit(origin)
+                    if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.path not in ('','/') or parsed.query or parsed.fragment:
+                        raise ValueError('Use the exact HTTPS login origin, such as https://accounts.example.com, with no path.')
+                    row['login_origin'] = origin.rstrip('/')
                 if body.get('id'):
                     index = next((i for i,e in enumerate(payload['entries']) if e['id'] == body['id']), None)
                     if index is None: raise ValueError('Saved sign-in no longer exists.')

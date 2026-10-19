@@ -3,8 +3,8 @@
   let catalog, saved, request=0;
   function bind(state,references){
     const rows=[];
-    for(const trip of state.trips||[]){for(const item of trip.findings.itinerary||[]){const option=trip.findings.options?.find(o=>o.id===item.option_id);rows.push({...item,trip:trip.findings.title,payment:option?.payment});}}
-    return {'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows};
+    for(const trip of state.trips||[]){for(const item of trip.findings.itinerary||[]){const option=trip.findings.options?.find(o=>o.id===item.option_id);rows.push({...option,...item,trip:trip.findings.title,payment:option?.payment});}}
+    return {'wallet.artwork':Object.fromEntries(cards.map(c=>[c.name,'/assets'+c.path])),'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows};
   }
   window.loadOverview=async function(reset=false){
     const sequence=++request;

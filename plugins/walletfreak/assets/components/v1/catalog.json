@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "release": "1.0.1",
+  "release": "1.1.0",
   "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
   "themes": [
     "paper",
@@ -52,6 +52,14 @@
       "description": "Trip steps with payment cards and benefit usage when provided.",
       "sources": [
         "travel.itinerary"
+      ]
+    },
+    {
+      "id": "wallet-cards",
+      "name": "Linked wallet cards",
+      "description": "Cards with their linked rewards account and benefits. Account balances are not added together.",
+      "sources": [
+        "wallet.cards"
       ]
     }
   ],
@@ -121,7 +129,7 @@
     {
       "id": "travel",
       "name": "Travel",
-      "description": "Itinerary, payment cards and usable benefits.",
+      "description": "A compact timeline with mapped stays, route order and payment details on demand.",
       "layout": {
         "version": 1,
         "title": "Travel",
@@ -133,18 +141,6 @@
             "component": "itinerary",
             "source": "travel.itinerary",
             "title": "Your itinerary"
-          },
-          {
-            "id": "cards",
-            "component": "data-table",
-            "source": "wallet.cards",
-            "title": "Cards"
-          },
-          {
-            "id": "benefits",
-            "component": "data-table",
-            "source": "wallet.benefits",
-            "title": "Credits & benefits"
           }
         ]
       }
@@ -161,7 +157,7 @@
         "blocks": [
           {
             "id": "cards",
-            "component": "data-table",
+            "component": "wallet-cards",
             "source": "wallet.cards",
             "title": "Cards"
           },

@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 import threading
+from signin import TOOLS, saved_vault, fill_code, redact
 
 from local import atomic_json, data_directory, exclusive, now, read_json
 
@@ -45,9 +46,13 @@ def launch():
     settings = read_json(root / 'settings.json', {'remember': False, 'forget': False})
     if not isinstance(settings, dict) or any(type(settings.get(key, False)) is not bool for key in ('remember', 'forget')):
         raise ValueError('Invalid browser settings. Preserve the file and repair its boolean values.')
-    process = subprocess.Popen(launch_args(root, settings), stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, bufsize=1, start_new_session=os.name != 'nt')
+    child_env = {k:v for k,v in os.environ.items() if k not in ('DEBUG','PWDEBUG','DEBUG_FILE')}
+    process = subprocess.Popen(launch_args(root, settings), env=child_env, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, bufsize=1, start_new_session=os.name != 'nt')
     output_lock = threading.Lock()
     ownership = None
+    discoveries = set()
+    sensitive_calls = set()
+    secrets = []
 
     def emit(line):
         with output_lock:
@@ -56,7 +61,19 @@ def launch():
 
     def forward():
         for line in process.stdout:
-            emit(line)
+            message=json.loads(line)
+            identifier=message.get('id')
+            if identifier in discoveries:
+                discoveries.discard(identifier)
+                if 'result' in message: message['result'].setdefault('tools',[]).extend(TOOLS)
+            if identifier in sensitive_calls:
+                sensitive_calls.discard(identifier)
+                # Discard browser diagnostics, code echoes and snapshots for credential fills.
+                parts=message.get('result',{}).get('content',[])
+                result_text='\n'.join(p.get('text','').split('### Ran Playwright code')[0] for p in parts)
+                success=not message.get('error') and not message.get('result',{}).get('isError') and 'Credentials filled.' in result_text
+                message={'jsonrpc':'2.0','id':identifier,'result':{'content':[{'type':'text','text':'Credentials filled on the approved origin. Continue login; ask the user to handle MFA.' if success else 'Could not fill the login fields. Check the origin and empty form; no automatic retry was made.'}], 'isError':not success}}
+            emit(json.dumps(redact(message,secrets))+'\n')
 
     output = threading.Thread(target=forward, daemon=True)
     output.start()
@@ -83,6 +100,26 @@ def launch():
                     if acquired:
                         candidate.__exit__(None, None, None)
                     emit(json.dumps({'jsonrpc':'2.0','id':message.get('id'),'result':{'isError':True,'content':[{'type':'text','text':f'WalletFreak browser unavailable: {error}. Close the other host’s WalletFreak browser connection before retrying.'}]}})+'\n')
+                    continue
+            if message.get('method') == 'tools/list': discoveries.add(message.get('id'))
+            name=message.get('params',{}).get('name')
+            if message.get('method') == 'tools/call' and name in ('walletfreak_signins','walletfreak_sign_in'):
+                try:
+                    vault=saved_vault(root,read_json,atomic_json)
+                    if name=='walletfreak_signins':
+                        entries=[{k:r.get(k,'') for k in ('id','provider','label','login_origin')} for r in vault.payload['entries']]
+                        emit(json.dumps({'jsonrpc':'2.0','id':message.get('id'),'result':{'content':[{'type':'text','text':json.dumps(entries)}]}})+'\n')
+                        continue
+                    arguments=message['params'].get('arguments',{})
+                    entry=next((r for r in vault.payload['entries'] if r['id']==arguments.get('credential_id')),None)
+                    if entry is None:raise ValueError('Saved sign-in no longer exists.')
+                    code=fill_code(entry,arguments)
+                    secrets.extend([entry['password'],entry['username']])
+                    sensitive_calls.add(message.get('id'))
+                    message['params']={'name':'browser_run_code','arguments':{'code':code}}
+                    line=json.dumps(message)+'\n'
+                except (OSError,ValueError) as error:
+                    emit(json.dumps({'jsonrpc':'2.0','id':message.get('id'),'result':{'isError':True,'content':[{'type':'text','text':str(error)}]}})+'\n')
                     continue
             process.stdin.write(line)
             process.stdin.flush()

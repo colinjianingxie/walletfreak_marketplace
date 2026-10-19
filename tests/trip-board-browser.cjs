@@ -33,6 +33,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     for (const url of [pathToFileURL(output).href, `http://127.0.0.1:${server.address().port}/index.html`]) {
       await page.goto(url);
       await page.getByRole('heading', { name: 'A week in Tokyo' }).waitFor();
+      if(!await page.locator('#export-alternatives').getAttribute('open'))await page.locator('#export-alternatives>summary').click();
       assert.equal(await page.locator('.option:visible').count(), 5);
       assert.match(await page.locator('.notice').innerText(), /Fictional prices/);
       await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('connecting');
@@ -45,7 +46,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await page.getByRole('checkbox', { name: 'Shortlisted only', exact: true }).check();
       assert.equal(await page.locator('.option:visible').count(), 1);
       // A filtered-out itinerary option must become visible when its link is followed.
-      await page.locator('.timeline a[href="#option-3"]').click();
+      await page.locator('.wf-itinerary details').nth(1).locator('summary').click();await page.locator('.wf-itinerary a[href="#option-3"]').click();
       await page.locator('#option-3').waitFor({ state: 'visible' });
       await page.locator('#option-3 details[open]').waitFor();
       await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('not-a-result');
@@ -69,7 +70,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     const noJS = await browser.newContext({ javaScriptEnabled: false });
     const fallback = await noJS.newPage();
     await fallback.goto(pathToFileURL(output).href);
-    assert.equal(await fallback.locator('.option:visible').count(), 5);
+    await fallback.locator('#export-alternatives>summary').click();assert.equal(await fallback.locator('.option:visible').count(), 5);
     await noJS.close();
     console.log('Passed: offline + HTTP, filters, shortlist, itinerary links, reload, 4 widths, no JS fallback, no errors/external requests.');
   } finally {

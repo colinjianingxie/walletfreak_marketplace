@@ -114,8 +114,8 @@ class TripBoard(unittest.TestCase):
     def test_self_contained_copy_and_safe_replacement(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            isolated = root / 'skill'
-            shutil.copytree(SKILL, isolated)
+            isolated = root / 'walletfreak/skills/trip-board'
+            shutil.copytree(SKILL.parents[1], root / 'walletfreak')
             original_assets = board.ASSETS
             try:
                 board.ASSETS = isolated / 'assets'

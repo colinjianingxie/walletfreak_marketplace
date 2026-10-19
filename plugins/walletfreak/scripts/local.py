@@ -36,7 +36,7 @@ import render_board as board
 
 PROVIDERS = json.loads((PLUGIN / 'providers.json').read_text())
 LIMIT = 2_000_000
-UI_ASSETS = {'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
 
 
 def now():
@@ -126,6 +126,10 @@ def clean_findings(value):
             option['image']['source_url'] = board.source_url(option['image']['source_url'])
         for source in option.get('sources', []):
             source['url'] = board.source_url(source['url'])
+    for item in result.get('itinerary', []):
+        for field in ('place', 'route'):
+            if item.get(field, {}).get('source_url'):
+                item[field]['source_url'] = board.source_url(item[field]['source_url'])
     for item in result.get('research', []):
         if item.get('url'):
             item['url'] = board.source_url(item['url'])
@@ -165,12 +169,20 @@ def export_findings(trip):
 
 
 def empty_wallet():
-    return {'version': 1, 'revision': 'empty', 'cards': [], 'programs': [], 'benefits': [], 'preferences': ''}
+    return {'version': 2, 'revision': 'empty', 'cards': [], 'programs': [], 'benefits': [], 'preferences': '', 'people': []}
 
 
 def validate_wallet(value):
-    fields(value, ('cards', 'programs', 'benefits', 'preferences'), ('cards', 'programs', 'benefits', 'preferences'))
+    fields(value, ('cards', 'programs', 'benefits', 'preferences', 'people'), ('cards', 'programs', 'benefits', 'preferences'))
     short_text(value['preferences'], 'preferences')
+    people = value.get('people', [])
+    if not isinstance(people,list) or len(people)>100: raise ValueError('Use at most 100 people.')
+    person_ids = set()
+    for person in people:
+        fields(person, ('id','name'), ('id','name'))
+        if not isinstance(person['id'],str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,64}',person['id']) or person['id'] in person_ids: raise ValueError('People need unique IDs.')
+        short_text(person['name'],'person name',True,300)
+        person_ids.add(person['id'])
     columns = {
         'cards': ('name', 'owner', 'notes', 'reported_on'),
         'programs': ('name', 'owner', 'balance', 'approximate', 'status', 'preserve', 'reported_on', 'notes'),
@@ -180,7 +192,7 @@ def validate_wallet(value):
         if not isinstance(rows, list) or len(rows) > 100:
             raise ValueError('Use at most 100 entries per wallet section.')
         for row in rows:
-            fields(row, allowed, tuple(k for k in allowed if k != 'notes' or section != 'programs'))
+            fields(row, (*allowed, 'id', 'reward_account_id', 'card_id', 'program_id', 'person_id', 'synced_at', 'sync_source'), tuple(k for k in allowed if k != 'notes' or section != 'programs'))
             for key in allowed:
                 if key not in row: continue
                 if key in ('approximate', 'preserve'):
@@ -194,6 +206,40 @@ def validate_wallet(value):
                 raise ValueError('Points must be a nonnegative whole number or blank for unknown.')
             if section == 'benefits' and row['kind'] not in ('credit', 'certificate', 'gift-card', 'travel-bank', 'travel-credit', 'companion', 'upgrade', 'lounge-pass', 'membership', 'voucher', 'cashback', 'other'):
                 raise ValueError('Choose a supported wallet asset type.')
+
+    ids = set()
+    for section in columns:
+        for row in value[section]:
+            if row.get('person_id') and row['person_id'] not in person_ids: raise ValueError('Choose an existing person.')
+            if 'synced_at' in row: board.timestamp(row['synced_at'],'synced_at')
+            if 'sync_source' in row: board.source_url(row['sync_source'])
+            identifier = row.get('id')
+            if identifier is not None:
+                if not isinstance(identifier, str) or not re.fullmatch(r'[a-zA-Z0-9-]{1,64}', identifier) or identifier in ids:
+                    raise ValueError('Wallet entries need unique stable IDs.')
+                ids.add(identifier)
+            permitted = {'cards': {'reward_account_id'}, 'programs': set(), 'benefits': {'card_id', 'program_id'}}[section]
+            for key, target in [('reward_account_id','programs'), ('card_id','cards'), ('program_id','programs')]:
+                if key not in row: continue
+                if key not in permitted or not isinstance(row[key], str):
+                    raise ValueError('Invalid wallet relationship.')
+                if row[key] and row[key] not in {r.get('id') for r in value[target]}:
+                    raise ValueError('Linked wallet entry no longer exists. Choose another or unlink it.')
+
+
+def identify_wallet(value):
+    result = deepcopy(value)
+    result.setdefault('people', [])
+    by_name = {person['name']:person['id'] for person in result['people']}
+    for section in ('cards', 'programs', 'benefits'):
+        for row in result[section]:
+            row.setdefault('id', uuid.uuid4().hex)
+            if row.get('owner') and not row.get('person_id'):
+                if row['owner'] not in by_name:
+                    by_name[row['owner']] = uuid.uuid4().hex
+                    result['people'].append({'id':by_name[row['owner']], 'name':row['owner']})
+                row['person_id'] = by_name[row['owner']]
+    return result
 
 
 class Store:
@@ -229,9 +275,18 @@ class Store:
         return state
 
     def wallet(self):
-        value = read_json(self.root / 'wallet.json', empty_wallet())
-        if value.get('version') != 1:
+        path = self.root / 'wallet.json'
+        value = read_json(path, empty_wallet())
+        if value.get('version') not in (1, 2):
             raise ValueError('Unsupported wallet version; original data retained.')
+        if value['version'] == 1:
+            validate_wallet({k:v for k,v in value.items() if k not in ('version','revision')})
+            backup = self.root / 'wallet-v1-backup.json'
+            if not backup.exists():
+                atomic_json(backup, value)
+            value = identify_wallet(value)
+            value.update(version=2, revision=uuid.uuid4().hex)
+            atomic_json(path, value)
         return value
 
     def trip(self, identifier, state=None):
@@ -261,7 +316,7 @@ class Store:
                 raise ValueError('A supported legacy profile is not available.')
             wallet = parse_profile(profile.read_text())
             validate_wallet(wallet)
-            atomic_json(self.root / 'wallet.json', {**wallet, 'version':1, 'revision':uuid.uuid4().hex})
+            atomic_json(self.root / 'wallet.json', {**identify_wallet(wallet), 'version':2, 'revision':uuid.uuid4().hex})
             return {'message':'Imported the saved profile. Original dates and unknowns retained; the Markdown file is unchanged.'}
         if action in ('wallet', 'delete-wallet'):
             fields(body, ('wallet', 'expected_revision') if action == 'wallet' else ('expected_revision',),
@@ -271,11 +326,12 @@ class Store:
             path = self.root / 'wallet.json'
             if action == 'wallet':
                 validate_wallet(body['wallet'])
-                atomic_json(path, {**body['wallet'], 'version': 1, 'revision': uuid.uuid4().hex})
+                atomic_json(path, {**identify_wallet(body['wallet']), 'version': 2, 'revision': uuid.uuid4().hex})
                 return {'message': 'Wallet saved on this device. Balances are self-reported.', 'wallet': self.wallet()}
             if path.is_symlink():
                 raise ValueError('Refusing a symlink in private application data.')
             path.unlink(missing_ok=True)
+            (self.root / 'wallet-v1-backup.json').unlink(missing_ok=True)
             return {'message': 'Personal wallet deleted. Trip results and downloaded files are unchanged.'}
         if action in ('settings', 'forget'):
             settings = read_json(self.root / 'settings.json', {'remember': False, 'forget': False})
@@ -318,6 +374,27 @@ class Store:
         return {'message': 'Results deleted. Your personal wallet is unchanged.'} if action == 'delete-results' else {}
 
     def agent_action(self, action, body):
+        if action == 'wallet-sync':
+            fields(body, ('expected_revision','updates'), ('expected_revision','updates'))
+            wallet=self.wallet()
+            if wallet['revision']!=body['expected_revision']: raise ValueError('Wallet changed; reread it before syncing.')
+            updates=body['updates']
+            if not isinstance(updates,list) or not 1<=len(updates)<=100: raise ValueError('Provide 1–100 observed account updates.')
+            seen=set()
+            for update in updates:
+                fields(update, ('program_id','person_id','balance','status','observed_at','source_url'), ('program_id','person_id','balance','observed_at','source_url'))
+                if update['program_id'] in seen: raise ValueError('Update each rewards account only once.')
+                seen.add(update['program_id'])
+                row=next((r for r in wallet['programs'] if r['id']==update['program_id']),None)
+                if row is None or not row.get('person_id') or row['person_id']!=update['person_id']: raise ValueError('Choose the matching person and existing rewards account.')
+                if not isinstance(update['balance'],str) or not re.fullmatch(r'\d{1,13}',update['balance']): raise ValueError('Supply the observed whole-number balance; do not estimate.')
+                board.timestamp(update['observed_at'],'observed_at')
+                row.update(balance=update['balance'],approximate=False,reported_on=update['observed_at'][:10],sync_source=board.source_url(update['source_url']),synced_at=update['observed_at'])
+                if 'status' in update: row['status']=short_text(update['status'],'status',False,300)
+            draft={k:v for k,v in wallet.items() if k not in ('version','revision')}
+            validate_wallet(draft)
+            atomic_json(self.root/'wallet.json',{**draft,'version':2,'revision':uuid.uuid4().hex})
+            return {'message':f'Updated {len(updates)} rewards account(s). Other wallet entries were retained.'}
         if action == 'insights':
             return self.documents.publish(body)
         if action != 'publish':
@@ -359,7 +436,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Content-Length', str(len(raw)))
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('Referrer-Policy', 'no-referrer')
+        self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
         self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'")
         for key, value in (headers or {}).items():
             self.send_header(key, value)
@@ -444,7 +521,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/vault':
             if not self.user():
                 return self.respond(403, {'error':'Vault access requires the private browser session.'})
-            return self.respond(200, self.server.store.vault.status(self.session()))
+            try:
+                return self.respond(200, self.server.store.vault.status(self.session()))
+            except (ValueError,OSError) as error:
+                return self.respond(400, {'error':str(error)})
         if path == '/api/plugins':
             return self.respond(200, inventory.discover(PLUGIN))
         if path == '/api/state':
@@ -598,7 +678,7 @@ def start(root, port):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet', 'settings', 'forget', 'stop', 'references', 'insights', 'layout', 'catalog'))
+    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'insights', 'layout', 'catalog'))
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--input', type=Path, help='JSON findings or local settings; use - for stdin. Never supply credentials.')
     args = parser.parse_args()
@@ -611,18 +691,18 @@ def main():
             descriptor = start(root, args.port)
             print(descriptor['origin'] + '/#key=' + descriptor['ui_token'])
             return
-        if args.command in ('publish', 'settings', 'forget', 'insights') or args.command == 'layout' and args.input:
+        if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync') or args.command == 'layout' and args.input:
             if not args.input:
                 raise ValueError('Provide --input with a JSON file or - for stdin.')
             body = json.load(sys.stdin) if str(args.input) == '-' else read_json(args.input)
-            route = '/api/agent/' + args.command if args.command in ('publish', 'insights') else '/api/' + args.command
+            route = '/api/agent/' + args.command if args.command in ('publish', 'insights', 'wallet-sync') else '/api/' + args.command
             result = call(root, route, body)
         elif args.command in ('layout','catalog'):
             result = call(root, '/api/' + args.command)
         elif args.command == 'references':
             result = call(root, '/api/references')
         elif args.command == 'wallet':
-            result = read_json(root / 'wallet.json', empty_wallet())
+            result = Store(root).wallet()
         elif args.command == 'stop':
             result = call(root, '/api/stop', {})
         else:

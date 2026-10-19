@@ -19,7 +19,7 @@ claude plugin install walletfreak-spending@walletfreak
 
 Start a fresh host session and ask: **Use walletfreak-setup to open my local dashboard.**
 
-WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder and walletfreak-setup. See [installation and migration](docs/INSTALL.md).
+WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder, stay-route-map, wallet-sync and walletfreak-setup. See [installation and migration](docs/INSTALL.md).
 
 ## Categorize spending locally
 
@@ -29,7 +29,7 @@ WalletFreak Spending adds the spending-analysis skill and bank-specific guides f
 
 ## Compose your dashboard
 
-Use dashboard-builder to choose a template, arrange wallet/spending/itinerary components and select a theme. Dashboard → Choose a template or load a layout also accepts JSON downloaded from the public component gallery. The plugin bundles catalog v1 and the renderer for offline use. Layouts contain component IDs and local data bindings; they contain no financial data, URLs or executable code. Existing wallet, trip and spending views remain available.
+Use dashboard-builder to choose a template, arrange wallet/spending/itinerary components and select a theme. Overview → Choose a template or load a layout also accepts JSON downloaded from the public component gallery. The plugin bundles catalog v1 and the renderer for offline use. Layouts contain component IDs and local data bindings; they contain no financial data, URLs or executable code. Existing wallet, trip and spending views remain available.
 
 The website publishes the same catalog, schema and renderer at /components/v1/ and previews templates at /components.html. A separate read-only catalog MCP prototype lives in the website repository; deploying it is optional, and the local plugin needs no hosted service.
 
@@ -49,7 +49,7 @@ Ask: “Use my wallet to choose the best card or points redemption for this book
 
 When sign-in is needed during research, the agent opens the official provider page. Enter credentials and MFA codes there. Temporary sessions are default; remembering sign-ins is opt-in and applies after restarting the host's browser connection. Saved sessions stay in a dedicated local profile outside the repositories. One host owns it at a time. Forget-all removes local sessions on the next browser connection start; it does not revoke provider-side sessions.
 
-The optional Sign-ins tab stores credentials in a separate encrypted local vault, with a master password entered only in the browser. It does not automatically sign in. No SMS reader, bookings, cancellations, enrollments or transfers. These are workflow restrictions, not a technical transaction firewall. See [privacy](docs/PRIVACY.md).
+More → Sign-ins stores credentials in a separate local encrypted vault. New vaults use a device-held key (macOS Keychain on Mac), without a separate WalletFreak master password. Existing vaults can migrate after one unlock. Ask wallet-sync to refresh a selected person’s rewards accounts; the browser bridge fills saved credentials only on their exact approved login origin, without returning secrets to the agent. MFA remains user-operated. No SMS reader, bookings, cancellations, enrollments or transfers. These are workflow restrictions, not a technical transaction firewall. See [privacy](docs/PRIVACY.md).
 
 ## Coverage and verification
 
@@ -68,3 +68,5 @@ For a separate test data directory, set WALLETFREAK_DATA to a dedicated private 
 [Acceptance](docs/ACCEPTANCE.md) · [Validation](docs/VALIDATION.md) · [Contributing](CONTRIBUTING.md).
 
 The separate walletfreak repository owns the public website. Source publication and website deployment are separate release actions. MIT applies to code; provider artwork retains its source/trademark notices.
+
+The wallet groups cards, rewards accounts and assets by person, retaining a Table view for bulk edits. Stable links keep shared rewards balances on one account. The v2 migration preserves existing values and saves wallet-v1-backup.json locally; deleting the personal wallet also deletes that backup. Travel templates show a compact timeline and route list. Street-map tiles are optional and contact OpenStreetMap only after Load street map. Exports retain an offline route list.

@@ -2,9 +2,10 @@
 """Render sanitized trip research as one portable, offline HTML document."""
 import argparse
 import base64
-from datetime import datetime
+from datetime import datetime, date
 import hashlib
 import ipaddress
+import math
 from html import escape
 import json
 import os
@@ -160,10 +161,41 @@ def validate(data):
         if item.get("url") is not None:
             source_url(item["url"])
     for item in data.get("itinerary", []):
-        if not isinstance(item, dict) or item.keys() - {"when", "title", "detail", "option_id"}:
+        if not isinstance(item, dict) or item.keys() - {"when", "title", "detail", "option_id", "day", "place", "stay", "route", "booking_status"}:
             raise ValueError("Invalid itinerary entry")
         for name in ("when", "title", "detail"):
             text(item.get(name), f"itinerary {name}", True)
+        if 'day' in item:
+            date.fromisoformat(item['day'])
+        if 'booking_status' in item and item['booking_status'] not in ('proposed','booked','cancelled'):
+            raise ValueError('Unknown booking status')
+        if 'place' in item:
+            place = item['place']
+            if not isinstance(place, dict) or set(place) != {'label','lat','lng','confidence','source_url'}:
+                raise ValueError('Place needs label, coordinates, confidence and public source_url')
+            text(place['label'], 'place label', True)
+            for key, limit in [('lat',90), ('lng',180)]:
+                if type(place[key]) not in (int,float) or not math.isfinite(place[key]) or abs(place[key]) > limit:
+                    raise ValueError('Invalid map coordinates')
+            if place['confidence'] not in ('verified','approximate'):
+                raise ValueError('Unknown location confidence')
+            source_url(place['source_url'])
+        if 'stay' in item:
+            stay = item['stay']
+            if not isinstance(stay, dict) or set(stay) != {'check_in','check_out'}:
+                raise ValueError('Stay needs check_in and check_out dates')
+            if date.fromisoformat(stay['check_out']) <= date.fromisoformat(stay['check_in']):
+                raise ValueError('Check-out must follow check-in')
+        if 'route' in item:
+            route = item['route']
+            if not isinstance(route, dict) or set(route) - {'mode','duration','source_url'} or 'mode' not in route:
+                raise ValueError('Invalid route leg')
+            if route['mode'] not in ('flight','train','drive','walk','transit','ferry','other'):
+                raise ValueError('Unknown transport mode')
+            if 'duration' in route: text(route['duration'], 'route duration', True)
+            if 'duration' in route and not route.get('source_url'):
+                raise ValueError('Route duration needs a source')
+            if route.get('source_url'): source_url(route['source_url'])
         if "option_id" in item and item["option_id"] not in ids:
             raise ValueError("Itinerary references an unknown option")
     for gap in data.get("gaps", []):
@@ -217,8 +249,18 @@ def render(data):
         option = next((o for o in options if o['id'] == item.get('option_id')), None)
         payment = payment_html(option) if option else ''
         itinerary.append(f'<li><p class="when">{escape(item["when"])}</p><h3>{escape(item["title"])}</h3>{photo_html(option)}<p>{escape(item["detail"])}</p>{payment}{ref}</li>')
-    style = (ASSETS / "board.css").read_text()
+    components = ASSETS.parents[2] / 'assets/components/v1'
+    rows = [{**next((o for o in options if o['id'] == item.get('option_id')), {}), **item} for item in data.get('itinerary', [])]
+    for row in rows:
+        row.pop('image', None)
+        if row.get('option_id') in anchors: row['option_anchor'] = '#' + anchors[row['option_id']]
+        row['sources'] = [{**source, 'url':source_url(source['url'])} for source in row.get('sources', [])]
+        for key in ('place','route'):
+            if row.get(key, {}).get('source_url'): row[key] = {**row[key], 'source_url':source_url(row[key]['source_url'])}
+    payload = json.dumps(rows).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    style = (ASSETS / "board.css").read_text() + '\n' + (components / 'components.css').read_text() + '\n.wf-load-map,.wf-route>.wf-map-note:last-of-type{display:none!important}'
     script = (ASSETS / "board.js").read_text()
+    script += '\n' + (components / 'components.js').read_text() + '\nWalletFreakComponents.renderTrip(document.querySelector("#export-trip"),'+payload+');'
     digest = lambda value: base64.b64encode(hashlib.sha256(value.encode()).digest()).decode()
     replacements = {
         "TITLE": escape(data["title"]), "SUMMARY": escape(data.get("summary", "")),

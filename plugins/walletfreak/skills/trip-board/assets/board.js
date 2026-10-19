@@ -40,6 +40,7 @@ function revealOption() {
   search.value = kind.value = status.value = '';
   only.checked = false;
   update();
+  card.closest('#export-alternatives').open = true;
   card.querySelector('details').open = true;
   card.scrollIntoView({block: 'start'});
 }

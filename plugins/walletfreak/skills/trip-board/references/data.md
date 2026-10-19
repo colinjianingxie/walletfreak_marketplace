@@ -25,3 +25,12 @@ Use exact existing card products without account numbers or private owner identi
 Hotel options may include one `image`: `{"url":"https://hotel.example.com/photos/pool.jpg","alt":"Rooftop pool at Example Hotel","source_url":"https://hotel.example.com/gallery/"}`. Use a direct public HTTPS image URL observed on the official hotel's site or its image CDN, plus the public page it came from. Prefer a modest-sized exterior, lobby or shared amenity photo; describe what it shows and avoid implying a pictured suite is the quoted room. No invented URLs, stock substitutes, base64, private/account URLs, signed links or downloaded image bundles. Only numeric image-sizing and supported crop parameters are retained; session queries and fragments are stripped. Verify the resulting URL still loads. If no reliable image is available, omit `image` and keep the listing.
 
 The viewer and HTML export load remote photos lazily with no referrer and link back to the source. Images need internet access and may disappear if the host blocks embedding or removes them; the rest of the exported trip remains usable offline. Do not change quote evidence or availability when adding photos.
+
+
+## Stays and route (optional, backwards compatible)
+
+An itinerary entry may add `day` (YYYY-MM-DD local date), `booking_status` (proposed, booked, cancelled; defaults to proposed), `stay: {"check_in":"2026-11-01","check_out":"2026-11-04"}`, and `place: {"label":"Public hotel or station name","lat":35.68,"lng":139.76,"confidence":"approximate","source_url":"https://example.com/location"}`. Coordinates must be finite and in range. Confidence is verified or approximate; omit unresolved coordinates. Check-out must follow check-in.
+
+`route: {"mode":"train","duration":"About 45 minutes","source_url":"https://example.com/timetable"}` describes the leg from the previous entry. Modes: flight, train, drive, walk, transit, ferry, other. Duration is optional and requires a source; do not invent it. All lines are schematic. The viewer flags adjacent stay overlaps/gaps and missing connections, but the agent must check the whole trip, including first/last nights and time zones. Different travelers' simultaneous stays should be explained in gaps.
+
+Timeline details and payment reasoning are collapsed by default. Hotel photo previews remain in Compare options. Standalone downloads retain the compact timeline and offline stop list.
