@@ -4,9 +4,9 @@ Requires Python 3.10+, Node.js 18+ and Chrome. Both hosts can install three focu
 
 ## Fresh install
 
-Codex: `codex plugin marketplace add colinjianingxie/walletfreak_marketplace`, then `codex plugin add walletfreak@walletfreak`.
+Codex: `codex plugin marketplace add walletfreak/walletfreak_marketplace`, then `codex plugin add walletfreak@walletfreak`.
 
-Claude Code: `claude plugin marketplace add colinjianingxie/walletfreak_marketplace`, then `claude plugin install walletfreak@walletfreak`.
+Claude Code: `claude plugin marketplace add walletfreak/walletfreak_marketplace`, then `claude plugin install walletfreak@walletfreak`.
 
 Start a fresh host session and invoke walletfreak-setup. For an unpublished development build, add the explicit marketplace checkout path instead of the GitHub source. Verify which source the host is using before reinstalling.
 

@@ -70,7 +70,7 @@ def photo_url(value):
 def validate(data):
     if not isinstance(data, dict):
         raise ValueError("Board input must be an object")
-    allowed = {"title", "summary", "generated_at", "illustrative", "options", "research", "itinerary", "gaps"}
+    allowed = {"title", "summary", "generated_at", "illustrative", "options", "research", "itinerary", "gaps", "lodging_window"}
     if data.keys() - allowed:
         raise ValueError("Unknown board fields; do not include wallet balances or profiles")
     text(data.get("title"), "title", True)
@@ -81,6 +81,15 @@ def validate(data):
     for name in ("options", "research", "itinerary", "gaps"):
         if not isinstance(data.get(name, []), list):
             raise ValueError(f"{name} must be a list")
+    if 'lodging_window' in data:
+        window = data['lodging_window']
+        if not isinstance(window, dict) or set(window) != {'check_in', 'check_out'}:
+            raise ValueError('Lodging window needs check_in and check_out dates')
+        for value in window.values():
+            if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
+                raise ValueError('Lodging dates need YYYY-MM-DD')
+        if date.fromisoformat(window['check_out']) <= date.fromisoformat(window['check_in']):
+            raise ValueError('Lodging check-out must follow check-in')
     ids = set()
     for option in data.get("options", []):
         if not isinstance(option, dict):
@@ -185,6 +194,9 @@ def validate(data):
             stay = item['stay']
             if not isinstance(stay, dict) or set(stay) != {'check_in','check_out'}:
                 raise ValueError('Stay needs check_in and check_out dates')
+            for value in stay.values():
+                if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
+                    raise ValueError('Stay dates need YYYY-MM-DD')
             if date.fromisoformat(stay['check_out']) <= date.fromisoformat(stay['check_in']):
                 raise ValueError('Check-out must follow check-in')
         if 'route' in item:
@@ -259,9 +271,10 @@ def render(data):
         for key in ('place','route'):
             if row.get(key, {}).get('source_url'): row[key] = {**row[key], 'source_url':source_url(row[key]['source_url'])}
     payload = json.dumps(rows).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    window_payload = json.dumps(data.get('lodging_window')).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
     style = (ASSETS / "board.css").read_text() + '\n' + (components / 'components.css').read_text() + '\n.wf-load-map,.wf-route>.wf-map-note:last-of-type{display:none!important}'
     script = (ASSETS / "board.js").read_text()
-    script += '\n' + (components / 'components.js').read_text() + '\nWalletFreakComponents.renderTrip(document.querySelector("#export-trip"),'+payload+');'
+    script += '\n' + (components / 'components.js').read_text() + '\nWalletFreakComponents.renderTrip(document.querySelector("#export-trip"),'+payload+','+window_payload+');'
     digest = lambda value: base64.b64encode(hashlib.sha256(value.encode()).digest()).decode()
     replacements = {
         "TITLE": escape(data["title"]), "SUMMARY": escape(data.get("summary", "")),

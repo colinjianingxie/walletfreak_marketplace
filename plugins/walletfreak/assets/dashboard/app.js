@@ -53,7 +53,7 @@ function renderFindings() {
   const linked = new Set(itinerary.map(i => i.option_id));
   const displayRows=itinerary.map(i=>({...byId.get(i.option_id),...i}));
   for(const id of t.selected.filter(id=>!linked.has(id))){const o=byId.get(id);if(o)displayRows.push({...o,when:'Your proposed selection',detail:o.product});}
-  WalletFreakComponents.renderTrip($('#itinerary'),displayRows);
+  WalletFreakComponents.renderTrip($('#itinerary'),displayRows,f.lodging_window);
   $('#trip-gaps').hidden=!(f.gaps||[]).length;
   $('#trip-gaps').innerHTML=`<strong>Still to check</strong><ul>${(f.gaps||[]).map(g=>`<li>${esc(g)}</li>`).join('')}</ul>`;
   const words = $('#search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);

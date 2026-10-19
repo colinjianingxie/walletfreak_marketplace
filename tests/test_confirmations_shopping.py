@@ -23,6 +23,14 @@ class ConfirmationsAndShopping(unittest.TestCase):
         with self.assertRaises(ValueError):self.store.user_action('import-confirmations',{'title':'Trip','items':preview['items']})
         self.assertEqual(self.store.read_results()['trips'],[])
         with self.assertRaises(ValueError):confirmations.parse('')
+    def test_flights_can_define_reviewed_hotel_nights(self):
+        preview=confirmations.parse('Flight: Outbound\nDeparture date: June 2, 2027\nArrival date: June 3, 2027\n---\nFlight: Return\nDeparture date: June 8, 2027')
+        self.assertEqual(preview['items'][0]['arrival_day'],'2027-06-03')
+        window={'check_in':'2027-06-03','check_out':'2027-06-08'}
+        result=self.store.user_action('import-confirmations',{'title':'Flight trip','items':preview['items'],'lodging_window':window})
+        self.assertEqual(self.store.trip(result['id'])['findings']['lodging_window'],window)
+        with self.assertRaises(ValueError):self.store.user_action('import-confirmations',{'title':'Bad trip','items':preview['items'],'lodging_window':{'check_in':'2027-06-08','check_out':'2027-06-03'}})
+        with self.assertRaises(ValueError):self.store.user_action('import-confirmations',{'title':'Bad trip','items':preview['items'],'lodging_window':{'check_in':20270603,'check_out':'2027-06-08'}})
     def test_shopping_publish_requires_source_and_revision(self):
         current=self.store.shopping.state();deal={'id':'one','merchant':'Example Store','product':'Laptop','price':'999.00','currency':'USD','source_url':'https://example.com/item','observed_at':'2026-10-19T10:00:00Z','terms':'Shipping extra','status':'available','card':'Example card'}
         result=self.store.agent_action('shopping-publish',{'expected_revision':current['revision'],'deals':[deal]})

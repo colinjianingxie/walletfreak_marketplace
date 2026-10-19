@@ -29,6 +29,8 @@ The viewer and HTML export load remote photos lazily with no referrer and link b
 
 ## Stays and route (optional, backwards compatible)
 
+To show hotel nights still to book, add `lodging_window: {"check_in":"2026-11-01","check_out":"2026-11-08"}` to the findings. These are local destination dates: arrival night through departure morning. Check-out must follow check-in. The timeline calculates empty hotel slots after subtracting only `booking_status: "booked"` stays, including nights before the first stay and after the last. Proposed hotels do not cover nights. Do not infer the window from a flight departure date alone; review arrival dates and time zones. For multi-city or multiple traveler groups, describe uncertain locations or coverage in `gaps`.
+
 An itinerary entry may add `day` (YYYY-MM-DD local date), `booking_status` (proposed, booked, cancelled; defaults to proposed), `stay: {"check_in":"2026-11-01","check_out":"2026-11-04"}`, and `place: {"label":"Public hotel or station name","lat":35.68,"lng":139.76,"confidence":"approximate","source_url":"https://example.com/location"}`. Coordinates must be finite and in range. Confidence is verified or approximate; omit unresolved coordinates. Check-out must follow check-in.
 
 `route: {"mode":"train","duration":"About 45 minutes","source_url":"https://example.com/timetable"}` describes the leg from the previous entry. Modes: flight, train, drive, walk, transit, ferry, other. Duration is optional and requires a source; do not invent it. All lines are schematic. The viewer flags adjacent stay overlaps/gaps and missing connections, but the agent must check the whole trip, including first/last nights and time zones. Different travelers' simultaneous stays should be explained in gaps.
