@@ -36,7 +36,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     assert.equal(await page.locator('#wallet-form').evaluate(form => form.inert), true);
     releaseInitialState();
     await page.getByRole('button',{name:'Table view',exact:true}).click();await page.getByText('No cards added yet.').waitFor();
-    await page.getByLabel('Add a person',{exact:true}).fill('Private owner alias');await page.getByRole('button',{name:'Add person',exact:true}).click();
+    await require('./setup-helper.cjs').person(page,'Private owner alias');
     assert.equal(new URL(page.url()).hash, '');
     assert.equal(await page.locator('.welcome').count(),0);
     assert.equal(await page.getByRole('button',{name:/Research this trip|Connect account|Save trip brief/}).count(),0);

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "release": "1.1.0",
+  "release": "1.2.0",
   "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
   "themes": [
     "paper",
@@ -67,7 +67,7 @@
     {
       "id": "overview",
       "name": "Overview",
-      "description": "Wallet, spending and trips together.",
+      "description": "One trip at a time, with your wallet and sourced spending metrics.",
       "layout": {
         "version": 1,
         "title": "Overview",
@@ -75,10 +75,10 @@
         "density": "compact",
         "blocks": [
           {
-            "id": "metrics",
-            "component": "metric-cards",
-            "source": "spending.metrics",
-            "title": "Spending at a glance"
+            "id": "itinerary",
+            "component": "itinerary",
+            "source": "travel.itinerary",
+            "title": "Your itinerary"
           },
           {
             "id": "points",
@@ -87,10 +87,10 @@
             "title": "Points & status"
           },
           {
-            "id": "itinerary",
-            "component": "itinerary",
-            "source": "travel.itinerary",
-            "title": "Your itinerary"
+            "id": "metrics",
+            "component": "metric-cards",
+            "source": "spending.metrics",
+            "title": "Spending at a glance"
           }
         ]
       }
@@ -98,7 +98,7 @@
     {
       "id": "spending",
       "name": "Spending",
-      "description": "Statements, metrics and evidence.",
+      "description": "PDF, CSV and ZIP references, agent-published metrics and source evidence.",
       "layout": {
         "version": 1,
         "title": "Spending",
@@ -148,7 +148,7 @@
     {
       "id": "wallet",
       "name": "Wallet",
-      "description": "Your cards, balances and benefits.",
+      "description": "Set up by person, link cards to rewards accounts, and review balances and benefits.",
       "layout": {
         "version": 1,
         "title": "Wallet",
@@ -165,7 +165,7 @@
             "id": "points",
             "component": "data-table",
             "source": "wallet.programs",
-            "title": "Points & status"
+            "title": "Rewards accounts"
           },
           {
             "id": "benefits",

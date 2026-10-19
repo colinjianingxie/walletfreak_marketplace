@@ -32,6 +32,17 @@ class WalletRoutes(unittest.TestCase):
         self.assertEqual(updated['programs'][0]['balance'],'0');self.assertEqual(updated['programs'][0]['notes'],'Keep points');self.assertEqual(updated['programs'][0]['sync_source'],'https://example.com/rewards')
         with self.assertRaises(ValueError):self.store.agent_action('wallet-sync',body)
         self.store.user_action('delete-wallet',{'expected_revision':updated['revision']});self.assertFalse((self.root/'wallet-v1-backup.json').exists())
+    def test_optional_account_identity_preserves_legacy_values(self):
+        old=self.old_wallet();local.atomic_json(self.root/'wallet.json',old)
+        current=self.store.wallet();draft={k:v for k,v in current.items() if k not in ('version','revision')}
+        draft['programs'][0].update(account_label='Alex rewards',member_hint='1234',credential_id='a'*32)
+        result=self.store.user_action('wallet',{'wallet':draft,'expected_revision':current['revision']})['wallet']
+        self.assertEqual(result['programs'][0]['balance'],'12345');self.assertEqual(result['programs'][0]['reported_on'],'2026-10-01')
+        self.assertEqual(result['programs'][0]['credential_id'],'a'*32)
+        bad=deepcopy(draft);bad['cards'][0]['credential_id']='a'*32
+        with self.assertRaises(ValueError):local.validate_wallet(bad)
+        bad=deepcopy(draft);bad['programs'][0]['credential_id']='not-an-id'
+        with self.assertRaises(ValueError):local.validate_wallet(bad)
     def test_routes_validation_and_export_escape(self):
         data={'title':'Demo','generated_at':'2026-10-19T12:00:00Z','options':[],'itinerary':[{'when':'Local time TBD','title':'Stay','detail':'</script><script>alert(1)</script>','stay':{'check_in':'2027-01-01','check_out':'2027-01-03'},'place':{'label':'Public place','lat':0,'lng':0,'confidence':'approximate','source_url':'https://example.com/?secret=TOKEN'},'route':{'mode':'train'}}]}
         local.board.validate(data);html=local.board.render(data);self.assertNotIn('TOKEN',html);self.assertNotIn('</script><script>alert(1)',html)

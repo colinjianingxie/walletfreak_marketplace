@@ -14,7 +14,7 @@
     try{references=await api('references');renderReferences();}catch(e){message(e.message,true);}
   }
   function renderReferences(){
-    $('#reference-list').innerHTML=references.files.map(f=>`<article class="reference-row"><span class="file-badge">${esc(f.name.split('.').pop().toUpperCase())}</span><div><strong>${esc(f.name)}</strong><small>${Math.ceil(f.bytes/1024)} KB · ${f.available?'Ready for your agent':'File missing'}</small><code>${esc(f.path)}</code></div><a href="/api/references/${f.id}" download aria-label="Download ${esc(f.name)}">Download</a><button data-remove-reference="${f.id}" aria-label="Remove ${esc(f.name)}">Remove</button></article>`).join('');
+    $('#reference-list').innerHTML=references.files.map(f=>`<article class="reference-row"><span class="file-badge">${esc(f.name.split('.').pop().toUpperCase())}</span><div><strong>${esc(f.name)}</strong><small>${Math.ceil(f.bytes/1024)} KB · ${f.available?'Ready for your agent':'File missing'}</small><code>${esc(f.path)}</code>${f.archive_name?`<small>From ${esc(f.archive_name)} / ${esc(f.member)}</small>`:''}${f.members?`<details><summary>${f.members.filter(m=>m.supported).length} supported files · ${f.extracted?'Extracted':'Ready for agent extraction'}</summary><ul>${f.members.map(m=>`<li>${esc(m.name)}${m.supported?'':' · Unsupported; skipped'}</li>`).join('')}</ul></details>`:''}</div><a href="/api/references/${f.id}" download aria-label="Download ${esc(f.name)}">Download</a><button data-remove-reference="${f.id}" aria-label="Remove ${esc(f.name)}">Remove</button></article>`).join('');
     $('#reference-copy').hidden=!references.files.length;
     const report=references.report;
     if(!report){$('#spending-report').innerHTML='<p class="muted">Your metrics and findings will appear here.</p>';return;}
@@ -26,7 +26,7 @@
     const failures=[];
     try{for(const file of files){
       try{
-        if(!/\.(pdf|csv)$/i.test(file.name)||file.size>20000000||!file.size)throw new Error('Choose a nonempty PDF or CSV up to 20 MB.');
+        if(!/\.(pdf|csv|zip)$/i.test(file.name)||file.size>20000000||!file.size)throw new Error('Choose a nonempty PDF, CSV or ZIP up to 20 MB.');
         $('#reference-status').textContent=`Saving ${file.name}…`;
         const content=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=()=>reject(new Error('Could not read the file.'));reader.readAsDataURL(file);});
         references=await api('references/upload',{name:file.name,content});renderReferences();

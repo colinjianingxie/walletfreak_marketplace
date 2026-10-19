@@ -34,3 +34,5 @@ Users can also fill in the bundled [profile template](assets/profile-template.md
 - Proposed bookings, hypothetical transfers and planned lounge visits never reduce saved balances or mark credits used. Maintain proposed allocations in the trip comparison only. No automatic account polling or syncing.
 
 Return relevant user-reported facts to `travel-plan`. Provider skills receive only facts needed for the current comparison through the conversation; they should not maintain separate profiles. Transactions and account changes remain user-operated.
+
+The local Wallet view offers Person → Cards → Rewards accounts → Review & save. Existing records and dates are preserved. Program rows represent individual rewards accounts; optional `account_label`, `member_hint` (partial identifier only), and `credential_id` link their identity to an independently stored sign-in. Cards use `reward_account_id` for the earning account, not transfer partners. Keep different people’s accounts and balances separate. Do not request passwords in the conversation; use the account’s Add sign-in control.

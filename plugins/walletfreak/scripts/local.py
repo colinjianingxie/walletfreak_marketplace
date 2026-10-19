@@ -36,7 +36,7 @@ import render_board as board
 
 PROVIDERS = json.loads((PLUGIN / 'providers.json').read_text())
 LIMIT = 2_000_000
-UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/wallet-setup.js', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
 
 
 def now():
@@ -192,7 +192,7 @@ def validate_wallet(value):
         if not isinstance(rows, list) or len(rows) > 100:
             raise ValueError('Use at most 100 entries per wallet section.')
         for row in rows:
-            fields(row, (*allowed, 'id', 'reward_account_id', 'card_id', 'program_id', 'person_id', 'synced_at', 'sync_source'), tuple(k for k in allowed if k != 'notes' or section != 'programs'))
+            fields(row, (*allowed, 'id', 'reward_account_id', 'card_id', 'program_id', 'person_id', 'synced_at', 'sync_source', 'account_label', 'member_hint', 'credential_id'), tuple(k for k in allowed if k != 'notes' or section != 'programs'))
             for key in allowed:
                 if key not in row: continue
                 if key in ('approximate', 'preserve'):
@@ -202,6 +202,11 @@ def validate_wallet(value):
                     short_text(row[key], key, key == 'name', 4000 if key == 'notes' else 300)
                 if key.endswith('_on') and row[key]:
                     date.fromisoformat(row[key])
+            for key in ('account_label', 'member_hint', 'credential_id'):
+                if key in row:
+                    if section != 'programs': raise ValueError('Account metadata belongs to rewards accounts.')
+                    short_text(row[key], key, False, 300)
+                    if key == 'credential_id' and row[key] and not re.fullmatch(r'[a-f0-9]{32}', row[key]): raise ValueError('Invalid saved sign-in ID.')
             if section == 'programs' and row['balance'] and not re.fullmatch(r'\d{1,13}', row['balance']):
                 raise ValueError('Points must be a nonnegative whole number or blank for unknown.')
             if section == 'benefits' and row['kind'] not in ('credit', 'certificate', 'gift-card', 'travel-bank', 'travel-credit', 'companion', 'upgrade', 'lounge-pass', 'membership', 'voucher', 'cashback', 'other'):
@@ -395,6 +400,8 @@ class Store:
             validate_wallet(draft)
             atomic_json(self.root/'wallet.json',{**draft,'version':2,'revision':uuid.uuid4().hex})
             return {'message':f'Updated {len(updates)} rewards account(s). Other wallet entries were retained.'}
+        if action == 'extract-references':
+            return self.documents.extract(body)
         if action == 'insights':
             return self.documents.publish(body)
         if action != 'publish':
@@ -678,7 +685,7 @@ def start(root, port):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'insights', 'layout', 'catalog'))
+    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'extract-references', 'insights', 'layout', 'catalog'))
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--input', type=Path, help='JSON findings or local settings; use - for stdin. Never supply credentials.')
     args = parser.parse_args()
@@ -691,11 +698,11 @@ def main():
             descriptor = start(root, args.port)
             print(descriptor['origin'] + '/#key=' + descriptor['ui_token'])
             return
-        if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync') or args.command == 'layout' and args.input:
+        if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync', 'extract-references') or args.command == 'layout' and args.input:
             if not args.input:
                 raise ValueError('Provide --input with a JSON file or - for stdin.')
             body = json.load(sys.stdin) if str(args.input) == '-' else read_json(args.input)
-            route = '/api/agent/' + args.command if args.command in ('publish', 'insights', 'wallet-sync') else '/api/' + args.command
+            route = '/api/agent/' + args.command if args.command in ('publish', 'insights', 'wallet-sync', 'extract-references') else '/api/' + args.command
             result = call(root, route, body)
         elif args.command in ('layout','catalog'):
             result = call(root, '/api/' + args.command)

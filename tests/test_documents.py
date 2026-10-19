@@ -45,3 +45,37 @@ class References(unittest.TestCase):
         with patch.object(inventory.subprocess,'run',return_value=subprocess.CompletedProcess([],0,json.dumps({'installed':entries}))),patch.dict('os.environ',{'CODEX_HOME':str(self.root/'codex')}):
             self.assertEqual([p['name'] for p in inventory.discover(self.root)['plugins']],['walletfreak'])
         with patch.object(inventory.subprocess,'run',side_effect=OSError()):self.assertEqual(inventory.discover(self.root)['plugins'],[])
+
+class Archives(References):
+    def zip_upload(self, entries):
+        import io, zipfile
+        data=io.BytesIO()
+        with zipfile.ZipFile(data,'w') as archive:
+            for name,raw in entries: archive.writestr(name,raw)
+        return self.upload(data.getvalue(),'statements.zip')
+    def test_archive_inventory_extract_citations_and_cascade(self):
+        state=self.zip_upload([('October/one.pdf',b'%PDF-1.4\nexample'),('two.csv',b'Date,Amount\n2026-10-01,10\n'),('readme.txt',b'ignored')])
+        parent=state['files'][0];self.assertEqual(len(state['files']),1);self.assertEqual(len(parent['members']),3)
+        state=self.docs.extract({'id':parent['id'],'expected_revision':state['revision']});self.assertEqual(len(state['files']),3)
+        self.assertEqual(state['files'][1]['member'],'October/one.pdf');self.assertEqual(state['files'][1]['archive_id'],parent['id'])
+        again=self.docs.extract({'id':parent['id'],'expected_revision':state['revision']});self.assertEqual(again['revision'],state['revision'])
+        body=self.report(state);body['report']['metrics'][0]['source_ids']=[state['files'][1]['id']];self.docs.publish(body)
+        state=self.docs.snapshot();self.docs.delete({'id':parent['id'],'expected_revision':state['revision']})
+        self.assertEqual(self.docs.state()['files'],[]);self.assertIsNone(self.docs.state()['report']);self.assertEqual(list((self.root/'references').iterdir()),[])
+    def test_archive_rejects_traversal_symlinks_limits_and_invalid_members(self):
+        import io,zipfile,stat
+        for name in ['../x.pdf','/x.pdf','C:/x.pdf','folder\\x.pdf']:
+            with self.assertRaises(ValueError):self.zip_upload([(name,b'%PDF-1.4')])
+        info=zipfile.ZipInfo('link.pdf');info.external_attr=(stat.S_IFLNK|0o777)<<16
+        with self.assertRaises(ValueError):self.zip_upload([(info,b'/etc/passwd')])
+        with self.assertRaises(ValueError):self.zip_upload([('nested.zip',b'zip')])
+        with self.assertRaises(ValueError):self.zip_upload([(str(i)+'.pdf',b'%PDF-') for i in range(101)])
+        state=self.zip_upload([('good.pdf',b'%PDF-1.4'),('bad.csv',b'\xff')]);parent=state['files'][0]
+        with self.assertRaises(ValueError):self.docs.extract({'id':parent['id'],'expected_revision':state['revision']})
+        self.assertEqual(len(self.docs.state()['files']),1);self.assertEqual(len(list((self.root/'references').iterdir())),1)
+    def test_archive_extract_rollback_and_revision(self):
+        state=self.zip_upload([('one.pdf',b'%PDF-1.4'),('two.csv',b'a,b')]);body={'id':state['files'][0]['id'],'expected_revision':state['revision']}
+        with patch.object(self.docs,'write',side_effect=OSError('disk full')):
+            with self.assertRaises(OSError):self.docs.extract(body)
+        self.assertEqual(len(list((self.root/'references').iterdir())),1)
+        with self.assertRaises(ValueError):self.docs.extract({**body,'expected_revision':'old'})

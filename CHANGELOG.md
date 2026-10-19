@@ -1,5 +1,12 @@
 # Changelog
 
+## Guided wallets and ZIP references
+
+- Four-step wallet setup, direct entry saves, labeled rewards accounts and optional linked sign-ins.
+- One-trip Overview with agent starter prompts and refreshed dashboard-generation instructions.
+- ZIP reference inventories, bounded agent extraction, source provenance and cascade deletion.
+- Shared component release 1.2.0 and matching responsive public previews.
+
 ## Local follow-up — statement references and agent metrics
 
 - Make Spending a PDF/CSV drop area with private local references and agent-published, sourced metrics. Keep the transaction spreadsheet optional.
