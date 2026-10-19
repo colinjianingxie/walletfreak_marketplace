@@ -313,14 +313,14 @@ class Store:
 
     def user_action(self, action, body):
         if action == 'import-confirmations':
-            fields(body, ('title','items'), ('title','items'))
+            fields(body, ('title','items','lodging_window'), ('title','items'))
             title=short_text(body['title'],'trip title',True,200)
             items=body['items']
             if not isinstance(items,list) or not 1<=len(items)<=20:
                 raise ValueError('Review 1–20 bookings before saving.')
             itinerary,options,selected,gaps=[],[],[],[]
             for index,item in enumerate(items):
-                fields(item, ('kind','day','when','title','detail','price','booking_status','stay'), ('kind','day','when','title','detail','price','booking_status'))
+                fields(item, ('kind','day','arrival_day','when','title','detail','price','booking_status','stay'), ('kind','day','when','title','detail','price','booking_status'))
                 if item['kind'] not in ('flight','hotel','transport','other') or item['booking_status'] not in ('booked','proposed'):
                     raise ValueError('Choose a supported booking type and status.')
                 day=short_text(item['day'],'booking date',True,10)
@@ -346,6 +346,8 @@ class Store:
             findings={'title':title,'summary':'Reviewed bookings imported from pasted confirmation text. Recheck all dates, status and prices with the provider.',
                       'generated_at':now(),'options':options,'itinerary':itinerary,'gaps':gaps,
                       'research':[{'title':'Confirmation import','detail':'The original email text was not stored. Fields were reviewed in the local browser.'}]}
+            if 'lodging_window' in body:
+                findings['lodging_window']=body['lodging_window']
             findings=clean_findings(findings)
             state=self.read_results()
             trip={'id':uuid.uuid4().hex,'revision':0,'findings':findings,'shortlist':[],

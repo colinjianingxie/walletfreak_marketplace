@@ -28,7 +28,8 @@ def parse(raw):
         kind='hotel' if re.search(r'\b(hotel|check.?in|check.?out|room|property)\b',block,re.I) else 'flight' if re.search(r'\b(flight|airline|departure|boarding)\b',block,re.I) else 'other'
         check_in=labeled(block,['check[ -]?in','arrival date'])
         check_out=labeled(block,['check[ -]?out','departure date'])
-        departure=labeled(block,['departure','departing','flight date','travel date'])
+        departure=labeled(block,['departure date','departure','departing','flight date','travel date'])
+        arrival=labeled(block,['arrival date','arrival','arriving']) if kind=='flight' else ''
         date_values=[normalized_date(m.group(0)) for m in re.finditer(DATE,block)]
         day=normalized_date(check_in if kind=='hotel' else departure) or next((d for d in date_values if d),'')
         stay=None
@@ -41,5 +42,5 @@ def parse(raw):
         currency=(total.group(1) or {'$':'USD','€':'EUR','£':'GBP'}.get(total.group(2),'USD')) if total else ''
         price=(currency+' '+total.group(3).replace(',','')) if total else ''
         confirmed=bool(re.search(r'\b(booking confirmed|reservation confirmed|flight confirmed|confirmed reservation)\b',block,re.I))
-        items.append({'kind':kind,'day':day,'when':day or 'Date to confirm','title':title,'detail':'Imported from pasted confirmation; verify dates, names, status and total before saving.', 'price':price,'booking_status':'booked' if confirmed else 'proposed','stay':stay})
+        items.append({'kind':kind,'day':day,'arrival_day':normalized_date(arrival),'when':day or 'Date to confirm','title':title,'detail':'Imported from pasted confirmation; verify dates, names, status and total before saving.', 'price':price,'booking_status':'booked' if confirmed else 'proposed','stay':stay})
     return {'items':items,'note':'Review every detected field. Dates, prices and booking status can be incomplete; pasted email text is not saved.'}

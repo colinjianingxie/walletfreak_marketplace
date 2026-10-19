@@ -7,13 +7,13 @@ Three focused plugins for Codex and Claude Code: Travel, Finance and Shopping, w
 Prerequisites: Python 3.10+, Node.js 18+ and Chrome.
 
 ```sh
-codex plugin marketplace add colinjianingxie/walletfreak_marketplace
+codex plugin marketplace add walletfreak/walletfreak_marketplace
 codex plugin add walletfreak@walletfreak
 codex plugin add walletfreak-finance@walletfreak
 codex plugin add walletfreak-shopping@walletfreak
 
 # Or Claude Code:
-claude plugin marketplace add colinjianingxie/walletfreak_marketplace
+claude plugin marketplace add walletfreak/walletfreak_marketplace
 claude plugin install walletfreak@walletfreak
 claude plugin install walletfreak-finance@walletfreak
 claude plugin install walletfreak-shopping@walletfreak

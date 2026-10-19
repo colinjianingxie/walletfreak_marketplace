@@ -4,7 +4,7 @@
   function bind(state,references){
     const rows=[];
     for(const trip of (state.trips||[]).filter(t=>t.id===selectedTrip)){for(const item of trip.findings.itinerary||[]){const option=trip.findings.options?.find(o=>o.id===item.option_id);rows.push({...option,...item,trip:trip.findings.title,payment:option?.payment});}}
-    return {'wallet.artwork':Object.fromEntries(cards.map(c=>[c.name,'/assets'+c.path])),'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows};
+    return {'wallet.artwork':Object.fromEntries(cards.map(c=>[c.name,'/assets'+c.path])),'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows,'travel.lodging_window':(state.trips||[]).find(t=>t.id===selectedTrip)?.findings.lodging_window};
   }
   window.loadOverview=async function(reset=false){
     const sequence=++request;
@@ -18,7 +18,7 @@
       const selector=$('#overview-trip'), options=trips.map(t=>`<option value="${esc(t.id)}">${esc(t.findings.title)}</option>`).join('');
       if(selector.innerHTML!==options)selector.innerHTML=options;selector.value=selectedTrip;
       const hasTravel=saved.layout.blocks.some(b=>b.source==='travel.itinerary');
-      $('#overview-trip-label').hidden=!hasTravel||!trips.length;$('#overview-intro').hidden=hasTravel&&trips.some(t=>t.findings.itinerary?.length);
+      $('#overview-trip-label').hidden=!hasTravel||!trips.length;$('#overview-intro').hidden=hasTravel&&trips.some(t=>t.findings.itinerary?.length||t.findings.lodging_window);
       const selected=trips.find(t=>t.id===selectedTrip),gaps=selected?.findings.gaps||[];
       const costs=selected?.totals||{cash:{},points:{},unknown:[]};
       const reported={};for(const item of selected?.findings.itinerary||[]){if(item.booking_status==='booked'&&!item.option_id){const m=/^([A-Z]{3}) ([0-9]+(?:\.[0-9]{1,2})?)$/.exec(item.price||'');if(m)reported[m[1]]=(reported[m[1]]||0)+Number(m[2]);}}

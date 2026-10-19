@@ -5,7 +5,7 @@ description: "Track airport lounge access from a traveler's existing cards and m
 
 # Lounge access tracker
 
-Prioritize lounge planning alongside flights when cards or lounge access matter to the traveler. This skill belongs to `walletfreak`. Discover and load core’s `travel-plan` through the host, and reuse its sole `walletfreak-browser` connection. If core instructions or browser tools are missing, STOP live research and give `codex plugin add walletfreak@walletfreak` or `claude plugin install walletfreak@walletfreak`, followed by a fresh session and `walletfreak-setup`. If the marketplace is missing, add `colinjianingxie/walletfreak_marketplace` with the host’s `plugin marketplace add` command. Do not read neighboring plugin files or start another browser.
+Prioritize lounge planning alongside flights when cards or lounge access matter to the traveler. This skill belongs to `walletfreak`. Discover and load core’s `travel-plan` through the host, and reuse its sole `walletfreak-browser` connection. If core instructions or browser tools are missing, STOP live research and give `codex plugin add walletfreak@walletfreak` or `claude plugin install walletfreak@walletfreak`, followed by a fresh session and `walletfreak-setup`. If the marketplace is missing, add `walletfreak/walletfreak_marketplace` with the host’s `plugin marketplace add` command. Do not read neighboring plugin files or start another browser.
 
 ## Match cards to the actual airport stops
 
