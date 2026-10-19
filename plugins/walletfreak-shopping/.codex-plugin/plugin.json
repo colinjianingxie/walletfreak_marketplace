@@ -1,0 +1,25 @@
+{
+  "name": "walletfreak-shopping",
+  "version": "0.1.0+codex.20261019023701",
+  "description": "Research current shopping deals with wallet-aware card recommendations.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "WalletFreak Shopping",
+    "shortDescription": "Compare current deals and the card to use.",
+    "longDescription": "Research products, merchant offers and cash back, then show sourced deals in the local WalletFreak shopping board.",
+    "developerName": "WalletFreak contributors",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Find current deals for a product and show which card in my wallet to use."
+    ],
+    "composerIcon": "./assets/mascot.png",
+    "logo": "./assets/mascot.png"
+  },
+  "homepage": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "repository": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "license": "MIT"
+}

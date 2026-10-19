@@ -37,7 +37,7 @@ def discover(plugin):
         installed=json.loads(run.stdout).get('installed',[])
         base=Path(os.environ.get('CODEX_HOME',str(Path.home()/'.codex')))/'plugins/cache'
         for item in installed:
-            if item.get('marketplaceName') != 'walletfreak' or item.get('name') not in ('walletfreak', 'walletfreak-spending') or item.get('enabled') is not True: continue
+            if item.get('marketplaceName') != 'walletfreak' or item.get('name') not in ('walletfreak', 'walletfreak-finance', 'walletfreak-shopping') or item.get('enabled') is not True: continue
             name,market,version=(item.get(k,'') for k in ('name','marketplaceName','version'))
             if not all(re.fullmatch(r'[A-Za-z0-9_.+@-]+',v) for v in (name,market,version)): continue
             root=base/market/name/version

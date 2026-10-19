@@ -27,7 +27,7 @@ class Layouts(unittest.TestCase):
             v=deepcopy(base);v[key]=value;bad.append(v)
         for key,value in [('component','remote-code'),('source','credentials.password'),('source','wallet.cards'),('id','../secret')]:
             v=deepcopy(base);v['blocks'][0][key]=value;bad.append(v)
-        v=deepcopy(base);v['blocks'][1]['id']=v['blocks'][0]['id'];bad.append(v)
+        v=deepcopy(base);v['blocks'].append(deepcopy(v['blocks'][0]));bad.append(v)
         v=deepcopy(base);v['blocks'][0]['script']='alert(1)';bad.append(v)
         for v in bad:
             with self.subTest(v=v),self.assertRaises(ValueError):layouts.validate(v)

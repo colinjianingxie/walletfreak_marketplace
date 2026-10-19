@@ -19,12 +19,12 @@ class Packages(unittest.TestCase):
         for path in (ROOT/'.agents/plugins/marketplace.json', ROOT/'.claude-plugin/marketplace.json'):
             catalog=json.loads(path.read_text())
             self.assertEqual(catalog['name'],'walletfreak')
-            self.assertEqual([p['name'] for p in catalog['plugins']],['walletfreak','walletfreak-spending'])
-        self.assertEqual(sorted(p.name for p in (ROOT/'plugins').iterdir()),['walletfreak','walletfreak-spending'])
+            self.assertEqual([p['name'] for p in catalog['plugins']],['walletfreak','walletfreak-finance','walletfreak-shopping'])
+        self.assertEqual(sorted(p.name for p in (ROOT/'plugins').iterdir()),['walletfreak','walletfreak-finance','walletfreak-shopping'])
         for host in ('codex','claude'):
             m=json.loads((PLUGIN/f'.{host}-plugin/plugin.json').read_text())
             self.assertEqual(m['name'],'walletfreak')
-            self.assertEqual(m['version'].split('+')[0],'0.3.0')
+            self.assertEqual(m['version'].split('+')[0],'0.4.0')
         ledger=json.loads((ROOT/'docs/provider-verification.json').read_text())
         self.assertEqual({r['id'] for r in ledger},EXPECTED)
         for p in PROVIDERS:
@@ -50,7 +50,7 @@ class Packages(unittest.TestCase):
             isolated=Path(temporary)/'walletfreak'
             shutil.copytree(PLUGIN,isolated)
             names={s.parent.name for s in isolated.glob('skills/*/SKILL.md')}
-            self.assertEqual(names,{'travel-plan','provider-research','traveler-profile','card-travel-benefits','lounge-access','trip-board','walletfreak-setup','wallet-optimizer','dashboard-builder','stay-route-map','wallet-sync'})
+            self.assertEqual(names,{'travel-plan','provider-research','traveler-profile','card-travel-benefits','lounge-access','trip-board','walletfreak-setup','wallet-optimizer','dashboard-builder','stay-route-map','wallet-sync','confirmation-import'})
             for path in isolated.rglob('*.md'):
                 for target in re.findall(r'\]\(([^)]+)\)',path.read_text()):
                     if target.startswith('https://'):

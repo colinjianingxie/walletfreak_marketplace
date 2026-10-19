@@ -28,6 +28,8 @@ from profile_import import parse_profile
 import inventory
 from spending import Ledger
 from documents import Documents
+from shopping import Shopping
+from confirmations import parse as preview_confirmations
 from layouts import Layouts, CATALOG
 
 PLUGIN = Path(__file__).resolve().parents[1]
@@ -36,7 +38,7 @@ import render_board as board
 
 PROVIDERS = json.loads((PLUGIN / 'providers.json').read_text())
 LIMIT = 2_000_000
-UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/wallet-setup.js', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/wallet-setup.js', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/finance.js', 'dashboard/shopping.js', 'dashboard/confirmations.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
 
 
 def now():
@@ -255,6 +257,7 @@ class Store:
         self.inventory = None
         self.spending = Ledger(root, read_json, atomic_json)
         self.documents = Documents(root, read_json, atomic_json)
+        self.shopping = Shopping(root, read_json, atomic_json)
         self.layouts = Layouts(root, read_json, atomic_json)
         # Move the old store once. Manual deletion must never resurrect old results.
         legacy = root / 'state.json'
@@ -305,10 +308,50 @@ class Store:
         result = self.read_results()
         for trip in result['trips']:
             trip['totals'] = selected_totals(trip)
-        result.update(wallet=self.wallet(), providers=PROVIDERS, legacy_profile=(self.root.parent / 'traveler-profile.md').is_file())
+        result.update(wallet=self.wallet(), shopping=self.shopping.state(), providers=PROVIDERS, legacy_profile=(self.root.parent / 'traveler-profile.md').is_file())
         return result
 
     def user_action(self, action, body):
+        if action == 'import-confirmations':
+            fields(body, ('title','items'), ('title','items'))
+            title=short_text(body['title'],'trip title',True,200)
+            items=body['items']
+            if not isinstance(items,list) or not 1<=len(items)<=20:
+                raise ValueError('Review 1–20 bookings before saving.')
+            itinerary,options,selected,gaps=[],[],[],[]
+            for index,item in enumerate(items):
+                fields(item, ('kind','day','when','title','detail','price','booking_status','stay'), ('kind','day','when','title','detail','price','booking_status'))
+                if item['kind'] not in ('flight','hotel','transport','other') or item['booking_status'] not in ('booked','proposed'):
+                    raise ValueError('Choose a supported booking type and status.')
+                day=short_text(item['day'],'booking date',True,10)
+                date.fromisoformat(day)
+                row={'day':day,'when':short_text(item['when'],'booking time',True,200),
+                     'title':short_text(item['title'],'booking title',True,200),
+                     'detail':short_text(item['detail'],'booking detail',True,500),
+                     'booking_status':item['booking_status']}
+                if item.get('stay'):
+                    stay=item['stay']
+                    fields(stay,('check_in','check_out'),('check_in','check_out'))
+                    if date.fromisoformat(stay['check_out'])<=date.fromisoformat(stay['check_in']):
+                        raise ValueError('Hotel check-out must follow check-in.')
+                    row['stay']=stay
+                price=short_text(item['price'],'reported price',False,40)
+                if price:
+                    match=re.fullmatch(r'([A-Z]{3}) ([0-9]{1,9}(?:\.[0-9]{1,2})?)',price)
+                    if not match: raise ValueError('Use a reported price such as USD 240.00 or leave it blank.')
+                    row['price']=price
+                else: gaps.append('Price not recorded for '+row['title'])
+                itinerary.append(row)
+            itinerary.sort(key=lambda row:row['day'])
+            findings={'title':title,'summary':'Reviewed bookings imported from pasted confirmation text. Recheck all dates, status and prices with the provider.',
+                      'generated_at':now(),'options':options,'itinerary':itinerary,'gaps':gaps,
+                      'research':[{'title':'Confirmation import','detail':'The original email text was not stored. Fields were reviewed in the local browser.'}]}
+            findings=clean_findings(findings)
+            state=self.read_results()
+            trip={'id':uuid.uuid4().hex,'revision':0,'findings':findings,'shortlist':[],
+                  'selected':selected,'selection_revision':0}
+            state['trips'].append(trip);atomic_json(self.path,state)
+            return {'id':trip['id'],'message':'Reviewed bookings saved as an itinerary.'}
         if action == 'layout':
             return self.layouts.save(body)
         if action == 'import-profile':
@@ -379,6 +422,7 @@ class Store:
         return {'message': 'Results deleted. Your personal wallet is unchanged.'} if action == 'delete-results' else {}
 
     def agent_action(self, action, body):
+        if action == 'shopping-publish': return self.shopping.publish(body)
         if action == 'wallet-sync':
             fields(body, ('expected_revision','updates'), ('expected_revision','updates'))
             wallet=self.wallet()
@@ -499,6 +543,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(200, CATALOG if path == '/api/catalog' else self.server.store.layouts.state())
             except (ValueError, KeyError, TypeError, OSError):
                 return self.respond(500, {'error':'Layout could not be read. Preserve layout.json and check its format.'})
+        if path == '/api/shopping':
+            return self.respond(200,self.server.store.shopping.state())
         if path == '/api/references':
             try:
                 return self.respond(200, self.server.store.documents.snapshot())
@@ -572,7 +618,16 @@ class Handler(BaseHTTPRequestHandler):
                 session = secrets.token_urlsafe(32)
                 self.server.sessions.add(session)
                 return self.respond(200, {}, headers={'Set-Cookie': f'walletfreak={session}; HttpOnly; SameSite=Strict; Path=/'})
-            if self.path in ('/api/references/upload', '/api/references/delete'):
+            if self.path == '/api/confirmations/preview':
+                if not self.user() or self.headers.get('X-WalletFreak') != '1':
+                    return self.respond(403, {'error':'Confirmations require the private browser session.'})
+                fields(body,('text',),('text',))
+                result=preview_confirmations(body['text'])
+            elif self.path == '/api/confirmations/save':
+                if not self.user() or self.headers.get('X-WalletFreak') != '1':
+                    return self.respond(403, {'error':'Confirmations require the private browser session.'})
+                result=self.server.store.user_action('import-confirmations',body)
+            elif self.path in ('/api/references/upload', '/api/references/delete'):
                 if not self.user() or self.headers.get('X-WalletFreak') != '1':
                     return self.respond(403, {'error': 'Reference changes require the private browser session.'})
                 docs = self.server.store.documents
@@ -685,7 +740,7 @@ def start(root, port):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'extract-references', 'insights', 'layout', 'catalog'))
+    parser.add_argument('command', choices=('start', 'serve', 'status', 'publish', 'wallet-sync', 'wallet', 'settings', 'forget', 'stop', 'references', 'extract-references', 'insights', 'shopping', 'shopping-publish', 'layout', 'catalog'))
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--input', type=Path, help='JSON findings or local settings; use - for stdin. Never supply credentials.')
     args = parser.parse_args()
@@ -698,14 +753,16 @@ def main():
             descriptor = start(root, args.port)
             print(descriptor['origin'] + '/#key=' + descriptor['ui_token'])
             return
-        if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync', 'extract-references') or args.command == 'layout' and args.input:
+        if args.command in ('publish', 'settings', 'forget', 'insights', 'wallet-sync', 'extract-references', 'shopping-publish') or args.command == 'layout' and args.input:
             if not args.input:
                 raise ValueError('Provide --input with a JSON file or - for stdin.')
             body = json.load(sys.stdin) if str(args.input) == '-' else read_json(args.input)
-            route = '/api/agent/' + args.command if args.command in ('publish', 'insights', 'wallet-sync', 'extract-references') else '/api/' + args.command
+            route = '/api/agent/' + args.command if args.command in ('publish', 'insights', 'wallet-sync', 'extract-references', 'shopping-publish') else '/api/' + args.command
             result = call(root, route, body)
         elif args.command in ('layout','catalog'):
             result = call(root, '/api/' + args.command)
+        elif args.command == 'shopping':
+            result = call(root, '/api/shopping')
         elif args.command == 'references':
             result = call(root, '/api/references')
         elif args.command == 'wallet':

@@ -33,3 +33,5 @@ Download trip file exports standalone HTML containing the research itinerary, sa
 Check option counts, filters, evidence links, itinerary components, costs, dates/time zones and unresolved gaps. Available means at observation, never guaranteed now. No booking, polling or automatic balance changes.
 
 Use [stay-route-map](../stay-route-map/SKILL.md) when adding hotel locations and routes. Keep critical gaps visible; payment reasoning and evidence expand on demand.
+
+For reviewed confirmation imports, itinerary entries may carry a `price` string directly even without a linked research option. Treat it as a reported booking total or potential price; do not silently add it to verified research subtotals.

@@ -1,7 +1,7 @@
 {
-  "name": "walletfreak-spending",
+  "name": "walletfreak-finance",
   "version": "0.1.0",
-  "description": "Analyze local PDF and CSV statement references and show sourced spending metrics in WalletFreak.",
+  "description": "Local spending reports, category charts and statement analysis.",
   "author": {
     "name": "WalletFreak contributors"
   },

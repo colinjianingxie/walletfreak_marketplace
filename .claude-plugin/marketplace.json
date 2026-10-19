@@ -4,18 +4,23 @@
     "name": "WalletFreak contributors"
   },
   "metadata": {
-    "description": "All-in-one plugins and skills for travel, your wallet and local spending.",
-    "version": "0.3.0"
+    "description": "Focused local travel, finance and shopping plugins with one private workspace.",
+    "version": "0.4.0"
   },
   "plugins": [
     {
       "name": "walletfreak",
       "source": "./plugins/walletfreak",
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     {
-      "name": "walletfreak-spending",
-      "source": "./plugins/walletfreak-spending",
+      "name": "walletfreak-finance",
+      "source": "./plugins/walletfreak-finance",
+      "version": "0.1.0"
+    },
+    {
+      "name": "walletfreak-shopping",
+      "source": "./plugins/walletfreak-shopping",
       "version": "0.1.0"
     }
   ]

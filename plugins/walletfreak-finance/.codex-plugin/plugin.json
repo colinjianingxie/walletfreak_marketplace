@@ -1,0 +1,27 @@
+{
+  "name": "walletfreak-finance",
+  "version": "0.1.0+codex.20261019023701",
+  "description": "Local spending reports, category charts and statement analysis.",
+  "author": {
+    "name": "WalletFreak contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "WalletFreak Finance",
+    "shortDescription": "Understand spending by category and month.",
+    "longDescription": "Import PDF, CSV or ZIP statement references, review transactions and explore local spending charts with source-linked findings.",
+    "developerName": "WalletFreak",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Analyze my downloaded activity and show category spending in WalletFreak Finance.",
+      "Compare my month-by-month spending and explain large changes."
+    ],
+    "brandColor": "#0788D9",
+    "composerIcon": "./assets/mascot.png",
+    "logo": "./assets/mascot.png"
+  },
+  "homepage": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "repository": "https://github.com/colinjianingxie/walletfreak_marketplace",
+  "license": "MIT"
+}

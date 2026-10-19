@@ -1,6 +1,6 @@
 # WalletFreak
 
-All-in-one plugins + skills for Codex and Claude Code: travel, your personal wallet and local spending. Plan with flexible dates, compare 31 provider groups, evaluate existing card benefits and lounges, and explore findings in a private local dashboard. Users sign in and book themselves.
+Three focused plugins for Codex and Claude Code: Travel, Finance and Shopping, with one private local workspace. Plan with flexible dates, compare 31 provider groups, evaluate existing card benefits and lounges, and explore findings in a private local dashboard. Users sign in and book themselves.
 
 ## Install
 
@@ -9,27 +9,29 @@ Prerequisites: Python 3.10+, Node.js 18+ and Chrome.
 ```sh
 codex plugin marketplace add colinjianingxie/walletfreak_marketplace
 codex plugin add walletfreak@walletfreak
-codex plugin add walletfreak-spending@walletfreak
+codex plugin add walletfreak-finance@walletfreak
+codex plugin add walletfreak-shopping@walletfreak
 
 # Or Claude Code:
 claude plugin marketplace add colinjianingxie/walletfreak_marketplace
 claude plugin install walletfreak@walletfreak
-claude plugin install walletfreak-spending@walletfreak
+claude plugin install walletfreak-finance@walletfreak
+claude plugin install walletfreak-shopping@walletfreak
 ```
 
 Start a fresh host session and ask: **Use walletfreak-setup to open my local dashboard.**
 
-WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder, stay-route-map, wallet-sync and walletfreak-setup. See [installation and migration](docs/INSTALL.md).
+WalletFreak core covers all travel providers in one plugin. It includes travel-plan, provider-research, traveler-profile, card-travel-benefits, lounge-access, trip-board, wallet-optimizer, dashboard-builder, stay-route-map, wallet-sync, walletfreak-setup and confirmation-import. See [installation and migration](docs/INSTALL.md).
 
-## Categorize spending locally
+## Travel, finance and shopping
 
-WalletFreak Spending adds the spending-analysis skill and bank-specific guides for Chase, Citi, Capital One, Amex and other mapped CSVs. It uses the same core local dashboard—no second server. Drop downloaded PDF or CSV statements into Spending. Files are saved as local references; ask your agent for metrics, categories or recurring charges, and explore the sourced results in the dashboard. The optional CSV spreadsheet provides category review and transaction/monthly exports. Every row needs review before inclusion. Payments/transfers are excluded from spending; currencies stay separate. PDF extraction is a local assisted workflow, not an automatic transaction parser.
+WalletFreak Finance adds the spending-analysis skill and bank-specific guides for Chase, Citi, Capital One, Amex and other mapped CSVs. It uses the same core local dashboard—no second server. Drop downloaded PDF, CSV or ZIP statements into Finance. Files are saved as local references; ask your agent for metrics, categories or recurring charges, and explore the sourced results in the dashboard. The optional CSV spreadsheet provides category review and transaction/monthly exports. Every row needs review before inclusion. Payments/transfers are excluded from spending; currencies stay separate. PDF extraction is a local assisted workflow, not an automatic transaction parser.
 
 **Your files are processed on your device. No bank credentials required.** Direct import, categorization and exports run locally. The ledger is a private local plaintext file. Content you ask an agent to read may be processed by your host/model provider; this is not an offline language model.
 
 ## Compose your dashboard
 
-Use dashboard-builder to choose a template, arrange wallet/spending/itinerary components and select a theme. Overview → Choose a template or load a layout also accepts JSON downloaded from the public component gallery. The plugin bundles catalog v1 and the renderer for offline use. Layouts contain component IDs and local data bindings; they contain no financial data, URLs or executable code. Existing wallet, trip and spending views remain available.
+Use dashboard-builder to choose a template, arrange wallet/spending/itinerary components and select a theme. Travel → Choose a template or load a layout also accepts JSON downloaded from the public component gallery. The plugin bundles catalog v1 and the renderer for offline use. Layouts contain component IDs and local data bindings; they contain no financial data, URLs or executable code. Existing wallet, trip and spending views remain available.
 
 The website publishes the same catalog, schema and renderer at /components/v1/ and previews templates at /components.html. A separate read-only catalog MCP prototype lives in the website repository; deploying it is optional, and the local plugin needs no hosted service.
 
@@ -70,3 +72,5 @@ For a separate test data directory, set WALLETFREAK_DATA to a dedicated private 
 The separate walletfreak repository owns the public website. Source publication and website deployment are separate release actions. MIT applies to code; provider artwork retains its source/trademark notices.
 
 The wallet groups cards, rewards accounts and assets by person, retaining a Table view for bulk edits. Stable links keep shared rewards balances on one account. The v2 migration preserves existing values and saves wallet-v1-backup.json locally; deleting the personal wallet also deletes that backup. Travel templates show a compact timeline and route list. Street-map tiles are optional and contact OpenStreetMap only after Load street map. Exports retain an offline route list.
+
+WalletFreak Shopping researches current merchant prices, cash back and card choices, and publishes sourced offers to the same local Shopping board. Paste flight or hotel confirmations in Travel to preview detected bookings, review details and save a visual itinerary. Original pasted email text is discarded after preview.

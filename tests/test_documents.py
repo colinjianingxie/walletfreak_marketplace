@@ -41,7 +41,7 @@ class References(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'symlink'):self.upload()
         with self.assertRaises(ValueError):self.docs.file_path({'file':'../secret.pdf'})
     def test_inventory_filters_marketplace_and_enabled_state(self):
-        entries=[{'name':'walletfreak','marketplaceName':'walletfreak','version':'1','enabled':True,'source':{'source':'local','path':str(self.root)}}, {'name':'walletfreak-spending','marketplaceName':'walletfreak','version':'1','enabled':False}, {'name':'unrelated','marketplaceName':'walletfreak','version':'1','enabled':True}, {'name':'walletfreak','marketplaceName':'other','version':'1','enabled':True}]
+        entries=[{'name':'walletfreak','marketplaceName':'walletfreak','version':'1','enabled':True,'source':{'source':'local','path':str(self.root)}}, {'name':'walletfreak-finance','marketplaceName':'walletfreak','version':'1','enabled':False}, {'name':'unrelated','marketplaceName':'walletfreak','version':'1','enabled':True}, {'name':'walletfreak','marketplaceName':'other','version':'1','enabled':True}]
         with patch.object(inventory.subprocess,'run',return_value=subprocess.CompletedProcess([],0,json.dumps({'installed':entries}))),patch.dict('os.environ',{'CODEX_HOME':str(self.root/'codex')}):
             self.assertEqual([p['name'] for p in inventory.discover(self.root)['plugins']],['walletfreak'])
         with patch.object(inventory.subprocess,'run',side_effect=OSError()):self.assertEqual(inventory.discover(self.root)['plugins'],[])

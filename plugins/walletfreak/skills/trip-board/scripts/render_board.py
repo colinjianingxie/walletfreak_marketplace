@@ -161,12 +161,13 @@ def validate(data):
         if item.get("url") is not None:
             source_url(item["url"])
     for item in data.get("itinerary", []):
-        if not isinstance(item, dict) or item.keys() - {"when", "title", "detail", "option_id", "day", "place", "stay", "route", "booking_status"}:
+        if not isinstance(item, dict) or item.keys() - {"when", "title", "detail", "option_id", "day", "place", "stay", "route", "booking_status", "price"}:
             raise ValueError("Invalid itinerary entry")
         for name in ("when", "title", "detail"):
             text(item.get(name), f"itinerary {name}", True)
         if 'day' in item:
             date.fromisoformat(item['day'])
+        if 'price' in item and (not isinstance(item['price'],str) or len(item['price'])>80): raise ValueError('Invalid itinerary price')
         if 'booking_status' in item and item['booking_status'] not in ('proposed','booked','cancelled'):
             raise ValueError('Unknown booking status')
         if 'place' in item:

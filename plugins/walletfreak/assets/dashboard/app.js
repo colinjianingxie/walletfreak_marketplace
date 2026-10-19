@@ -5,7 +5,7 @@ document.addEventListener('error', event => {
 
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state, activeId = '', brands = {}, cards = [], draft, draftRevision, dirty = false, stopped = false, assetCatalog = [], vaultState, pluginInventory, currentTab = 'wallet';
+let state, activeId = '', brands = {}, cards = [], draft, draftRevision, dirty = false, stopped = false, assetCatalog = [], vaultState, pluginInventory, currentTab = 'overview';
 function notice(message, error = false) { $('#notice').textContent = message; $('#notice').className = error ? 'error' : ''; }
 async function api(path, body) {
   const response = await fetch('/api/' + path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json','X-WalletFreak':'1'}, body:JSON.stringify(body)});
@@ -17,9 +17,10 @@ async function act(path, body) {
   try { const result = await api(path, body); if (result.message) notice(result.message); await refresh(); return result; }
   catch (error) { notice(error.message, true); await refresh(); return null; }
 }
-function tab(name) { currentTab = name; $('.workspace-more').open=false; if (name === 'overview') window.loadOverview(); if (name === 'spending') window.loadSpending(); if (name === 'plugins') loadPlugins(); if (name === 'credentials') refreshVault(); for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed', String(item.dataset.tab === name)); for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== name; }
+function tab(name) { currentTab = name; $('.workspace-more').open=false; if (name === 'overview') window.loadOverview(); if (name === 'spending') window.loadSpending(); if (name === 'shopping') window.loadShopping(); if (name === 'plugins') loadPlugins(); if (name === 'credentials') refreshVault(); for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed', String(item.dataset.tab === name)); for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== name; }
 document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
 $('#open-wallet').onclick = () => tab('wallet');
+$('#open-confirmations').onclick=()=>{$('#confirmation-import').open=true;$('#confirmation-text').focus();};
 function trip() { return state?.trips.find(t => t.id === activeId); }
 function logo(name) {
   if (typeof name !== 'string') return '';

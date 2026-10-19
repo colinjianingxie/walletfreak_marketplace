@@ -20,6 +20,10 @@
       const hasTravel=saved.layout.blocks.some(b=>b.source==='travel.itinerary');
       $('#overview-trip-label').hidden=!hasTravel||!trips.length;$('#overview-intro').hidden=hasTravel&&trips.some(t=>t.findings.itinerary?.length);
       const selected=trips.find(t=>t.id===selectedTrip),gaps=selected?.findings.gaps||[];
+      const costs=selected?.totals||{cash:{},points:{},unknown:[]};
+      const reported={};for(const item of selected?.findings.itinerary||[]){if(item.booking_status==='booked'&&!item.option_id){const m=/^([A-Z]{3}) ([0-9]+(?:\.[0-9]{1,2})?)$/.exec(item.price||'');if(m)reported[m[1]]=(reported[m[1]]||0)+Number(m[2]);}}
+      const figures=[...Object.entries(reported).map(([currency,value])=>`<article><small>Reported bookings</small><strong>${esc(currency)} ${value.toFixed(2)}</strong></article>`),...Object.entries(costs.cash).map(([currency,value])=>`<article><small>Recorded cash</small><strong>${esc(currency)} ${esc(value)}</strong></article>`),...Object.entries(costs.points).map(([program,value])=>`<article><small>${esc(program)} points</small><strong>${Number(value).toLocaleString()}</strong></article>`)];
+      $('#overview-costs').hidden=!hasTravel||!selected;$('#overview-costs').innerHTML=figures.length?figures.join('')+'<p>Selected booked or verified items only. Other potential prices appear in the timeline.</p>':'<article><small>Trip cost</small><strong>To confirm</strong></article><p>Potential prices appear on each itinerary stop.</p>';
       $('#overview-gaps').hidden=!hasTravel||!gaps.length;$('#overview-gaps').innerHTML=gaps.length?`<strong>Still to check</strong><ul>${gaps.map(g=>`<li>${esc(g)}</li>`).join('')}</ul>`:'';
       const data=bind(current,references),signature=JSON.stringify([saved.layout,data,selectedTrip]);
       if(signature!==rendered){WalletFreakComponents.render($('#overview-content'),saved.layout,catalog,data);rendered=signature;}

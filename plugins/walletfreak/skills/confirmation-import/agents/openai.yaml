@@ -1,0 +1,3 @@
+interface:
+  display_name: "Confirmation Import"
+  short_description: "Import pasted bookings"

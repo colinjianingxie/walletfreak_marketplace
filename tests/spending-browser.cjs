@@ -12,7 +12,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
   const context=await browser.newContext(),page=await context.newPage(),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(new URL(url).origin))external.push(r.url());});
-  await page.goto(url);await page.getByRole('button',{name:'Spending',exact:true}).click();await page.locator('#spend-advanced > summary').click();await page.locator('#spend-import-panel > summary').click();await page.getByText('0 matching · 0 total').waitFor();
+  await page.goto(url);await page.getByRole('button',{name:'Finance',exact:true}).click();await page.locator('#spend-advanced > summary').click();await page.locator('#spend-import-panel > summary').click();await page.getByText('0 matching · 0 total').waitFor();
   await page.getByLabel('Account alias',{exact:true}).fill('Test personal');
   const content='Transaction Date,Description,Category,Type,Amount\n10/01/2026,Cafe,Dining,Sale,-12.34\n10/02/2026,Payment Thank You,,Payment,30\n10/03/2026,Refund,Dining,Return,2.34\n10/04/2026,Unknown credit,,,5\n';
   const file={name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(content)};
@@ -34,7 +34,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    assert.equal((await anonymous.request.get(new URL(path,url).href,{headers:{Authorization:'Bearer '+descriptor.agent_token}})).status(),403);
   }
   const denied=await anonymous.request.post(new URL('/api/spending/delete',url).href,{headers:{Authorization:'Bearer '+descriptor.agent_token,'X-WalletFreak':'1'},data:{expected_revision:snapshot.revision,confirm:'delete-spending'}});assert.equal(denied.status(),403);await anonymous.close();
-  const other=await context.newPage();await other.goto(url);await other.getByRole('button',{name:'Spending',exact:true}).click();await other.locator('#spend-advanced > summary').click();await other.getByText('9 matching · 9 total').waitFor();
+  const other=await context.newPage();await other.goto(url);await other.getByRole('button',{name:'Finance',exact:true}).click();await other.locator('#spend-advanced > summary').click();await other.getByText('9 matching · 9 total').waitFor();
   const first=page.locator('#spend-table tbody tr').first();await first.locator('[data-spend-field=category]').fill('Edited category');await page.getByRole('button',{name:'Save row edits',exact:true}).click();await page.getByText('Spending edits saved locally.',{exact:true}).waitFor();
   await other.locator('#spend-table tbody tr').first().locator('[data-spend-field=category]').fill('Stale change');await other.getByRole('button',{name:'Save row edits',exact:true}).click();await other.getByText('Spending changed in another tab. Reload before saving.',{exact:true}).waitFor();await other.close();
   mkdirSync(join(root,'.artifacts/spending'),{recursive:true});

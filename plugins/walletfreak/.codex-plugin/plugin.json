@@ -1,6 +1,6 @@
 {
   "name": "walletfreak",
-  "version": "0.3.0+codex.20261019020403",
+  "version": "0.4.0+codex.20261019023701",
   "description": "Map trips, organize wallets by person, refresh portal balances and explore results locally.",
   "author": {
     "name": "WalletFreak contributors"
@@ -15,9 +15,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "WalletFreak",
-    "shortDescription": "One travel toolkit. Your own local trip dashboard.",
-    "longDescription": "Map trips, organize wallets by person, refresh portal balances and explore results locally.",
+    "displayName": "WalletFreak Travel",
+    "shortDescription": "Visual trips, cards and points.",
+    "longDescription": "Plan and import trips, map stays, compare costs and cards, and explore results in a private local travel dashboard.",
     "developerName": "WalletFreak",
     "category": "Productivity",
     "capabilities": [
@@ -27,9 +27,9 @@
       "Plan a trip with flexible dates and show my local trip board.",
       "Open my personal wallet to enter my cards and loyalty balances.",
       "Choose the best card or points redemption from my wallet using current quotes and offers.",
-      "Use dashboard-builder to arrange my wallet, spending metrics and itinerary in a local dashboard.",
       "Map my hotel stays and route in a compact itinerary.",
-      "Use wallet-sync to refresh one person\u2019s rewards balances from their portals."
+      "Use wallet-sync to refresh one person\u2019s rewards balances from their portals.",
+      "Turn my pasted booking confirmation into a reviewed itinerary."
     ],
     "brandColor": "#0788D9",
     "composerIcon": "./assets/mascot.png",

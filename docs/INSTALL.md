@@ -1,6 +1,6 @@
 # Installation and upgrading
 
-Requires Python 3.10+, Node.js 18+ and Chrome. Both hosts install the same walletfreak package and one walletfreak-browser MCP connection.
+Requires Python 3.10+, Node.js 18+ and Chrome. Both hosts can install three focused packages; Travel owns the one local dashboard and browser MCP connection.
 
 ## Fresh install
 
@@ -30,9 +30,9 @@ WALLETFREAK_DATA can point to a dedicated private directory for tests or another
 
 ## Compact wallet and optional sign-in vault
 
-The viewer starts on Wallet. If an older traveler-profile.md exists beside the local data directory, Load existing wallet imports it into an empty wallet without changing the original. Import is explicit and does not silently refresh old reporting dates. Add separate rows for gift cards, TravelBank, airline credits, certificates, passes and other assets; blank values remain unknown.
+The viewer starts on Travel. Open Wallet to add people, cards and linked rewards accounts. If an older traveler-profile.md exists beside the local data directory, Load existing wallet imports it into an empty wallet without changing the original. Import is explicit and does not silently refresh old reporting dates. Add separate rows for gift cards, TravelBank, airline credits, certificates, passes and other assets; blank values remain unknown.
 
-Sign-ins accepts any provider name and keeps usernames/passwords in an encrypted local vault. The optional dependency is `python3 -m pip install -r <plugin>/requirements-vault.txt` in the Python environment used to run local.py; use an isolated environment if required by your Python installation. The wallet and results viewer require no additional package. Never enter secrets in shell arguments or chat. Create/unlock the vault in the private browser. There is no master-password recovery or automatic provider login.
+Sign-ins accepts any provider name and keeps usernames/passwords in an encrypted local vault. The optional dependency is `python3 -m pip install -r <plugin>/requirements-vault.txt` in the Python environment used to run local.py; use an isolated environment if required by your Python installation. The wallet and results viewer require no additional package. Never enter secrets in shell arguments or chat. Create/unlock the vault in the private browser. New vaults use a device-held key without a separate master password; existing password vaults can migrate after one unlock. Saving a sign-in does not automatically log in.
 
 Plugins & skills displays local Codex installations and their skill documents. If the native CLI is unavailable it shows this bundled WalletFreak package with an explicit discovery limitation. Restart the viewer after installing/removing plugins to refresh its inventory.
 
@@ -46,6 +46,8 @@ Forget all local sessions schedules removal of the dedicated saved profile when 
 
 If starting fails, run `local.py serve` in a terminal for the error. Preserve data on failures; do not reset settings to hide corruption. Port conflicts do not require killing other applications.
 
-## Spending plugin
+## Finance and Shopping plugins
 
-Install walletfreak-spending@walletfreak with the same host plugin command after installing WalletFreak core. Start a new thread and ask for spending-analysis. Both use the same dashboard. The CSV importer has no third-party dependencies. PDF text extraction optionally uses an already-installed pdftotext; scanned/unusual PDFs need local conversion and reconciliation. No automatic PDF transaction import or XLSX export is claimed.
+Install walletfreak-finance@walletfreak and/or walletfreak-shopping@walletfreak with the same host plugin command after installing WalletFreak Travel. Start a new thread and ask for spending-analysis. Both use the same dashboard. The CSV importer has no third-party dependencies. PDF text extraction optionally uses an already-installed pdftotext; scanned/unusual PDFs need local conversion and reconciliation. No automatic PDF transaction import or XLSX export is claimed.
+
+Shopping researches live merchant offers and publishes sourced deals to the shared local Shopping board. Travel accepts pasted confirmation text in the browser; review dates, status and reported prices before saving an itinerary. The original pasted text is discarded.

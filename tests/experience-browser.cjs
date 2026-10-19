@@ -1,0 +1,44 @@
+const assert=require('node:assert/strict');
+const {execFileSync}=require('node:child_process');
+const {mkdtempSync,readFileSync,rmSync}=require('node:fs');
+const {tmpdir}=require('node:os');
+const {join,resolve}=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{
+ const root=resolve(__dirname,'..'),data=mkdtempSync(join(tmpdir(),'wf-experience-'));
+ const script=join(root,'plugins/walletfreak/scripts/local.py');
+ const env={...process.env,WALLETFREAK_DATA:data};
+ const cli=(...args)=>execFileSync('python3',[script,...args],{env,encoding:'utf8'}).trim();
+ let browser;
+ try{
+  const url=cli('start','--port','0');
+  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+  const page=await browser.newPage({viewport:{width:390,height:850}});page.setDefaultTimeout(10000);
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(url);
+  await page.getByRole('button',{name:'Travel',exact:true}).waitFor();
+  await page.locator('#open-confirmations').click();
+  await page.locator('#confirmation-text').fill('Booking confirmed\nHotel: Example Tokyo Stay\nCheck-in: April 13, 2027\nCheck-out: April 16, 2027\nTotal: USD 450.00');
+  await page.getByRole('button',{name:'Detect bookings'}).click();
+  await page.locator('#confirmation-review:not([hidden])').waitFor();
+  assert.equal(await page.locator('[data-field="day"]').inputValue(),'2027-04-13');
+  assert.equal(await page.locator('[data-field="price"]').inputValue(),'USD 450.00');
+  await page.getByRole('button',{name:'Save reviewed itinerary'}).click();
+  await page.locator('#overview-content .wf-itinerary li').first().waitFor();
+  assert.match(await page.locator('#overview-content').innerText(),/Example Tokyo Stay/);
+  assert.match(await page.locator('#overview-costs').innerText(),/450/);
+  assert.equal(readFileSync(join(data,'results.json'),'utf8').includes('Booking confirmed'),false);
+  await page.getByRole('button',{name:'Finance',exact:true}).click();
+  await page.locator('.finance-empty').waitFor();
+  await page.getByRole('button',{name:'Shopping',exact:true}).click();
+  await page.getByRole('heading',{name:'Find a better way to buy.'}).waitFor();
+  const deal={id:'carry-on',merchant:'Example Shop',product:'Carry-on suitcase',price:'125.00',currency:'USD',source_url:'https://example.com/suitcase',observed_at:'2026-10-18T15:00:00Z',terms:'Synthetic offer for testing only.',status:'unverified'};
+  execFileSync('python3',[script,'shopping-publish','--input','-'],{env,input:JSON.stringify({expected_revision:'empty',deals:[deal]}),encoding:'utf8'});
+  await page.locator('#shopping-refresh').click();
+  await page.getByRole('heading',{name:'Carry-on suitcase'}).waitFor();
+  assert.equal(await page.locator('#shopping-deals a').getAttribute('href'),deal.source_url);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(errors,[]);
+  console.log('Passed: reviewed confirmation becomes a visual trip, raw email is discarded, Finance empty state, sourced Shopping deal, mobile width.');
+ }finally{if(browser)await browser.close();try{cli('stop');}catch{}rmSync(data,{recursive:true,force:true});}
+})().catch(error=>{console.error(error);process.exitCode=1;});

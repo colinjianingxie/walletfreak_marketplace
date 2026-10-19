@@ -84,7 +84,7 @@ class Spending(unittest.TestCase):
         import importlib.util
         from unittest.mock import patch
         import subprocess
-        script=Path(__file__).resolve().parents[1]/'plugins/walletfreak-spending/scripts/extract_pdf.py'
+        script=Path(__file__).resolve().parents[1]/'plugins/walletfreak-finance/scripts/extract_pdf.py'
         spec=importlib.util.spec_from_file_location('extract_pdf',script);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
         pdf=Path(self.temp.name)/'statement.pdf';pdf.write_bytes(b'fake')
         dest=Path(self.temp.name)/'statement.txt'

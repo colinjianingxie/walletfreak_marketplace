@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "release": "1.2.0",
+  "release": "1.3.0",
   "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
   "themes": [
     "paper",
@@ -67,10 +67,10 @@
     {
       "id": "overview",
       "name": "Overview",
-      "description": "One trip at a time, with your wallet and sourced spending metrics.",
+      "description": "A focused travel timeline with route, stays and potential costs.",
       "layout": {
         "version": 1,
-        "title": "Overview",
+        "title": "Travel",
         "theme": "paper",
         "density": "compact",
         "blocks": [
@@ -79,18 +79,6 @@
             "component": "itinerary",
             "source": "travel.itinerary",
             "title": "Your itinerary"
-          },
-          {
-            "id": "points",
-            "component": "data-table",
-            "source": "wallet.programs",
-            "title": "Points & status"
-          },
-          {
-            "id": "metrics",
-            "component": "metric-cards",
-            "source": "spending.metrics",
-            "title": "Spending at a glance"
           }
         ]
       }
