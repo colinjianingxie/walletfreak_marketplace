@@ -6,19 +6,47 @@ const {renderTrip}=window.WalletFreakComponents;
 const windowDates={check_in:'2027-06-03',check_out:'2027-06-08'};
 const target={classList:{add(){}},querySelector(){return null},innerHTML:''};
 const show=rows=>{renderTrip(target,rows,windowDates);return target.innerHTML;};
-assert.match(show([]),/2027-06-03 → 2027-06-08 · 5 nights/);
+const empty=show([]);
+assert.equal((empty.match(/class="wf-needed"/g)||[]).length,5);
+assert.match(empty,/2027-06-03 → 2027-06-04 · 1 night/);
+assert.match(empty,/2027-06-07 → 2027-06-08 · 1 night/);
 const split=show([
   {booking_status:'booked',stay:{check_in:'2027-06-04',check_out:'2027-06-06'}},
-  {booking_status:'proposed',stay:{check_in:'2027-06-06',check_out:'2027-06-08'}}
+  {booking_status:'proposed',title:'Suggested hotel',price:'USD 400',stay:{check_in:'2027-06-06',check_out:'2027-06-08'}}
 ]);
 assert.match(split,/2027-06-03 → 2027-06-04 · 1 night/);
-assert.match(split,/2027-06-06 → 2027-06-08 · 2 nights/);
-assert.equal((split.match(/class="wf-needed"/g)||[]).length,2);
+assert.match(split,/2027-06-06 → 2027-06-07 · 1 night/);
+assert.match(split,/2027-06-07 → 2027-06-08 · 1 night/);
+assert.match(split,/Suggested: Suggested hotel/);
+assert.equal((split.match(/<p class="wf-candidate">Suggested:/g)||[]).length,1);
+assert.match(split,/USD 400<small>Stay total/);
+assert.equal((split.match(/<p class="wf-price">USD 400/g)||[]).length,1);
+assert.equal((split.match(/class="wf-needed"/g)||[]).length,3);
 assert.doesNotMatch(show([
   {booking_status:'booked',stay:{check_in:'2027-06-03',check_out:'2027-06-05'}},
   {booking_status:'booked',stay:{check_in:'2027-06-05',check_out:'2027-06-08'}}
 ]),/class="wf-needed"/);
-const flight=show([{day:'2027-06-02',when:'Departure',title:'Outbound flight',detail:'Booked flight',booking_status:'booked'}]);
+renderTrip(target,[
+  {booking_status:'booked',stay:{check_in:'2027-06-03',check_out:'2027-06-04'}},
+  {booking_status:'booked',stay:{check_in:'2027-06-06',check_out:'2027-06-08'}}
+]);
+assert.equal((target.innerHTML.match(/class="wf-needed"/g)||[]).length,2);
+assert.match(target.innerHTML,/2027-06-04 → 2027-06-05 · 1 night/);
+assert.match(target.innerHTML,/2027-06-05 → 2027-06-06 · 1 night/);
+const flight=show([{day:'2027-06-02',when:'10:35 AM EDT → 2:15 PM JST',title:'Outbound flight',detail:'Booked flight',price:'USD 900',booking_status:'booked'}]);
 assert.match(flight,/Outbound flight/);
-assert.match(flight,/Hotel to book/);
+assert.match(flight,/class="wf-time">10:35 AM EDT → 2:15 PM JST/);
+assert.match(flight,/class="wf-price">USD 900/);
+assert.match(flight,/Hotel night to book/);
+assert.match(flight,/class="wf-info"/);
+assert.match(flight,/class="wf-evidence"/);
+assert.doesNotMatch(flight,/Details & evidence/);
+let click,opened=0,closed=0;
+const dialog={showModal(){opened++},close(){closed++}};
+const trip={addEventListener(type,handler){if(type==='click')click=handler},querySelector(){return dialog}};
+renderTrip({classList:{add(){}},querySelector(){return trip},innerHTML:''},[{title:'Outbound flight'}]);
+click({target:{closest(){return {dataset:{info:'0'},hasAttribute(){return false},classList:{contains(){return false}}}}}});
+click({target:{closest(){return {dataset:{},hasAttribute(name){return name==='data-close-info'},closest(){return dialog},classList:{contains(){return false}}}}}});
+assert.equal(opened,1);
+assert.equal(closed,1);
 console.log('hotel slots: OK');

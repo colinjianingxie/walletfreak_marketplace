@@ -12,6 +12,7 @@
     overview.classList.add('travel-route-preview');
     const stays=rows.filter(r=>r.stay&&r.place&&Number.isFinite(r.place.lat)&&Number.isFinite(r.place.lng)&&Math.abs(r.place.lat)<=90&&Math.abs(r.place.lng)<=180);
     if(!stays.length)return;
+    overview.classList.add('travel-route-mapped');
     const lats=stays.map(r=>r.place.lat),lngs=stays.map(r=>r.place.lng);
     const midLat=(Math.min(...lats)+Math.max(...lats))/2,midLng=(Math.min(...lngs)+Math.max(...lngs))/2;
     const scale=Math.min(550/Math.max(Math.max(...lngs)-Math.min(...lngs),.01),240/Math.max(Math.max(...lats)-Math.min(...lats),.01));
@@ -34,15 +35,16 @@
       const selector=$('#overview-trip'), options=trips.map(t=>`<option value="${esc(t.id)}">${esc(t.findings.title)}</option>`).join('');
       if(selector.innerHTML!==options)selector.innerHTML=options;selector.value=selectedTrip;
       const hasTravel=saved.layout.blocks.some(b=>b.source==='travel.itinerary');
-      $('#overview-trip-label').hidden=!hasTravel||!trips.length;$('#overview-intro').hidden=hasTravel&&trips.some(t=>t.findings.itinerary?.length||t.findings.lodging_window);
+      $('#overview-trip-label').hidden=!hasTravel||trips.length<2;$('#overview-intro').hidden=hasTravel&&trips.some(t=>t.findings.itinerary?.length||t.findings.lodging_window);
       const selected=trips.find(t=>t.id===selectedTrip),gaps=selected?.findings.gaps||[];
+      $('#overview-heading').textContent=selected?.findings.title||'Travel';
       const costs=selected?.totals||{cash:{},points:{},unknown:[]};
       const reported={};for(const item of selected?.findings.itinerary||[]){if(item.booking_status==='booked'&&!item.option_id){const m=/^([A-Z]{3}) ([0-9]+(?:\.[0-9]{1,2})?)$/.exec(item.price||'');if(m)reported[m[1]]=(reported[m[1]]||0)+Number(m[2]);}}
       const figures=[...Object.entries(reported).map(([currency,value])=>`<article><small>Reported bookings</small><strong>${esc(currency)} ${value.toFixed(2)}</strong></article>`),...Object.entries(costs.cash).map(([currency,value])=>`<article><small>Recorded cash</small><strong>${esc(currency)} ${esc(value)}</strong></article>`),...Object.entries(costs.points).map(([program,value])=>`<article><small>${esc(program)} points</small><strong>${Number(value).toLocaleString()}</strong></article>`)];
       $('#overview-costs').hidden=!hasTravel||!selected;$('#overview-costs').innerHTML=figures.length?figures.join('')+'<p>Selected booked or verified items only. Other potential prices appear in the timeline.</p>':'<article><small>Trip cost</small><strong>To confirm</strong></article><p>Potential prices appear on each itinerary stop.</p>';
       $('#overview-gaps').hidden=!hasTravel||!gaps.length;$('#overview-gaps').innerHTML=gaps.length?`<strong>Still to check</strong><ul>${gaps.map(g=>`<li>${esc(g)}</li>`).join('')}</ul>`:'';
       const data=bind(current,references),signature=JSON.stringify([saved.layout,data,selectedTrip]);
-      if(signature!==rendered){WalletFreakComponents.render($('#overview-content'),saved.layout,catalog,data);$('#overview-content').classList.remove('travel-route-preview');drawRoute(data['travel.itinerary'].slice(0,100));rendered=signature;}
+      if(signature!==rendered){WalletFreakComponents.render($('#overview-content'),saved.layout,catalog,data);$('#overview-content').classList.remove('travel-route-preview','travel-route-mapped');drawRoute(data['travel.itinerary'].slice(0,100));rendered=signature;}
     }catch(e){notice(e.message,true);}
   };
   async function save(layout){WalletFreakComponents.validate(layout,catalog);await api('layout',{expected_revision:saved.revision,layout});await window.loadOverview(true);notice('Dashboard layout saved locally.');}

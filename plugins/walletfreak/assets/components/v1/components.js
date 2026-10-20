@@ -24,28 +24,54 @@
   function paymentSummary(p){return p?`Pay with ${esc(p.card)}${p.benefits?.length?' · '+p.benefits.map(b=>esc(b.name)+': '+esc(b.status)).join(' · '):' · Benefits not recorded'}`:'Payment card: to confirm';}
   function payment(p){return p?`<p>${esc(p.reason)}</p>${(p.benefits||[]).map(b=>`<p>${esc(b.name)} · ${esc(b.status)} — ${esc(b.detail)}${b.recorded_at?' · Recorded '+esc(b.recorded_at):''}</p>`).join('')}`:'';}
   function stayLabel(r){if(!r.stay)return '';const n=(Date.parse(r.stay.check_out)-Date.parse(r.stay.check_in))/86400000;return `${esc(r.stay.check_in)} → ${esc(r.stay.check_out)} · ${Number.isFinite(n)?n:'?'} ${n===1?'night':'nights'}`;}
+  function nextDay(day){const time=Date.parse(day);return Number.isFinite(time)?new Date(time+86400000).toISOString().slice(0,10):'';}
+  function eachNight(start,end,make){const result=[];for(let day=start,next=nextDay(day);day<end&&next&&next>day;day=next,next=nextDay(day))result.push(make(day,next));return result;}
+  function vacantNight(day,next,proposal,trip,showPrice){
+    const {stay,price,...rest}=proposal||{};
+    const location=proposal?.place?.label?.split(' · ')[0].replace(/\s+stay$/i,'');
+    return {...rest,day,when:'Check-in / check-out times to confirm',title:location?location+' · hotel night':'Hotel night to book',detail:proposal?.detail||'No booked hotel covers this night.',booking_status:'to book',slot:{check_in:day,check_out:next},candidate:proposal?.title||'',candidate_price:price||'',show_candidate_price:showPrice,trip:proposal?.trip||trip};
+  }
   function hotelSlots(rows,window){
     if(!window)return [];
-    const stays=rows.filter(r=>r.booking_status==='booked'&&r.stay).map(r=>r.stay).sort((a,b)=>a.check_in.localeCompare(b.check_in));
-    const slots=[];let cursor=window.check_in;
-    const add=end=>{if(cursor<end)slots.push({day:cursor,when:'Lodging needed',title:'Hotel to book',detail:'No booked hotel covers these nights.',booking_status:'to book',slot:{check_in:cursor,check_out:end},trip:rows[0]?.trip||''});};
-    for(const stay of stays){if(stay.check_out<=cursor||stay.check_in>=window.check_out)continue;add(stay.check_in);if(stay.check_out>cursor)cursor=stay.check_out;}
-    add(window.check_out);
-    return slots;
+    return eachNight(window.check_in,window.check_out,(day,next)=>{
+      if(rows.some(r=>r.booking_status==='booked'&&r.stay&&r.stay.check_in<=day&&day<r.stay.check_out))return null;
+      const proposal=rows.find(r=>r.booking_status!=='booked'&&r.stay&&r.stay.check_in<=day&&day<r.stay.check_out);
+      return vacantNight(day,next,proposal,rows[0]?.trip||'',!!proposal&&day===(proposal.stay.check_in>window.check_in?proposal.stay.check_in:window.check_in));
+    }).filter(Boolean);
   }
-  function tripRows(rows,window){return window?[...rows,...hotelSlots(rows,window)].sort((a,b)=>(a.day||'9999').localeCompare(b.day||'9999')):rows;}
+  function tripRows(rows,window){
+    const display=rows.flatMap(r=>{
+      if(!r.stay)return [r];
+      if(r.booking_status!=='booked')return [];
+      return eachNight(r.stay.check_in,r.stay.check_out,(day,next)=>({...r,day,stay:{check_in:day,check_out:next},price:day===r.stay.check_in?r.price:'',stay_price:r.price,stay_total:day===r.stay.check_in&&!!r.price}));
+    });
+    const groups=new Map();
+    if(!window)for(const r of rows.filter(r=>r.stay)){const key=r.trip||'',group=groups.get(key)||{rows:[],check_in:r.stay.check_in,check_out:r.stay.check_out};group.rows.push(r);if(r.stay.check_in<group.check_in)group.check_in=r.stay.check_in;if(r.stay.check_out>group.check_out)group.check_out=r.stay.check_out;groups.set(key,group);}
+    const slots=window?hotelSlots(rows,window):[...groups.values()].flatMap(group=>hotelSlots(group.rows,group));
+    return [...display,...slots].sort((a,b)=>(a.day||'9999').localeCompare(b.day||'9999'));
+  }
+  function routeStops(rows){return rows.map((r,i)=>({r,i})).filter(({r,i})=>{const previous=rows[i-1];return !previous||!(r.stay||r.slot)||!(previous.stay||previous.slot)||r.title!==previous.title||r.booking_status!==previous.booking_status||r.place?.label!==previous.place?.label||r.place?.lat!==previous.place?.lat||r.place?.lng!==previous.place?.lng;});}
   function safeLink(url,label){try{const u=new URL(url);return u.protocol==='https:'&&!u.username&&!u.password?`<a href="${esc(u.href)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';}catch{return '';}}
   function routeWarnings(rows,window){
     rows=rows.filter(r=>!r.slot);
     const warnings=[];let previous;
     for(const r of rows){
-      if(r.stay&&(!window||r.booking_status==='booked')){if(previous&&previous.trip===r.trip){if(r.stay.check_in<previous.stay.check_out)warnings.push('Overlapping stays: '+previous.title+' and '+r.title);else if(!window&&r.stay.check_in>previous.stay.check_out)warnings.push('Uncovered nights between '+previous.title+' and '+r.title);}previous=r;}
+      if(r.stay&&(!window||r.booking_status==='booked')){if(previous&&previous.trip===r.trip&&r.stay.check_in<previous.stay.check_out)warnings.push('Overlapping stays: '+previous.title+' and '+r.title);previous=r;}
     }
     for(let i=1;i<rows.length;i++){const a=rows[i-1],b=rows[i];if(a.trip===b.trip&&a.place&&b.place&&!b.route&&(a.place.lat!==b.place.lat||a.place.lng!==b.place.lng))warnings.push('Transfer to confirm: '+a.place.label+' → '+b.place.label);}
     return warnings;
   }
+  function stepHtml(r,i){
+    const stay=r.stay||r.slot;
+    const price=r.price||r.candidate_price||r.stay_price;
+    const schedule=r.slot||r.stay&&!/\b\d{1,2}:\d{2}\b|\b\d{1,2}\s*(?:AM|PM)\b/i.test(r.when||'')?'Check-in / check-out times to confirm':r.when||'Time to confirm';
+    const note=r.slot&&r.candidate&&r.show_candidate_price?`<p class="wf-candidate">Suggested: ${esc(r.candidate)}</p>`:'';
+    const details=`<dialog class="wf-evidence" aria-label="Details for ${esc(r.title)}${r.day?' on '+esc(r.day):''}"><div class="wf-evidence-heading"><h3>${esc(r.title)}</h3><button type="button" data-close-info aria-label="Close details">×</button></div><dl><div><dt>Date / time</dt><dd>${esc(r.day||'Date to confirm')} · ${esc(r.when||schedule)}</dd></div><div><dt>Status</dt><dd>${esc(r.booking_status||'proposed')}</dd></div><div><dt>Price</dt><dd>${price?`${esc(price)}${stay?' · full stay quote or reported total':''}`:'To confirm'}</dd></div></dl><p>${esc(r.detail||'Details to confirm.')}</p>${r.candidate?`<p>Suggested stay: ${esc(r.candidate)}</p>`:''}${r.option_anchor&&/^#option-[0-9]+$/.test(r.option_anchor)?`<a href="${r.option_anchor}">View option</a>`:''}${payment(r.payment)}${r.terms?`<p>${esc(r.terms)}</p>`:''}${(r.sources||[]).map(s=>safeLink(s.url,s.label)).join(' · ')}${r.place?`<p>${esc(r.place.label)} · ${esc(r.place.confidence)} ${safeLink(r.place.source_url,'Location source')}</p>`:''}${r.route?.source_url?`<p>${safeLink(r.route.source_url,'Route source')}</p>`:''}</dialog>`;
+    return `<li data-stop="${i}" class="${r.slot?'wf-needed':''}" tabindex="-1"><div class="wf-step-top">${r.day?`<span class="wf-day">${esc(r.day)}</span>`:''}<button type="button" class="wf-info" data-info="${i}" aria-label="More details for ${esc(r.title)}${r.day?' on '+esc(r.day):''}">i</button></div><div class="wf-step-heading"><strong>${esc(r.title)}</strong><span class="wf-tag">${esc(r.booking_status||'proposed')}</span></div><small class="wf-time">${esc(schedule)}</small>${stay?`<p class="wf-night">${stayLabel({stay})}</p>`:''}${note}${r.route&&!r.slot?`<small>${esc(r.route.mode)}${r.route.duration?' · '+esc(r.route.duration):' · Duration to confirm'}</small>`:''}${r.price||r.candidate_price&&r.show_candidate_price?`<p class="wf-price">${esc(r.price||r.candidate_price)}${r.stay_total||r.candidate_price?'<small>Stay total</small>':''}</p>`:''}${r.slot?'':`<small class="wf-payment">${paymentSummary(r.payment)}</small>`}${r.place?`<button type="button" class="wf-show-stop" data-show-stop="${i}">Show on map</button>`:''}${details}</li>`;
+  }
   function tripHtml(rows,window){
-    return `<div class="wf-trip">${routeWarnings(rows,window).length?`<aside class="wf-route-warning"><strong>Check the plan</strong><ul>${routeWarnings(rows,window).map(w=>`<li>${esc(w)}</li>`).join('')}</ul></aside>`:''}<div class="wf-trip-switch" role="group" aria-label="Trip view"><button type="button" data-trip-view="timeline" aria-pressed="true">Timeline</button><button type="button" data-trip-view="map" aria-pressed="false">Map</button></div><div class="wf-trip-columns"><ol class="wf-itinerary">${rows.map((r,i)=>`<li data-stop="${i}" class="${r.slot?'wf-needed':''}" tabindex="-1">${r.day?`<span class="wf-day">${esc(r.day)}</span>`:''}<small>${esc(r.trip||'')} ${esc(r.when)}</small><div class="wf-step-heading"><strong>${esc(r.title)}</strong><span class="wf-tag">${esc(r.booking_status||'proposed')}</span></div>${r.stay||r.slot?`<p>${stayLabel({stay:r.stay||r.slot})}</p>`:''}${r.route?`<small>${esc(r.route.mode)}${r.route.duration?' · '+esc(r.route.duration):' · Duration to confirm'}</small>`:''}${r.price?`<p class="wf-price">${esc(r.price)}</p>`:''}${r.slot?'':`<small class="wf-payment">${paymentSummary(r.payment)}</small>`}<div class="wf-step-actions">${r.place?`<button type="button" data-show-stop="${i}">Show on map</button>`:''}<details><summary>Details & evidence</summary><p>${esc(r.detail)}</p>${r.option_anchor&&/^#option-[0-9]+$/.test(r.option_anchor)?`<a href="${r.option_anchor}">View option</a>`:''}${payment(r.payment)}${r.terms?`<p>${esc(r.terms)}</p>`:''}${(r.sources||[]).map(s=>safeLink(s.url,s.label)).join(' · ')}${r.place?`<p>${esc(r.place.label)} · ${esc(r.place.confidence)} ${safeLink(r.place.source_url,'Location source')}</p>`:''}${r.route?.source_url?`<p>${safeLink(r.route.source_url,'Route source')}</p>`:''}</details></div></li>`).join('')}</ol><aside class="wf-route"><h4>Stays & route</h4><p class="wf-map-note">Schematic connections, not navigation directions.</p><div class="wf-route-diagram">${rows.map((r,i)=>`<button type="button" data-route-stop="${i}"><span class="wf-pin">${i+1}</span><span><strong>${esc(r.place?.label||r.title)}</strong><small>${r.stay||r.slot?stayLabel({stay:r.stay||r.slot}):esc(r.when)}${r.place?' · '+esc(r.place.confidence):r.slot?' · To book':' · Location to confirm'}</small></span></button>`).join('')}</div><div class="wf-street-map" hidden aria-label="Street map of trip stops"></div><button type="button" class="wf-load-map">Load street map</button><p class="wf-map-note">Optional: contacts OpenStreetMap for tiles. Your wallet is never sent. The stop list works offline.</p><p class="wf-map-status" role="status"></p></aside></div></div>`;
+    const warnings=routeWarnings(rows,window);
+    return `<div class="wf-trip">${warnings.length?`<aside class="wf-route-warning"><strong>Check the plan</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></aside>`:''}<div class="wf-trip-switch" role="group" aria-label="Trip view"><button type="button" data-trip-view="timeline" aria-pressed="true">Timeline</button><button type="button" data-trip-view="map" aria-pressed="false">Map</button></div><div class="wf-trip-columns"><ol class="wf-itinerary">${rows.map(stepHtml).join('')}</ol><aside class="wf-route"><h4>Stays & route</h4><p class="wf-map-note">Schematic connections, not navigation directions.</p><div class="wf-route-diagram">${routeStops(rows).map(({r,i})=>`<button type="button" data-route-stop="${i}"><span class="wf-pin">${i+1}</span><span><strong>${esc(r.place?.label||r.title)}</strong><small>${r.stay||r.slot?stayLabel({stay:r.stay||r.slot}):esc(r.when)}${r.place?' · '+esc(r.place.confidence):r.slot?' · To book':' · Location to confirm'}</small></span></button>`).join('')}</div><div class="wf-street-map" hidden aria-label="Street map of trip stops"></div><button type="button" class="wf-load-map">Load street map</button><p class="wf-map-note">Loads OpenStreetMap tiles only when clicked.</p><p class="wf-map-status" role="status"></p></aside></div></div>`;
   }
   function mountTrip(target,rows){
     let map,markers=[];
@@ -54,6 +80,8 @@
     const select=index=>{trip.querySelectorAll('[data-stop],[data-route-stop]').forEach(el=>el.classList.toggle('wf-selected',Number(el.dataset.stop??el.dataset.routeStop)===index));if(markers[index]){map.panTo(markers[index].getLatLng());markers[index].openPopup();}};
     trip.addEventListener('click',e=>{
       const button=e.target.closest('button');if(!button)return;
+      if(button.dataset.info!==undefined)trip.querySelector(`[data-stop="${Number(button.dataset.info)}"] .wf-evidence`)?.showModal();
+      if(button.hasAttribute('data-close-info'))button.closest('dialog')?.close();
       if(button.dataset.tripView)setView(button.dataset.tripView);
       if(button.dataset.showStop!==undefined){setView('map');select(Number(button.dataset.showStop));}
       if(button.dataset.routeStop!==undefined){const i=Number(button.dataset.routeStop);select(i);setView('timeline');trip.querySelector(`[data-stop="${i}"]`).focus({preventScroll:true});}
@@ -65,8 +93,8 @@
         const pane=trip.querySelector('.wf-street-map');pane.hidden=false;button.hidden=true;
         map=L.map(pane,{scrollWheelZoom:false});
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).on('tileerror',()=>{status.textContent='Some map tiles could not load. Your stops remain available below.';}).addTo(map);
-        const points=[];
-        rows.forEach((r,i)=>{if(!valid(r))return;const point=[r.place.lat,r.place.lng];points.push(point);const label=document.createElement('span');label.textContent=`${i+1}. ${r.place.label}`;markers[i]=L.marker(point,{icon:L.divIcon({className:'wf-map-pin',html:String(i+1),iconSize:[28,28]})}).bindPopup(label).on('click',()=>select(i)).addTo(map);});
+        const points=[],byLocation=new Map();
+        rows.forEach((r,i)=>{if(!valid(r))return;const point=[r.place.lat,r.place.lng],key=point.join(',');if(byLocation.has(key)){markers[i]=byLocation.get(key);return;}points.push(point);const label=document.createElement('span');label.textContent=`${i+1}. ${r.place.label}`;markers[i]=L.marker(point,{icon:L.divIcon({className:'wf-map-pin',html:String(i+1),iconSize:[28,28]})}).bindPopup(label).on('click',()=>select(i)).addTo(map);byLocation.set(key,markers[i]);});
         // Never join across an unmapped stop or two separate trips.
         rows.forEach((r,i)=>{const previous=rows[i-1];if(previous&&valid(previous)&&valid(r)&&previous.trip===r.trip)L.polyline([[previous.place.lat,previous.place.lng],[r.place.lat,r.place.lng]],{color:'#247364',dashArray:'6 8'}).addTo(map);});
         map.fitBounds(L.latLngBounds(points),{padding:[24,24],maxZoom:13});status.textContent='Dashed lines show stop order, not road or rail geometry.';

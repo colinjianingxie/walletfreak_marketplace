@@ -77,15 +77,12 @@ body[data-view=wallet],body[data-view=spending],body[data-view=shopping]{--green
 #overview-content .wf-itinerary::before{content:"ITINERARY";display:block;font:700 11px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.16em;color:var(--green);margin-bottom:18px}
 #overview-content .wf-itinerary>li{padding:18px 0;margin:0;border:0;border-top:1px solid var(--border);border-radius:0;box-shadow:none;background:transparent}
 #overview-content .wf-itinerary>li>small{display:none}
+#overview-content .wf-itinerary>li>.wf-time{display:block}
 #overview-content .wf-step-heading{display:block;margin:10px 0 6px}
 #overview-content .wf-step-heading>strong{display:block;font-size:18px;line-height:1.2}
 #overview-content .wf-tag{display:inline-block;margin-top:8px;background:#eef0fc;color:#4d5caf}
 #overview-content .wf-day{background:transparent;border:0;padding:0;color:var(--soft)}
 #overview-content .wf-payment{font-size:11px;padding-top:4px}
-#overview-content .wf-step-actions{margin-top:7px}
-#overview-content .wf-step-actions>[data-show-stop]{display:none}
-#overview-content .wf-step-actions details{padding-top:3px;border:0;margin:0}
-#overview-content .wf-step-actions summary{color:var(--green)}
 .travel-route-intro{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 18px}
 .travel-route-intro strong{font-size:clamp(20px,2.4vw,31px);letter-spacing:-.045em}
 .travel-route-intro strong span{color:#9da9c2;font-weight:400}
@@ -107,3 +104,40 @@ body[data-view=wallet],body[data-view=spending],body[data-view=shopping]{--green
 #overview-content .wf-route>.wf-load-map{margin-top:4px}
 #overview-content .wf-route>.wf-map-note{max-width:55ch}
 @media(max-width:900px){#overview-content [data-component=itinerary]>.wf-trip>.wf-trip-columns{grid-template-columns:1fr}#overview-content .wf-trip .wf-route,#overview-content .wf-trip .wf-itinerary{grid-column:1;grid-row:auto;display:block}#overview-content .wf-trip .wf-route{order:-1}#overview-content .wf-trip .wf-itinerary{position:static;max-height:none;margin-top:30px}#overview-content .wf-trip .wf-trip-switch{display:none}}
+
+/* Dashboard workspaces use a rail on wide screens and a dock on narrow screens. */
+main{max-width:1560px;display:grid;grid-template-columns:190px minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:clamp(24px,3vw,50px);padding-top:24px}
+#notice{grid-column:1/-1;grid-row:1}
+.workspace-nav{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:4px;align-self:start;position:sticky;top:24px;border:0;margin:0;padding:10px 0;overflow:visible}
+.workspace-nav .nav-caption{font:700 10px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.18em;color:#8a95a9;padding:8px 12px 18px}
+.workspace-nav button,.workspace-nav .workspace-more>summary{display:flex;align-items:center;gap:12px;width:100%;min-height:47px;border:1px solid transparent;border-radius:11px;padding:10px 12px;margin:0;background:transparent;color:#657083;text-align:left;font-size:13px;font-weight:600}
+.workspace-nav button:hover,.workspace-nav .workspace-more>summary:hover{background:#eef1fa;color:#182239}
+.workspace-nav button[aria-pressed=true]{border:1px solid #d9dffd;background:#eef0ff;color:#3349b7;box-shadow:inset 3px 0 #5267e9}
+.workspace-nav .subtab{font-size:12px;margin:0 0 14px;padding-left:26px;color:#788399}
+.workspace-nav .subtab[aria-pressed=true]{color:#3349b7}
+.workspace-nav .nav-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:22px;font-size:19px;font-weight:500;line-height:1}
+.workspace-nav .workspace-more{width:100%;margin:12px 0 0;border-top:1px solid var(--border);padding-top:10px}
+.workspace-nav .workspace-more>summary{list-style:none;cursor:pointer}
+.workspace-nav .workspace-more:has([aria-pressed=true])>summary{background:#eef0ff;color:#3349b7}
+.workspace-nav .workspace-more>summary::-webkit-details-marker{display:none}
+.workspace-nav .workspace-more>div{top:0;left:calc(100% + 8px);right:auto;min-width:190px;padding:6px}
+.workspace-nav .workspace-more>div button{min-height:38px;font-size:12px}
+.panel{grid-column:2;grid-row:2;min-width:0}
+.panel>.travel-hero,.panel>.finance-hero,.panel>.section-heading{border-bottom:1px solid var(--border);padding:0 0 22px;margin:0 0 22px}
+.panel>.travel-hero h1,.panel>.finance-hero h2,.panel>.section-heading h2{font-size:clamp(30px,4vw,54px);margin:7px 0 0}
+.panel>.travel-hero>div{min-width:0}.panel>.travel-hero h1{overflow-wrap:anywhere}
+#overview .travel-hero{align-items:center;padding:0 0 22px;margin-bottom:22px}
+#overview .travel-hero h1{font-size:clamp(30px,4vw,54px);margin:7px 0 0}
+#overview-content .wf-itinerary::before{content:"FLIGHTS & NIGHTS"}
+#overview-content .wf-itinerary>li.wf-needed{padding:17px 12px;border:0;border-top:1px dashed #b4bed6;border-radius:0;background:linear-gradient(90deg,#f1f3fc 0,transparent 95%)}
+#overview-content .wf-itinerary>li .wf-info{border:1px solid #d7deeb;background:#fff;color:#5267e9}
+#overview-content .wf-itinerary>li .wf-info:hover{background:#e9edfd}
+#overview-content .wf-itinerary .wf-time{font-size:12px;color:#657083}
+#overview-content .wf-itinerary .wf-night{color:#657083;margin:5px 0}
+#overview-content .wf-itinerary .wf-candidate{font-size:11px;color:#6677a4;margin:5px 0}
+#overview-content .wf-itinerary .wf-price{display:block;width:max-content;max-width:100%;border:0;background:transparent;padding:0;margin:8px 0;color:#202944;font-size:13px}
+#overview-content .wf-itinerary .wf-price small{font-size:10px;color:#7a8598}
+#overview-content .wf-itinerary .wf-show-stop{display:none}
+#overview-content.travel-route-mapped .wf-route-diagram{display:none}
+#overview-content.travel-route-mapped .wf-route>.wf-load-map{margin-top:18px}
+@media(max-width:900px){main{display:block;padding:20px 16px 110px}.workspace-nav{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;display:flex;flex-direction:row;gap:4px;overflow-x:auto;overflow-y:hidden;width:100%;padding:9px 12px max(9px,env(safe-area-inset-bottom));margin:0;border-top:1px solid var(--border);background:#fffffffa;box-shadow:0 -10px 30px #1a244219;scrollbar-width:none}.workspace-nav::-webkit-scrollbar{display:none}.workspace-nav .nav-caption{display:none}.workspace-nav button,.workspace-nav .workspace-more>summary{display:grid;justify-items:center;align-content:center;gap:3px;min-width:75px;width:auto;min-height:58px;padding:6px 8px;border-radius:10px;text-align:center;font-size:10px;white-space:nowrap}.workspace-nav .nav-icon{font-size:20px}.workspace-nav .subtab{margin:0;padding:6px 8px;font-size:10px}.workspace-nav .workspace-more{width:auto;flex:none;margin:0;padding:0;border:0}.workspace-nav .workspace-more>div{position:fixed;left:auto;right:10px;top:auto;bottom:82px;min-width:180px}.workspace-nav .workspace-more>div button{display:block;width:100%;text-align:left;font-size:12px}.panel{min-width:0}}
