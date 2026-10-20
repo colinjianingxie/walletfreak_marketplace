@@ -23,6 +23,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const findings=JSON.parse(readFileSync(join(root,'tests/fixtures/route-trip.json'),'utf8'));
   execFileSync('python3',[script,'publish','--input','-'],{env,input:JSON.stringify({findings})});await page.getByRole('button',{name:'Saved trips',exact:true}).click();await page.locator('#itinerary .wf-trip').waitFor();assert.equal(await page.locator('#trip-alternatives').getAttribute('open'),null);assert.equal(await page.locator('#itinerary details[open]').count(),0);
   for(const width of [1440,768,390,320]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`trip ${width}`);await page.screenshot({path:`/tmp/wf-trip-${width}.png`,fullPage:true});}
+  await page.getByRole('button',{name:'Travel',exact:true}).click();
+  await page.locator('#overview-content .travel-map-pin').first().waitFor();
+  assert.equal(await page.locator('#overview-content .travel-map-pin').count(),2);
+  assert.match(await page.locator('.travel-route-art svg').getAttribute('aria-label'),/Tokyo stay.*Kyoto stay/);
+  await page.setViewportSize({width:1440,height:1000});
+  assert.ok(await page.locator('#overview-content').evaluate(el=>el.querySelector('.wf-route').getBoundingClientRect().left<el.querySelector('.wf-itinerary').getBoundingClientRect().left));
+  await page.setViewportSize({width:390,height:1000});
+  assert.ok(await page.locator('#overview-content').evaluate(el=>el.querySelector('.wf-route').getBoundingClientRect().bottom<el.querySelector('.wf-itinerary').getBoundingClientRect().top));
+  await page.getByRole('button',{name:'Saved trips',exact:true}).click();
   assert.ok(requests.every(r=>r.startsWith(new URL(url).origin)),'no network before map opt-in');
   await page.getByRole('button',{name:'Map',exact:true}).click();await page.locator('.wf-route').waitFor();await page.locator('[data-route-stop="1"]').click();assert.equal(await page.locator('[data-stop="1"]').getAttribute('class'),'wf-selected');await page.getByRole('button',{name:'Map',exact:true}).click();
   await page.route('https://tile.openstreetmap.org/**',r=>r.abort());await page.getByRole('button',{name:'Load street map',exact:true}).click();await page.locator('.leaflet-container').waitFor();assert.equal(await page.locator('.wf-map-pin').count(),3);await page.getByText('Some map tiles could not load. Your stops remain available below.',{exact:true}).waitFor();

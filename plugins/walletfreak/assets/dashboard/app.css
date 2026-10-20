@@ -58,3 +58,52 @@ button,.primary{min-height:40px;border-radius:8px}.primary{background:var(--gree
 @media(max-width:430px){main{padding-inline:12px}.finance-kpis{grid-template-columns:1fr}.tabs{gap:14px}}
 .tabs .subtab{font-size:12px;color:#818b9d;margin-right:clamp(2px,2vw,28px)}
 .tabs .subtab[aria-pressed=true]{color:var(--green)}
+
+/* Travel direction prototype: a geographic route beside a compact, pinned itinerary. */
+body[data-view=wallet],body[data-view=spending],body[data-view=shopping]{--green:#5267e9;--blue:#5267e9}
+#overview{display:flex;flex-direction:column}
+#overview>.travel-hero{order:0}
+#overview-trip-label,#overview-intro{order:1}
+#overview-content{order:2}
+#overview-costs{order:3}
+#overview-gaps{order:4}
+#confirmation-import{order:5}
+#overview-customize{order:6}
+#overview-content.travel-route-preview>.wf-title,#overview-content [data-component=itinerary]>h3{display:none}
+#overview-content.travel-route-preview .wf-block:first-of-type{margin-top:0}
+#overview-content [data-component=itinerary]>.wf-trip>.wf-trip-columns{grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:clamp(20px,3vw,44px)}
+#overview-content .wf-trip .wf-route{grid-column:1;grid-row:1;position:static;background:transparent;border:0;padding:0}
+#overview-content .wf-trip .wf-itinerary{grid-column:2;grid-row:1;position:sticky;top:20px;max-height:calc(100dvh - 40px);overflow:auto;padding:0 6px 0 0;scrollbar-width:thin}
+#overview-content .wf-itinerary::before{content:"ITINERARY";display:block;font:700 11px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.16em;color:var(--green);margin-bottom:18px}
+#overview-content .wf-itinerary>li{padding:18px 0;margin:0;border:0;border-top:1px solid var(--border);border-radius:0;box-shadow:none;background:transparent}
+#overview-content .wf-itinerary>li>small{display:none}
+#overview-content .wf-step-heading{display:block;margin:10px 0 6px}
+#overview-content .wf-step-heading>strong{display:block;font-size:18px;line-height:1.2}
+#overview-content .wf-tag{display:inline-block;margin-top:8px;background:#eef0fc;color:#4d5caf}
+#overview-content .wf-day{background:transparent;border:0;padding:0;color:var(--soft)}
+#overview-content .wf-payment{font-size:11px;padding-top:4px}
+#overview-content .wf-step-actions{margin-top:7px}
+#overview-content .wf-step-actions>[data-show-stop]{display:none}
+#overview-content .wf-step-actions details{padding-top:3px;border:0;margin:0}
+#overview-content .wf-step-actions summary{color:var(--green)}
+.travel-route-intro{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 18px}
+.travel-route-intro strong{font-size:clamp(20px,2.4vw,31px);letter-spacing:-.045em}
+.travel-route-intro strong span{color:#9da9c2;font-weight:400}
+.travel-route-art{position:relative;overflow:hidden;border-radius:22px;background:radial-gradient(circle at 78% 18%,#31496b 0,#18243b 45%,#111b30 100%);box-shadow:0 22px 50px #14244722}
+.travel-route-art svg{display:block;width:100%;height:auto;aspect-ratio:760/416}
+.travel-route-art .travel-map-caption{font:700 11px ui-monospace,SFMono-Regular,monospace;letter-spacing:2px;fill:#a2b3d0}
+.travel-route-art .travel-map-label{font:650 16px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#fff}
+.travel-route-art .travel-map-halo{fill:#a4f4d8;opacity:.16}
+.travel-route-art .travel-map-pin{fill:#a4f4d8}
+.travel-route-art .travel-map-core{fill:#10243a}
+.travel-map-foot{position:absolute;left:24px;bottom:20px;color:#acbed6;font-size:11px}
+#overview-content .wf-route>h4,#overview-content .wf-route>h4+.wf-map-note{display:none}
+#overview-content .wf-route-diagram{grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:0;margin:20px 0}
+#overview-content .wf-route-diagram:before{display:none}
+#overview-content .wf-route-diagram button{align-items:flex-start;padding:15px 12px 15px 0;border:0;border-bottom:1px solid var(--border);border-radius:0}
+#overview-content .wf-route-diagram .wf-pin{background:#e9edfd;color:#4c5fc5;flex:none}
+#overview-content .wf-route-diagram strong{font-size:13px;line-height:1.3}
+#overview-content .wf-route-diagram small{color:var(--soft)}
+#overview-content .wf-route>.wf-load-map{margin-top:4px}
+#overview-content .wf-route>.wf-map-note{max-width:55ch}
+@media(max-width:900px){#overview-content [data-component=itinerary]>.wf-trip>.wf-trip-columns{grid-template-columns:1fr}#overview-content .wf-trip .wf-route,#overview-content .wf-trip .wf-itinerary{grid-column:1;grid-row:auto;display:block}#overview-content .wf-trip .wf-route{order:-1}#overview-content .wf-trip .wf-itinerary{position:static;max-height:none;margin-top:30px}#overview-content .wf-trip .wf-trip-switch{display:none}}
