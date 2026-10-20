@@ -20,6 +20,6 @@
   const start=$('#confirmation-lodging-start').value,end=$('#confirmation-lodging-end').value;
   if((start||end)&&(!start||!end||start>=end)){notice('Enter both hotel dates, with departure after arrival.',true);return;}
   const body={title:$('#confirmation-title').value.trim(),items};if(start)body.lodging_window={check_in:start,check_out:end};
-  const button=$('#confirmation-save');button.disabled=true;try{const saved=await api('confirmations/save',body);$('#confirmation-text').value='';draft=null;$('#confirmation-review').hidden=true;$('#confirmation-import').open=false;await refresh();$('#overview-trip').value=saved.id;$('#trip-select').value=saved.id;activeId=saved.id;renderFindings();window.loadOverview();notice(saved.message);}catch(e){notice(e.message,true);}finally{button.disabled=false;}
+  const button=$('#confirmation-save');button.disabled=true;try{const saved=await api('confirmations/save',body);$('#confirmation-text').value='';draft=null;$('#confirmation-review').hidden=true;$('#confirmation-import').open=false;await refresh();window.selectTravelTrip(saved.id);notice(saved.message);}catch(e){notice(e.message,true);}finally{button.disabled=false;}
  };
 })();

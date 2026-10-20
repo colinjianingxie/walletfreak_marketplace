@@ -17,18 +17,27 @@ async function act(path, body) {
   try { const result = await api(path, body); if (result.message) notice(result.message); await refresh(); return result; }
   catch (error) { notice(error.message, true); await refresh(); return null; }
 }
-const routes = {overview:'/travel',findings:'/travel/trips',wallet:'/credit-cards',spending:'/spending',shopping:'/shopping',credentials:'/settings/sign-ins',plugins:'/settings/plugins'};
+const routes = {overview:'/travel',actions:'/actions',wallet:'/credit-cards',spending:'/spending',shopping:'/shopping',credentials:'/settings/sign-ins',plugins:'/settings/plugins'};
 function tab(name, navigate=true) {
   if (!routes[name]) name='overview';
   currentTab=name; document.body.dataset.view=name; $('.workspace-more').open=false;
-  if (navigate && location.pathname!==routes[name]) history.pushState(null,'',routes[name]);
-  if (name==='overview') window.loadOverview(); if (name==='spending') window.loadSpending(); if (name==='shopping') window.loadShopping(); if (name==='plugins') loadPlugins(); if (name==='credentials') refreshVault();
+  if (navigate && location.pathname!==routes[name]) history.pushState(null,'',name==='overview'&&activeId?`/travel?trip=${encodeURIComponent(activeId)}`:routes[name]);
+  if (name==='overview') window.loadOverview(); if (name==='actions') window.renderActions?.(); if (name==='spending') window.loadSpending(); if (name==='shopping') window.loadShopping(); if (name==='plugins') loadPlugins(); if (name==='credentials') refreshVault();
   for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed',String(item.dataset.tab===name));
   for (const panel of document.querySelectorAll('.panel')) panel.hidden=panel.id!==name;
 }
 document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
-window.addEventListener('popstate',()=>tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false));
-$('#open-wallet').onclick = () => tab('wallet');
+window.addEventListener('popstate',()=>{
+  const requested = new URLSearchParams(location.search).get('trip');
+  if (location.pathname==='/travel' && state?.trips.some(t=>t.id===requested)) {activeId=requested;renderFindings();}
+  tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false);
+});
+window.selectTravelTrip = id => {
+  if (!state?.trips.some(t=>t.id===id)) return;
+  activeId=id;
+  history.replaceState(null,'',`/travel?trip=${encodeURIComponent(id)}`);
+  renderFindings(); window.loadOverview(); window.renderActions?.();
+};
 $('#open-confirmations').onclick=()=>{$('#confirmation-import').open=true;$('#confirmation-text').focus();};
 function trip() { return state?.trips.find(t => t.id === activeId); }
 function logo(name) {
@@ -53,18 +62,9 @@ function paymentView(option) {
 }
 function renderFindings() {
   const t = trip();
-  $('#empty-results').hidden = !!t; $('#result-content').hidden = !t;
+  $('#trip-library').hidden = !t; $('#result-content').hidden = !t;
   if (!t) return;
   const f = t.findings;
-  $('#brief').innerHTML = `<div class="brief"><h3>${esc(f.title)}</h3><p>${esc(f.summary || '')}</p><p class="muted">Research recorded ${esc(f.generated_at)}${f.illustrative ? ' · FICTIONAL DEMO — not live quotes' : ''}</p></div>`;
-  const byId = new Map((f.options || []).map(o => [o.id, o]));
-  const itinerary = f.itinerary || [];
-  const linked = new Set(itinerary.map(i => i.option_id));
-  const displayRows=itinerary.map(i=>({...byId.get(i.option_id),...i}));
-  for(const id of t.selected.filter(id=>!linked.has(id))){const o=byId.get(id);if(o)displayRows.push({...o,when:'Your proposed selection',detail:o.product});}
-  WalletFreakComponents.renderTrip($('#itinerary'),displayRows,f.lodging_window);
-  $('#trip-gaps').hidden=!(f.gaps||[]).length;
-  $('#trip-gaps').innerHTML=`<strong>Still to check</strong><ul>${(f.gaps||[]).map(g=>`<li>${esc(g)}</li>`).join('')}</ul>`;
   const words = $('#search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);
   const options = (f.options || []).filter(o => words.every(w=>JSON.stringify(o).toLowerCase().includes(w)) && (!$('#kind').value || o.kind === $('#kind').value) && (!$('#availability').value || o.status === $('#availability').value) && (!$('#shortlisted').checked || t.shortlist.includes(o.id)));
   $('#count').textContent = `${options.length} of ${(f.options || []).length} options · ${t.shortlist.length} shortlisted`;
@@ -130,9 +130,8 @@ async function refresh() {
     state = next;
     $('#wallet-summary').innerHTML = `<span><strong>${state.wallet.cards.length}</strong> cards</span><span><strong>${state.wallet.programs.length}</strong> points programs</span><span><strong>${state.wallet.benefits.length}</strong> credits & assets</span><span><strong>${state.trips.length}</strong> itineraries</span>`;
     if (resultChanged) {
-      if (!state.trips.some(t=>t.id===activeId)) activeId = state.trips[0]?.id || '';
-      $('#trip-select').innerHTML = state.trips.length ? state.trips.map(t=>`<option value="${t.id}">${esc(t.findings.title)}</option>`).join('') : '<option value="">No saved results</option>';
-      $('#trip-select').value = activeId; renderFindings();
+      if (!state.trips.some(t=>t.id===activeId)) activeId = state.trips.find(t=>t.id===new URLSearchParams(location.search).get('trip'))?.id || state.trips[0]?.id || '';
+      renderFindings(); window.renderActions?.(); if (currentTab==='overview') window.loadOverview();
     }
     if (!draft || (!dirty && !$('#wallet-setup').open && !$('#wallet-editor').open && draftRevision !== state.wallet.revision)) loadWallet(); else walletStatus();
     if(currentTab==='credentials') await refreshVault();
@@ -189,7 +188,6 @@ $('#delete-wallet').onclick = async () => {
   if (!confirm('Delete your saved personal wallet and discard unsaved wallet edits? Trip results and downloaded files will stay.')) return;
   if (await act('delete-wallet',{expected_revision:draftRevision})) loadWallet();
 };
-$('#trip-select').onchange = event => { activeId = event.target.value; renderFindings(); };
 for (const id of ['search','kind','availability','shortlisted']) $('#'+id).addEventListener('input', renderFindings);
 $('#options').addEventListener('change', async event => {
   const t = trip(), target = event.target, key = target.dataset.shortlist ? 'shortlist' : 'selected', id = target.dataset.shortlist || target.dataset.select;
@@ -218,6 +216,7 @@ window.addEventListener('beforeunload', event => { if (dirty && !stopped) { even
     $('#asset-catalog').innerHTML=assetCatalog.map(a=>`<p><a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(a.name)} ↗</a> <span class="muted">${esc(a.note)}</span></p>`).join('');
     $('#card-names').innerHTML = cards.map(c=>`<option value="${esc(c.name)}"></option>`).join('');
     await refresh();
+    if (location.pathname==='/travel/trips') history.replaceState(null,'',`/travel${location.search}`);
     tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false);
     $('#program-names').innerHTML = (state?.providers || []).flatMap(p=>p.programs).map(p=>`<option value="${esc(p)}"></option>`).join('');
     $('#provider-names').innerHTML=(state?.providers || []).map(p=>`<option value="${esc(p.name)}"></option>`).join('');

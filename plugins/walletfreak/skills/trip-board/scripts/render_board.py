@@ -70,7 +70,7 @@ def photo_url(value):
 def validate(data):
     if not isinstance(data, dict):
         raise ValueError("Board input must be an object")
-    allowed = {"title", "summary", "generated_at", "illustrative", "options", "research", "itinerary", "gaps", "lodging_window"}
+    allowed = {"title", "summary", "generated_at", "illustrative", "options", "research", "itinerary", "gaps", "actions", "lodging_window"}
     if data.keys() - allowed:
         raise ValueError("Unknown board fields; do not include wallet balances or profiles")
     text(data.get("title"), "title", True)
@@ -78,9 +78,27 @@ def validate(data):
     text(data.get("summary", ""), "summary")
     if type(data.get("illustrative", False)) is not bool:
         raise ValueError("illustrative must be true or false")
-    for name in ("options", "research", "itinerary", "gaps"):
+    for name in ("options", "research", "itinerary", "gaps", "actions"):
         if not isinstance(data.get(name, []), list):
             raise ValueError(f"{name} must be a list")
+    if len(data.get('actions', [])) > 100:
+        raise ValueError('Use at most 100 user actions')
+    action_ids = set()
+    for action in data.get('actions', []):
+        if not isinstance(action, dict) or set(action) - {'id', 'title', 'detail', 'kind', 'due_on'} or not {'id', 'title', 'kind'} <= set(action):
+            raise ValueError('Invalid user action')
+        identifier = text(action['id'], 'action id', True)
+        if not re.fullmatch(r'[a-zA-Z0-9-]{1,64}', identifier) or identifier in action_ids:
+            raise ValueError('Actions need unique stable IDs')
+        action_ids.add(identifier)
+        text(action['title'], 'action title', True)
+        text(action.get('detail', ''), 'action detail')
+        if action['kind'] not in ('sign-in', 'verify', 'other'):
+            raise ValueError('Unknown user action kind')
+        if 'due_on' in action:
+            if not isinstance(action['due_on'], str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', action['due_on']):
+                raise ValueError('Action due date needs YYYY-MM-DD')
+            date.fromisoformat(action['due_on'])
     if 'lodging_window' in data:
         window = data['lodging_window']
         if not isinstance(window, dict) or set(window) != {'check_in', 'check_out'}:

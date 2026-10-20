@@ -1,6 +1,6 @@
 # Dashboard findings contract
 
-Use the existing example fields: title, summary, generated_at (ISO with zone), optional illustrative boolean, options, research, itinerary and gaps. Keep failed searches. Every available option needs an observation timestamp and a public HTTPS source.
+Use the existing example fields: title, summary, generated_at (ISO with zone), optional illustrative boolean, options, research, itinerary, gaps and actions. Keep failed searches. Every available option needs an observation timestamp and a public HTTPS source.
 
 Options have unique stable id, title, kind (flight/hotel/lounge/transport/other), status (available/unavailable/waitlisted/blocked/unverified), provider, program, quoted price text, observed_at, sources and optional search/product/terms/benefits/uncertainty/reproduce text. Do not reuse an ID for a different product.
 
@@ -8,7 +8,9 @@ For selected itinerary subtotals, add choice_group (e.g. outbound-flight, return
 
 Research entries contain title, detail, optional observed_at and url. Itinerary entries contain when (local time with named zone), title, detail and optional option_id. Gaps are unresolved checks and unpriced components. Dates remain in the user's supplied order; don't infer local time zones from UTC alone.
 
-Publish a new result with `local.py publish --input -` and {"findings":{...}}. Update with {"id":"<result-id>","expected_revision":<current revision>,"findings":{...}}. Read current revisions with `local.py status`. There are no request IDs, claims, heartbeats or task queues. A deleted result rejects updates; do not recreate it without a new user request.
+`actions` are concrete steps for the traveler, distinct from research gaps. Each has a stable unique `id` (letters, digits and hyphens, up to 64 characters), `title`, `kind` (`sign-in`, `verify`, or `other`), and optional `detail` and `due_on` (YYYY-MM-DD). Publish a sign-in step when a portal requires the user; publish a verification step when the user must decide or check a term. Do not put passwords, account numbers or private links in actions. The traveler can mark these steps addressed, and their status is retained across a refresh when the ID remains. Proposed flight purchases and uncovered hotel nights create booking actions automatically; those clear when reviewed itinerary data records the booking.
+
+Publish a new result with `local.py publish --input -` and {"findings":{...}}. Update with {"id":"<result-id>","expected_revision":<current revision>,"findings":{...}}. Read current revisions with `local.py status`. A deleted result rejects updates; do not recreate it without a new user request.
 
 The viewer renders itinerary entries immediately, using the linked option kind/provider for flight, stay, transport and lounge components. It preserves the research itinerary independently of local comparison selections. Include schedule/time-zone text and known restrictions; leave unknown timing explicit. Personal wallet data is never part of this display contract.
 

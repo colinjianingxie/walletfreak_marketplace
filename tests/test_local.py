@@ -45,6 +45,26 @@ class DataTests(unittest.TestCase):
     def save_wallet(self):
         return self.store.user_action('wallet', {'wallet':wallet(), 'expected_revision':self.store.wallet()['revision']})
 
+    def test_user_action_status_survives_refresh_without_changing_booking(self):
+        data = findings()
+        data['actions'] = [{'id':'verify-fare','title':'Verify fare rules','kind':'verify','due_on':'2027-04-01'}]
+        bad = copy.deepcopy(data); bad['actions'][0]['due_on'] = 'tomorrow'
+        with self.assertRaises(ValueError):
+            self.store.agent_action('publish', {'id':self.id,'expected_revision':0,'findings':bad})
+        self.store.agent_action('publish', {'id':self.id,'expected_revision':0,'findings':data})
+        self.store.user_action('action-status', {'id':self.id,'action_id':'verify-fare','status':'done','expected_revision':1})
+        self.assertEqual(self.store.trip(self.id)['action_state'], {'verify-fare':'done'})
+        self.assertEqual(self.store.trip(self.id)['findings']['actions'][0]['title'], 'Verify fare rules')
+        with self.assertRaises(ValueError):
+            self.store.user_action('action-status', {'id':self.id,'action_id':'missing','status':'done','expected_revision':2})
+        with self.assertRaises(ValueError):
+            self.store.user_action('action-status', {'id':self.id,'action_id':'verify-fare','status':'done','expected_revision':1})
+        self.store.agent_action('publish', {'id':self.id,'expected_revision':2,'findings':data})
+        self.assertEqual(self.store.trip(self.id)['action_state'], {'verify-fare':'done'})
+        data['actions'] = []
+        self.store.agent_action('publish', {'id':self.id,'expected_revision':3,'findings':data})
+        self.assertEqual(self.store.trip(self.id)['action_state'], {})
+
     def test_publish_selection_totals_and_refresh_preservation(self):
         self.assertNotIn('SECRET', json.dumps(self.store.snapshot()))
         self.store.user_action('selection', {'id':self.id,'shortlist':['cash','award'],'selected':['award','hotel','unknown'],'expected_revision':0})
@@ -243,10 +263,12 @@ class LauncherTests(unittest.TestCase):
                     with urlopen(descriptor['origin'], timeout=3) as response:
                         self.assertEqual(response.status, 200)
                         self.assertIn(b'/assets/dashboard/app.js', response.read())
-                    for view in ('travel', 'travel/trips', 'credit-cards', 'spending', 'shopping'):
+                    for view in ('travel', 'travel/trips', 'actions', 'credit-cards', 'spending', 'shopping'):
                         with urlopen(descriptor['origin'] + '/' + view, timeout=3) as response:
                             self.assertEqual(response.status, 200)
                             self.assertIn(b'/assets/dashboard/app.js', response.read())
+                    with urlopen(descriptor['origin'] + '/travel?trip=' + trip_id, timeout=3) as response:
+                        self.assertEqual(response.status, 200)
                     subprocess.check_output([sys.executable, str(current_script), 'start', '--port', '0'])
                     self.assertEqual(local.read_json(root / 'server.json'), descriptor)
                     self.assertEqual(local.call(root, '/api/state')['trips'][0]['id'], trip_id)

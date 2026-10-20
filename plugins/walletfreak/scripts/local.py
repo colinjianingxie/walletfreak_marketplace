@@ -38,7 +38,7 @@ import render_board as board
 
 PROVIDERS = json.loads((PLUGIN / 'providers.json').read_text())
 LIMIT = 2_000_000
-UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/wallet-setup.js', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/finance.js', 'dashboard/shopping.js', 'dashboard/confirmations.js', 'dashboard/overview.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
+UI_ASSETS = {'components/v1/vendor/leaflet.js', 'components/v1/vendor/leaflet.css', 'dashboard/wallet-setup.js', 'dashboard/app.js', 'dashboard/spending.js', 'dashboard/finance.js', 'dashboard/shopping.js', 'dashboard/confirmations.js', 'dashboard/overview.js', 'dashboard/actions.js', 'components/v1/components.js', 'components/v1/components.css', 'components/v1/catalog.json', 'components/v1/layout.schema.json', 'dashboard/app.css', 'mascot.png', 'brands.json', 'cards.json', 'wallet-assets.json'}
 
 
 def now():
@@ -418,6 +418,15 @@ class Store:
                 raise ValueError('Choose only one alternative from each itinerary component.')
             trip.update(shortlist=body['shortlist'], selected=body['selected'], selection_revision=trip['selection_revision'] + 1,
                         revision=trip['revision'] + 1)
+        elif action == 'action-status':
+            fields(body, ('id', 'action_id', 'status', 'expected_revision'), ('id', 'action_id', 'status', 'expected_revision'))
+            trip = self.trip(body['id'], state)
+            if body['expected_revision'] != trip['revision']:
+                raise ValueError('Trip changed. Refresh before updating the action.')
+            if not isinstance(body['action_id'], str) or body['action_id'] not in {item['id'] for item in trip['findings'].get('actions', [])} or body['status'] not in ('open', 'done'):
+                raise ValueError('Choose an existing action and a valid status.')
+            trip.setdefault('action_state', {})[body['action_id']] = body['status']
+            trip['revision'] += 1
         else:
             raise ValueError('Unknown action.')
         atomic_json(self.path, state)
@@ -465,7 +474,8 @@ class Store:
             groups = [o.get('choice_group') for o in findings.get('options', []) if o['id'] in trip['selected'] and o.get('choice_group')]
             if len(groups) != len(set(groups)):
                 raise ValueError('Updated findings would combine mutually exclusive selected items.')
-            trip.update(findings=findings, revision=trip['revision'] + 1)
+            kept = {item['id'] for item in findings.get('actions', [])}
+            trip.update(findings=findings, action_state={key: value for key, value in trip.get('action_state', {}).items() if key in kept}, revision=trip['revision'] + 1)
         else:
             if 'expected_revision' in body:
                 raise ValueError('An update revision requires a results id.')
@@ -517,10 +527,10 @@ class Handler(BaseHTTPRequestHandler):
         if not self.host_ok():
             return self.respond(403, {'error': 'Invalid local origin.'})
         route = urlsplit(self.path)
-        if route.query or route.fragment:
+        if route.fragment or (route.query and not (route.path in ('/travel', '/travel/trips') and re.fullmatch(r'trip=[0-9a-f]{32}', route.query))):
             return self.respond(400, {'error': 'Unexpected URL parameters.'})
         path = route.path
-        if path in ('/', '/travel', '/travel/trips', '/credit-cards', '/spending', '/shopping', '/settings/sign-ins', '/settings/plugins'):
+        if path in ('/', '/travel', '/travel/trips', '/actions', '/credit-cards', '/spending', '/shopping', '/settings/sign-ins', '/settings/plugins'):
             try:
                 return self.respond(200, (PLUGIN / 'assets/dashboard/index.html').read_bytes(), 'text/html; charset=utf-8')
             except OSError:

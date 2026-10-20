@@ -5,7 +5,7 @@ description: "Compose a personal WalletFreak dashboard from versioned templates 
 
 # Dashboard builder
 
-Resolve this plugin root from this skill's installed path. Start its local workspace with `python3 <plugin>/scripts/local.py start` if necessary. Travel is a configurable read-only itinerary overview; the existing wallet editor, statement uploads and itinerary controls stay in their respective tabs. Requests and analysis remain in the conversation.
+Resolve this plugin root from this skill's installed path. Start its local workspace with `python3 <plugin>/scripts/local.py start` if necessary. Travel is a configurable itinerary overview with one saved-trip selector; research and trip files stay with the selected trip. Actions shows user follow-ups. The wallet editor and statement uploads stay in their respective workspaces. Requests and analysis remain in the conversation.
 
 1. Read `local.py status`, `local.py catalog` and `local.py layout`. Status describes saved trips; catalog/layout contain design metadata. Reuse existing results and read the saved wallet only when it is relevant to the requested work. Never replace it with sample data.
 2. For a request to generate an itinerary dashboard, establish destinations, travelers, dates and flexibility from the conversation and existing trip. Ask only for missing information needed for research. Use travel-plan/provider-research to research, Credit Cards' wallet-optimizer when installed for payment cards and planned versus used benefits, and stay-route-map for stay dates and route order. Never invent quotes or booked status to fill a template.

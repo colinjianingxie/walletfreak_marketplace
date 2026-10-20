@@ -21,7 +21,19 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await page.getByRole('button',{name:'Table view',exact:true}).click();await page.locator('#wallet-programs [data-field=balance]').fill('43000');await page.getByRole('button',{name:'Save wallet',exact:true}).click();await page.getByText('Wallet saved on this device. Balances are self-reported.',{exact:true}).waitFor();await page.getByRole('button',{name:'Cards & rewards',exact:true}).click();assert.equal(JSON.parse(cli('wallet')).programs[0].balance,'43000');
   for(const width of [1440,768,390,320]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`wallet ${width}`);await page.screenshot({path:`/tmp/wf-wallet-${width}.png`,fullPage:true});}
   const findings=JSON.parse(readFileSync(join(root,'tests/fixtures/route-trip.json'),'utf8'));
-  execFileSync('python3',[script,'publish','--input','-'],{env,input:JSON.stringify({findings})});await page.getByRole('button',{name:'Saved trips',exact:true}).click();await page.locator('#itinerary .wf-trip').waitFor();assert.equal(await page.locator('#trip-alternatives').getAttribute('open'),null);assert.equal(await page.locator('#itinerary details[open]').count(),0);
+  const firstTrip=JSON.parse(execFileSync('python3',[script,'publish','--input','-'],{env,input:JSON.stringify({findings})}));await page.getByRole('button',{name:'Travel',exact:true}).click();await page.locator('#overview-content .wf-trip').waitFor();assert.equal(await page.locator('#trip-alternatives').getAttribute('open'),null);assert.equal(await page.locator('#overview-content details[open]').count(),0);
+  await page.getByRole('button',{name:'Actions',exact:true}).click();
+  await page.getByText('Book Tokyo stay',{exact:true}).waitFor();
+  assert.equal(await page.locator('#actions-list .user-action').count(),2);
+  await page.getByRole('button',{name:'Travel',exact:true}).click();
+  const otherFindings={...findings,title:'Second synthetic trip'};
+  const secondTrip=JSON.parse(execFileSync('python3',[script,'publish','--input','-'],{env,input:JSON.stringify({findings:otherFindings})}));
+  await page.locator(`#overview-trip option[value="${secondTrip.id}"]`).waitFor({state:'attached'});
+  await page.getByLabel('Saved trip',{exact:true}).selectOption(secondTrip.id);
+  await page.getByRole('heading',{name:'Second synthetic trip',exact:true}).waitFor();
+  assert.equal(new URL(page.url()).searchParams.get('trip'),secondTrip.id);
+  await page.reload();await page.getByRole('heading',{name:'Second synthetic trip',exact:true}).waitFor();
+  await page.getByLabel('Saved trip',{exact:true}).selectOption(firstTrip.id);
   for(const width of [1440,768,390,320]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`trip ${width}`);await page.screenshot({path:`/tmp/wf-trip-${width}.png`,fullPage:true});}
   await page.getByRole('button',{name:'Travel',exact:true}).click();
   await page.locator('#overview-content .travel-map-pin').first().waitFor();
@@ -36,11 +48,9 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await page.setViewportSize({width:390,height:1000});
   assert.ok(await page.locator('#overview-content').evaluate(el=>el.querySelector('.wf-route').getBoundingClientRect().bottom<el.querySelector('.wf-itinerary').getBoundingClientRect().top));
   assert.equal(await page.locator('.workspace-nav').evaluate(el=>getComputedStyle(el).position),'fixed');
-  await page.getByRole('button',{name:'Saved trips',exact:true}).click();
   assert.ok(requests.every(r=>r.startsWith(new URL(url).origin)),'no network before map opt-in');
-  await page.getByRole('button',{name:'Map',exact:true}).click();await page.locator('.wf-route').waitFor();await page.locator('[data-route-stop="1"]').click();assert.equal(await page.locator('[data-stop="1"]').evaluate(el=>el.classList.contains('wf-selected')),true);await page.getByRole('button',{name:'Map',exact:true}).click();
   await page.route('https://tile.openstreetmap.org/**',r=>r.abort());await page.getByRole('button',{name:'Load street map',exact:true}).click();await page.locator('.leaflet-container').waitFor();assert.equal(await page.locator('.wf-map-pin').count(),3);await page.getByText('Some map tiles could not load. Your stops remain available below.',{exact:true}).waitFor();
-  const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Download trip file',exact:true}).click();const downloaded=await pending;const html=readFileSync(await downloaded.path(),'utf8');assert.ok(!html.includes('43000'));assert.ok(!html.includes('Chase Ultimate Rewards'));
+  await page.locator('#trip-library>summary').click();const pending=page.waitForEvent('download');await page.getByRole('button',{name:'Download trip file',exact:true}).click();const downloaded=await pending;const html=readFileSync(await downloaded.path(),'utf8');assert.ok(!html.includes('43000'));assert.ok(!html.includes('Chase Ultimate Rewards'));
   const exportPath=join(data,'trip.html');writeFileSync(exportPath,html);const exported=await browser.newPage({viewport:{width:390,height:900}});exported.on('pageerror',e=>errors.push(e.message));await exported.goto('file://'+exportPath);await exported.locator('#export-trip .wf-trip').waitFor();await exported.getByRole('button',{name:'Map',exact:true}).click();assert.equal(await exported.locator('.wf-route-diagram button').count(),3);assert.equal(await exported.getByRole('button',{name:'Load street map',exact:true}).isVisible(),false);
   assert.deepEqual(errors,[]);console.log('Passed people, shared rewards account, tiles/table editing, mobile views, collapsed trip details, map opt-in/failure and private offline export.');
  }finally{if(browser)await browser.close();try{cli('stop');}catch{}rmSync(data,{recursive:true,force:true});}

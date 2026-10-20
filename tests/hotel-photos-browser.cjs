@@ -25,14 +25,14 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await route.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
     });
     const page=await context.newPage();page.setDefaultTimeout(10000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(url);await page.getByRole('button',{name:'Saved trips',exact:true}).click();
+    await page.goto(url);await page.getByRole('button',{name:'Travel',exact:true}).click();await page.locator('#trip-library>summary').click();
     await page.getByRole('heading',{name:'Photo test',exact:true}).waitFor();
     await page.locator('#trip-alternatives>summary').click();await page.locator('#options img[alt="Hotel pool"]').scrollIntoViewIfNeeded();
     await page.locator('#options img[alt="Hotel pool"]').evaluate(img=>img.decode());
     await page.locator('#options .hotel-photo').filter({has:page.locator('img[alt="Hotel exterior"]')}).scrollIntoViewIfNeeded();
     await page.locator('#options img[alt="Hotel exterior"][hidden]').waitFor({state:'attached'});
     assert.equal(await page.locator('#options .hotel-photo').count(),2);
-    assert.equal(await page.locator('#itinerary .hotel-photo').count(),0);
+    assert.equal(await page.locator('#overview-content .hotel-photo').count(),0);
     await page.locator('[data-shortlist="hotel"]').check();await page.locator('#comparison .hotel-photo').waitFor();
     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
     const descriptor=JSON.parse(readFileSync(join(data,'server.json')));
