@@ -24,7 +24,8 @@
       "enum": [
         "paper",
         "sage",
-        "midnight"
+        "midnight",
+        "editorial"
       ]
     },
     "density": {
@@ -58,6 +59,8 @@
           },
           "component": {
             "enum": [
+              "trip-brief",
+              "action-queue",
               "metric-cards",
               "data-table",
               "reference-list",
@@ -74,11 +77,20 @@
               "wallet.benefits",
               "spending.references",
               "spending.findings",
-              "travel.itinerary"
+              "travel.itinerary",
+              "travel.actions"
             ]
           }
         },
         "allOf": [
+          {
+            "if": {"properties": {"component": {"const": "trip-brief"}}},
+            "then": {"properties": {"source": {"enum": ["travel.itinerary"]}}}
+          },
+          {
+            "if": {"properties": {"component": {"const": "action-queue"}}},
+            "then": {"properties": {"source": {"enum": ["travel.actions"]}}}
+          },
           {
             "if": {
               "properties": {

@@ -1,17 +1,30 @@
 {
   "version": 1,
-  "release": "1.3.0",
+  "release": "1.4.0",
   "description": "Public design metadata only. Bind private data in the local WalletFreak runtime.",
   "themes": [
     "paper",
     "sage",
-    "midnight"
+    "midnight",
+    "editorial"
   ],
   "densities": [
     "compact",
     "comfortable"
   ],
   "components": [
+    {
+      "id": "trip-brief",
+      "name": "Trip brief",
+      "description": "A compact route overview from the selected trip's itinerary.",
+      "sources": ["travel.itinerary"]
+    },
+    {
+      "id": "action-queue",
+      "name": "Action queue",
+      "description": "Next steps that still need a traveler decision.",
+      "sources": ["travel.actions"]
+    },
     {
       "id": "metric-cards",
       "name": "Metric cards",
@@ -64,6 +77,22 @@
     }
   ],
   "templates": [
+    {
+      "id": "concierge-travel",
+      "name": "Concierge travel",
+      "description": "Editorial route brief, decisions and a detailed night-by-night itinerary.",
+      "layout": {
+        "version": 1,
+        "title": "Trip workspace",
+        "theme": "editorial",
+        "density": "compact",
+        "blocks": [
+          {"id": "trip-brief", "component": "trip-brief", "source": "travel.itinerary", "title": "Route overview"},
+          {"id": "next-actions", "component": "action-queue", "source": "travel.actions", "title": "Next up"},
+          {"id": "trip-itinerary", "component": "itinerary", "source": "travel.itinerary", "title": "Flights & nights"}
+        ]
+      }
+    },
     {
       "id": "overview",
       "name": "Overview",

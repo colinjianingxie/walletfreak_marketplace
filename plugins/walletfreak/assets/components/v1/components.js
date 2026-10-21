@@ -75,7 +75,7 @@
   }
   function mountTrip(target,rows){
     let map,markers=[];
-    const trip=target.querySelector('.wf-trip');if(!trip)return;
+    const trip=target?.querySelector('.wf-trip');if(!trip)return;
     const setView=view=>{trip.dataset.view=view;trip.querySelectorAll('[data-trip-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tripView===view)));if(map)setTimeout(()=>map.invalidateSize(),0);};
     const select=index=>{trip.querySelectorAll('[data-stop],[data-route-stop]').forEach(el=>el.classList.toggle('wf-selected',Number(el.dataset.stop??el.dataset.routeStop)===index));if(markers[index]){map.panTo(markers[index].getLatLng());markers[index].openPopup();}};
     trip.addEventListener('click',e=>{
@@ -103,10 +103,28 @@
   }
   function renderTrip(target,rows,window){const display=tripRows(rows,window);target.classList.add('wf-dashboard');target.innerHTML=tripHtml(display,window);mountTrip(target,display);}
   function walletCards(rows,data){return `<div class="wf-wallet-cards">${rows.map(r=>{const program=(data['wallet.programs']||[]).find(p=>p.id===r.reward_account_id);const benefits=(data['wallet.benefits']||[]).filter(b=>b.card_id&&b.card_id===r.id);const art=(data['wallet.artwork']||{})[r.name];return `<article class="wf-wallet-card">${typeof art==='string'&&/^\/(?:assets\/)?cards\/[a-zA-Z0-9._-]+$/.test(art)?`<img src="${esc(art)}" alt="" loading="lazy">`:'<span class="wf-card-symbol" aria-hidden="true">▰</span>'}<h4>${esc(r.name)}</h4><p>${program?esc(program.account_label||program.name):'Rewards account not linked'}</p>${program?`<strong>${value(program,'balance')} <small>points / miles · account balance</small></strong>`:''}<small>${benefits.length?benefits.length+' linked benefits':'No linked benefits'}</small><details><summary>Card details</summary><p>${esc(r.notes||'No notes added.')}</p><small>Reported ${esc(r.reported_on||'date unknown')}</small>${benefits.map(b=>`<p>${esc(b.name)} · ${esc(b.remaining||'Unknown remaining')} · Expires ${esc(b.expires_on||'unknown')}</p>`).join('')}</details></article>`;}).join('')}</div>`;}
+  function tripBrief(rows){
+    const stops=rows.filter(r=>r.place?.label&&Number.isFinite(r.place.lat)&&Number.isFinite(r.place.lng)).filter((r,i,all)=>all.findIndex(other=>other.place.label===r.place.label)===i).slice(0,8);
+    const title=rows[0]?.trip||'Your trip';
+    const dated=rows.map(r=>r.day).filter(Boolean).sort();
+    const dates=dated.length?`${dated[0]}${dated.at(-1)!==dated[0]?' → '+dated.at(-1):''}`:'Dates to confirm';
+    const nights=tripRows(rows).filter(r=>r.stay).length;
+    let art='';
+    if(stops.length){
+      const lats=stops.map(r=>r.place.lat),lngs=stops.map(r=>r.place.lng);
+      const minLat=Math.min(...lats),maxLat=Math.max(...lats),minLng=Math.min(...lngs),maxLng=Math.max(...lngs);
+      const points=stops.map(r=>[90+420*(r.place.lng-minLng)/Math.max(maxLng-minLng,.01),175-105*(r.place.lat-minLat)/Math.max(maxLat-minLat,.01)]);
+      art=`<svg viewBox="0 0 600 240" role="img" aria-label="Schematic route: ${esc(stops.map(r=>r.place.label).join(' to '))}"><polyline points="${points.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#87e1ce" stroke-width="3" stroke-dasharray="5 8"/>${points.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="7" fill="#a9eadb"/><text x="${x+11}" y="${y-12}">${esc(stops[i].place.label.split(' · ')[0])}</text>`).join('')}</svg>`;
+    }
+    return `<div class="wf-trip-brief"><div class="wf-trip-brief-copy"><span>YOUR ROUTE</span><strong>${esc(title)}</strong><p>${esc(dates)} · ${nights?nights+' hotel nights':'Stays to confirm'}</p><small>${stops.length?'Approximate positions · route is schematic':'Add verified locations to draw the route.'}</small></div>${art}</div>`;
+  }
+  function actionQueue(rows){return `<div class="wf-action-queue">${rows.filter(r=>!r.done).slice(0,4).map(r=>`<article><span class="wf-action-mark" aria-hidden="true">${r.kind==='booking'?'✈':r.kind==='sign-in'?'⌑':'◉'}</span><div><small>${esc(r.trip_name||'TRIP')}${r.due?' · DUE '+esc(r.due):''}</small><strong>${esc(r.title)}</strong><p>${esc(r.detail||'Review this step in Actions.')}</p></div></article>`).join('')||'<p class="wf-empty">No trip actions need your attention.</p>'}</div>`;}
   function componentHtml(block,data){
     const all=data[block.source]||[],rows=all.slice(0,100);
-    if(!rows.length&&!(block.component==='itinerary'&&data['travel.lodging_window'])){const message=block.source.startsWith('wallet.')?'Set up a person’s wallet in Wallet to add cards and rewards accounts.':block.source==='spending.references'?'Add PDF, CSV or ZIP references in Spending.':block.source.startsWith('spending.')?'Ask your agent to analyze your references and publish findings here.':'Ask your agent to generate an itinerary dashboard from your destinations, dates and flexibility.';return `<p class="wf-empty">${esc(message)}</p>`;}
+    if(!rows.length&&!(block.component==='itinerary'&&data['travel.lodging_window'])){const message=block.source.startsWith('wallet.')?'Set up a person’s wallet in Wallet to add cards and rewards accounts.':block.source==='spending.references'?'Add PDF, CSV or ZIP references in Spending.':block.source.startsWith('spending.')?'Ask your agent to analyze your references and publish findings here.':block.component==='action-queue'?'No trip actions need your attention.':'Ask your agent to generate an itinerary dashboard from your destinations, dates and flexibility.';return `<p class="wf-empty">${esc(message)}</p>`;}
     let html='';
+    if(block.component==='trip-brief')html=tripBrief(rows);
+    if(block.component==='action-queue')html=actionQueue(rows);
     if(block.component==='metric-cards')html=`<div class="wf-metrics">${rows.map(r=>`<article><small>${esc(r.label)}</small><strong>${esc(r.value)}</strong><p>${esc(r.detail)}</p>${sources(r,data)}</article>`).join('')}</div>`;
     if(block.component==='findings')html=rows.map(r=>`<article class="wf-finding"><strong>${esc(r.label)}</strong><p>${esc(r.detail)}</p>${sources(r,data)}</article>`).join('');
     if(block.component==='reference-list')html=rows.map(r=>`<article class="wf-reference"><span class="wf-file">${esc(r.name?.split('.').pop()?.toUpperCase()||'FILE')}</span><div><strong>${esc(r.name)}</strong><small>${r.available===false?'File missing':'Local reference'}${r.archive_name?' · '+esc(r.archive_name):''}${r.members?' · '+r.members.filter(m=>m.supported).length+' supported files':''}${Number.isFinite(r.bytes)?' · '+Math.ceil(r.bytes/1024)+' KB':''}</small></div></article>`).join('');

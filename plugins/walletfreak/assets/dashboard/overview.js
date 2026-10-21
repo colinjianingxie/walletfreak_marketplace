@@ -10,7 +10,9 @@
       const linked=new Set(itinerary.map(item=>item.option_id));
       for(const id of trip.selected||[]){const option=options.get(id);if(option&&!linked.has(id))rows.push({...option,when:'Proposed selection; not reserved',detail:option.product||'Schedule not recorded.',trip:trip.findings.title});}
     }
-    return {'wallet.artwork':Object.fromEntries(cards.map(c=>[c.name,'/assets'+c.path])),'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows,'travel.lodging_window':(state.trips||[]).find(t=>t.id===activeId)?.findings.lodging_window};
+    const selected=(state.trips||[]).find(t=>t.id===activeId);
+    const actions=selected&&window.getTripActions?window.getTripActions(selected).map(action=>({...action,trip_name:selected.findings.title})):[];
+    return {'wallet.artwork':Object.fromEntries(cards.map(c=>[c.name,'/assets'+c.path])),'wallet.cards':state.wallet.cards,'wallet.programs':state.wallet.programs,'wallet.benefits':state.wallet.benefits,'spending.metrics':references.report?.metrics||[],'spending.findings':references.report?.findings||[],'spending.references':references.files,'travel.itinerary':rows,'travel.actions':actions,'travel.lodging_window':selected?.findings.lodging_window};
   }
   function drawRoute(rows){
     const overview=$('#overview-content'),route=overview.querySelector('.wf-trip .wf-route');

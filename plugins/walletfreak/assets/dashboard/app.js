@@ -5,7 +5,7 @@ document.addEventListener('error', event => {
 
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state, activeId = '', brands = {}, cards = [], draft, draftRevision, dirty = false, stopped = false, assetCatalog = [], vaultState, pluginInventory, currentTab = 'overview';
+let state, activeId = '', brands = {}, cards = [], draft, draftRevision, dirty = false, stopped = false, assetCatalog = [], vaultState, pluginInventory, currentTab = 'home';
 function notice(message, error = false) { $('#notice').textContent = message; $('#notice').className = error ? 'error' : ''; }
 async function api(path, body) {
   const response = await fetch('/api/' + path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json','X-WalletFreak':'1'}, body:JSON.stringify(body)});
@@ -17,20 +17,20 @@ async function act(path, body) {
   try { const result = await api(path, body); if (result.message) notice(result.message); await refresh(); return result; }
   catch (error) { notice(error.message, true); await refresh(); return null; }
 }
-const routes = {overview:'/travel',actions:'/actions',wallet:'/credit-cards',spending:'/spending',shopping:'/shopping',credentials:'/settings/sign-ins',plugins:'/settings/plugins'};
+const routes = {home:'/',overview:'/travel',actions:'/actions',wallet:'/credit-cards',spending:'/spending',shopping:'/shopping',credentials:'/settings/sign-ins',plugins:'/settings/plugins'};
 function tab(name, navigate=true) {
   if (!routes[name]) name='overview';
   currentTab=name; document.body.dataset.view=name; $('.workspace-more').open=false;
   if (navigate && location.pathname!==routes[name]) history.pushState(null,'',name==='overview'&&activeId?`/travel?trip=${encodeURIComponent(activeId)}`:routes[name]);
-  if (name==='overview') window.loadOverview(); if (name==='actions') window.renderActions?.(); if (name==='spending') window.loadSpending(); if (name==='shopping') window.loadShopping(); if (name==='plugins') loadPlugins(); if (name==='credentials') refreshVault();
-  for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-pressed',String(item.dataset.tab===name));
+  if (name==='home') renderHome(); if (name==='overview') window.loadOverview(); if (name==='actions') window.renderActions?.(); if (name==='spending') window.loadSpending(); if (name==='shopping') window.loadShopping(); if (name==='plugins') loadPlugins(); if (name==='credentials') refreshVault();
+  for (const item of document.querySelectorAll('.workspace-nav [data-tab]')) item.setAttribute('aria-pressed',String(item.dataset.tab===name));
   for (const panel of document.querySelectorAll('.panel')) panel.hidden=panel.id!==name;
 }
-document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
+document.querySelectorAll('.workspace-nav [data-tab]').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
 window.addEventListener('popstate',()=>{
   const requested = new URLSearchParams(location.search).get('trip');
   if (location.pathname==='/travel' && state?.trips.some(t=>t.id===requested)) {activeId=requested;renderFindings();}
-  tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false);
+  tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'home',false);
 });
 window.selectTravelTrip = id => {
   if (!state?.trips.some(t=>t.id===id)) return;
@@ -38,6 +38,20 @@ window.selectTravelTrip = id => {
   history.replaceState(null,'',`/travel?trip=${encodeURIComponent(id)}`);
   renderFindings(); window.loadOverview(); window.renderActions?.();
 };
+function renderHome() {
+  if (!state) return;
+  const trips=state.trips||[],featured=trips.find(t=>t.id===activeId)||trips[0];
+  const photo=trip=>{const url=trip?.findings?.options?.find(o=>o.image?.url)?.image?.url;try{const parsed=new URL(url);return parsed.protocol==='https:'&&!parsed.username&&!parsed.password?url:'';}catch{return '';}};
+  const title=featured?.findings?.title||'Your next trip';
+  const steps=featured?.findings?.itinerary||[],dates=steps.map(item=>item.day).filter(Boolean).sort();
+  const route=[...new Set(steps.map(item=>item.place?.label?.split(' · ')[0]).filter(Boolean))].slice(0,4).join(' → ');
+  const open=trips.flatMap(t=>window.getTripActions?window.getTripActions(t):[]).filter(a=>!a.done);
+  $('#home-hero').innerHTML=`${photo(featured)?`<img src="${esc(photo(featured))}" alt="" loading="lazy">`:''}<div class="home-hero-copy"><span class="eyebrow">${featured?'SELECTED TRIP':'PERSONAL TRAVEL'}</span><h1>${esc(title)}</h1><p>${esc(route||'Your research starts here')}</p><small>${dates.length?esc(dates[0]+' → '+dates.at(-1)):'Dates to confirm'}</small><button type="button" data-home-trip="${esc(featured?.id||'')}">${featured?'View trip':'Plan with your agent'} →</button></div>`;
+  $('#home-stats').innerHTML=`<article><strong>${trips.length}</strong><span>Saved trips</span></article><article><strong>${open.length}</strong><span>Actions to review</span></article><article><strong>${state.wallet.cards.length}</strong><span>Cards tracked</span></article><article><strong>${state.wallet.programs.length}</strong><span>Reward programs</span></article>`;
+  $('#home-trips').innerHTML=trips.length?trips.map(t=>`<button type="button" class="home-trip" data-home-trip="${esc(t.id)}">${photo(t)?`<img src="${esc(photo(t))}" alt="" loading="lazy">`:'<span class="home-trip-art" aria-hidden="true">↗</span>'}<span><strong>${esc(t.findings.title)}</strong><small>${esc(t.findings.itinerary?.[0]?.day||'Dates to confirm')} · ${esc(t.findings.itinerary?.length||0)} itinerary items</small></span></button>`).join(''):'<p class="note">No saved trips yet. Ask your agent to plan a trip, then it will appear here.</p>';
+  $('#home-actions').innerHTML=open.length?open.slice(0,3).map(a=>`<button type="button" data-tab="actions"><span class="eyebrow">${esc(trips.find(t=>t.id===a.trip)?.findings.title||'TRIP')}</span><strong>${esc(a.title)}</strong><small>${esc(typeof a.detail==='string'?a.detail:'Review this step in Actions.')}</small></button>`).join(''):'<p class="note">No trip actions need your attention right now.</p>';
+}
+$('#home').addEventListener('click',event=>{const nav=event.target.closest('[data-tab]');if(nav){tab(nav.dataset.tab);return;}const target=event.target.closest('[data-home-trip]');if(!target)return;tab('overview');if(target.dataset.homeTrip)window.selectTravelTrip(target.dataset.homeTrip);});
 $('#open-confirmations').onclick=()=>{$('#confirmation-import').open=true;$('#confirmation-text').focus();};
 function trip() { return state?.trips.find(t => t.id === activeId); }
 function logo(name) {
@@ -129,6 +143,7 @@ async function refresh() {
     const resultChanged = !state || JSON.stringify(state.trips) !== JSON.stringify(next.trips);
     state = next;
     $('#wallet-summary').innerHTML = `<span><strong>${state.wallet.cards.length}</strong> cards</span><span><strong>${state.wallet.programs.length}</strong> points programs</span><span><strong>${state.wallet.benefits.length}</strong> credits & assets</span><span><strong>${state.trips.length}</strong> itineraries</span>`;
+    renderHome();
     if (resultChanged) {
       if (!state.trips.some(t=>t.id===activeId)) activeId = state.trips.find(t=>t.id===new URLSearchParams(location.search).get('trip'))?.id || state.trips[0]?.id || '';
       renderFindings(); window.renderActions?.(); if (currentTab==='overview') window.loadOverview();
@@ -217,7 +232,7 @@ window.addEventListener('beforeunload', event => { if (dirty && !stopped) { even
     $('#card-names').innerHTML = cards.map(c=>`<option value="${esc(c.name)}"></option>`).join('');
     await refresh();
     if (location.pathname==='/travel/trips') history.replaceState(null,'',`/travel${location.search}`);
-    tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'overview',false);
+    tab(Object.keys(routes).find(name=>routes[name]===location.pathname)||'home',false);
     $('#program-names').innerHTML = (state?.providers || []).flatMap(p=>p.programs).map(p=>`<option value="${esc(p)}"></option>`).join('');
     $('#provider-names').innerHTML=(state?.providers || []).map(p=>`<option value="${esc(p.name)}"></option>`).join('');
     setInterval(refresh,3000);

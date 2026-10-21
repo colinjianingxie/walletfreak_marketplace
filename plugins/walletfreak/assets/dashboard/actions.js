@@ -35,6 +35,7 @@
     for (const item of findings.actions || []) actions.push({trip: trip.id, id: item.id, title: item.title, detail: item.detail || '', due: item.due_on, kind: item.kind, target: item.kind === 'sign-in' ? 'credentials' : 'research', done: trip.action_state?.[item.id] === 'done'});
     return actions;
   }
+  window.getTripActions = tripActions;
 
   function card(action) {
     const label = action.kind === 'booking' ? (action.target === 'research' ? 'Review options' : 'View itinerary') : action.kind === 'sign-in' ? 'Open sign-ins' : action.target === 'spending' ? 'Review activity' : action.target === 'shopping' ? 'View offers' : 'Review trip';
